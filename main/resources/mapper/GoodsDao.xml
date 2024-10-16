@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.frisbeemall.dao.GoodsDao">
+
+    <!-- Result Map for Goods Entity -->
+    <resultMap id="GoodsResultMap" type="org.frisbeemall.domain.Goods">
+        <id property="gid" column="GID" />
+        <result property="gname" column="GName" />
+        <result property="gdesc" column="GDesc" />
+        <result property="gvalue" column="GValue" />
+        <result property="gpic" column="GPic" />
+    </resultMap>
+
+    <!-- Select All Goods -->
+    <select id="selectAll" resultMap="GoodsResultMap">
+        SELECT * FROM Goods
+    </select>
+
+    <!-- Select Goods by ID -->
+    <select id="selectById" parameterType="int" resultMap="GoodsResultMap">
+        SELECT * FROM Goods WHERE GID = #{gid}
+    </select>
+
+    <!-- Insert a New Goods -->
+    <insert id="insert" parameterType="org.frisbeemall.domain.Goods">
+        INSERT INTO Goods (GName, GDesc, GValue, GPic)
+        VALUES (#{gname}, #{gdesc}, #{gvalue}, #{gpic})
+    </insert>
+
+    <!-- Update an Existing Goods -->
+    <update id="updateById" parameterType="org.frisbeemall.domain.Goods">
+        UPDATE Goods
+        SET GName = #{gname}, GDesc = #{gdesc}, GValue = #{gvalue}, GPic = #{gpic}
+        WHERE GID = #{gid}
+    </update>
+
+    <!-- Delete a Goods by ID -->
+    <delete id="deleteById" parameterType="int">
+        DELETE FROM Goods WHERE GID = #{gid}
+    </delete>
+
+</mapper>
