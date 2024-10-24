@@ -10,10 +10,33 @@
  Target Server Version : 3045000 (3.45.0)
  File Encoding         : 65001
 
- Date: 16/10/2024 20:49:04
+ Date: 24/10/2024 08:27:51
 */
 
 PRAGMA foreign_keys = false;
+
+-- ----------------------------
+-- Table structure for Buyer
+-- ----------------------------
+DROP TABLE IF EXISTS "Buyer";
+CREATE TABLE "Buyer" (
+  "BAccount" TEXT NOT NULL,
+  "BPassword" TEXT NOT NULL,
+  "BPhone" integer,
+  "BLocation
+" TEXT,
+  PRIMARY KEY ("BAccount")
+);
+
+-- ----------------------------
+-- Table structure for Categories
+-- ----------------------------
+DROP TABLE IF EXISTS "Categories";
+CREATE TABLE "Categories" (
+  "CID" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "CName" TEXT NOT NULL,
+  "CParentID" INTEGER DEFAULT 0
+);
 
 -- ----------------------------
 -- Table structure for Goods
@@ -23,16 +46,24 @@ CREATE TABLE "Goods" (
   "GID" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   "GName" TEXT,
   "GDesc" TEXT,
+  "GStock" integer DEFAULT 0,
   "GValue" integer,
+  "CID" INTEGER,
   "GPic" TEXT,
   "GShelf" integer DEFAULT 0,
   "GState" real DEFAULT 0
 );
 
 -- ----------------------------
--- Records of Goods
+-- Table structure for GoodsPics
 -- ----------------------------
-INSERT INTO "Goods" VALUES (1, '测试商品1', '这是测试商品1的描述', 100, '1.jpeg', 2, 1.0);
+DROP TABLE IF EXISTS "GoodsPics";
+CREATE TABLE "GoodsPics" (
+  "PicID" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "GID" INTEGER NOT NULL,
+  "PicURL" TEXT NOT NULL,
+  FOREIGN KEY ("GID") REFERENCES "Goods" ("GID") ON DELETE NO ACTION ON UPDATE NO ACTION
+);
 
 -- ----------------------------
 -- Table structure for Order
@@ -40,17 +71,11 @@ INSERT INTO "Goods" VALUES (1, '测试商品1', '这是测试商品1的描述', 
 DROP TABLE IF EXISTS "Order";
 CREATE TABLE "Order" (
   "OID" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-  "GID" INTEGER,
+  "GID" INTEGER NOT NULL,
+  "BAccount" TEXT NOT NULL,
   "ODesc" TEXT,
   "OState" integer DEFAULT 0
 );
-
--- ----------------------------
--- Records of Order
--- ----------------------------
-INSERT INTO "Order" VALUES (1, 1, '小王想要，联系电话114514', 1);
-INSERT INTO "Order" VALUES (2, 1, '123', 0);
-INSERT INTO "Order" VALUES (3, 1, '234', 0);
 
 -- ----------------------------
 -- Table structure for Seller
@@ -63,11 +88,6 @@ CREATE TABLE "Seller" (
 );
 
 -- ----------------------------
--- Records of Seller
--- ----------------------------
-INSERT INTO "Seller" VALUES ('123', '123');
-
--- ----------------------------
 -- Table structure for sqlite_sequence
 -- ----------------------------
 DROP TABLE IF EXISTS "sqlite_sequence";
@@ -75,12 +95,6 @@ CREATE TABLE "sqlite_sequence" (
   "name",
   "seq"
 );
-
--- ----------------------------
--- Records of sqlite_sequence
--- ----------------------------
-INSERT INTO "sqlite_sequence" VALUES ('Goods', 4);
-INSERT INTO "sqlite_sequence" VALUES ('Order', 3);
 
 -- ----------------------------
 -- Auto increment value for Goods
