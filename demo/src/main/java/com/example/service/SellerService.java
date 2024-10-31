@@ -6,5 +6,5 @@ import com.example.entity.Seller;
 import java.util.List;
 
 public interface SellerService extends IService<Seller> {
-    List<Seller> findAll();
+    List<Seller> listAll();
 }

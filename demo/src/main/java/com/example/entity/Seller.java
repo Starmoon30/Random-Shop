@@ -2,17 +2,15 @@ package com.example.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@Data
+@TableName("Seller")
 public class Seller {
     @TableId("SAccount")
-    private String account;
+    private String saccount;
     @TableField("SPassword")
-    private String password;
+    private String spassword;
 }

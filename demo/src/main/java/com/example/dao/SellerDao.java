@@ -1,6 +1,7 @@
 package com.example.dao;
 
 import com.example.entity.Seller;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 

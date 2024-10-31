@@ -8,5 +8,5 @@ import java.util.List;
 
 @Mapper
 public interface SellerMapper extends BaseMapper<Seller> {
-    List<Seller> selectAll();
+    List<Seller> listAll();
 }
