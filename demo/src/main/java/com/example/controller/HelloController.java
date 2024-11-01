@@ -26,13 +26,14 @@ public class HelloController {
 
     @GetMapping("/list")
     public List<Seller> list(){
-        List<Seller> sellers = sellerService.list();
-        System.out.println("Sellers: " + sellers);
-        return sellers;
+        System.out.println(sellerService.listAll());
+        return sellerService.listAll();
     }
+
     @GetMapping("/list_test")
     public ResponseEntity<String> list_test() throws JsonProcessingException {
-        List<Seller> sellers = sellerService.list();
+        List<Seller> sellers = sellerService.listAll();
+        System.out.println(sellerService.listAll());
         ObjectMapper mapper = new ObjectMapper();
         String json = mapper.writeValueAsString(sellers);
         System.out.println("JSON: " + json);
