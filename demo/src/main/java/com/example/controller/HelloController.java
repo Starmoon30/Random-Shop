@@ -1,6 +1,6 @@
 package com.example.controller;
 
-import com.example.entity.Seller;
+import com.example.domain.Seller;
 import com.example.service.SellerService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +21,8 @@ public class HelloController {
 
     @GetMapping("/list1")
     public List<Seller> list1(){
-        return sellerService.listAll();
+        System.out.println(sellerService.list());
+        return sellerService.list();
     }
 
     @GetMapping("/list")

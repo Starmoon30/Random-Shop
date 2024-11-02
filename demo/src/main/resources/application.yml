@@ -7,6 +7,10 @@ spring:
     driver-class-name: org.sqlite.JDBC
     username:
     password:
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.example.entity
 #server:
 #  port: 8081 # 端口号
 #spring:
