@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mapper.UserMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.domain.User">
+            <id property="uaccount" column="UAccount" jdbcType="VARCHAR"/>
+            <result property="upassword" column="UPassword" jdbcType="VARCHAR"/>
+            <result property="uphone" column="UPhone" jdbcType="VARCHAR"/>
+            <result property="uaddress" column="UAddress" jdbcType="VARCHAR"/>
+            <result property="ucategory" column="UCategory" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="All_Column">
+        UAccount, UPassword, UPhone,UAddress,UCategory
+    </sql>
+
+    <select id="Get_Password_By_Account" resultType="string">
+        SELECT UPassword from User where UAccount = #{account}
+    </select>
+
+    <select id="Show_All" resultMap="BaseResultMap">
+        select * from User
+    </select>
+
+    <insert id="Add_User">
+        insert into User <include refid="All_Column" /> values (#{account},#{password},#{phone},#{address},#{category})
+    </insert>
+</mapper>

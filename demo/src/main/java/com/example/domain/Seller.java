@@ -14,6 +14,18 @@ import java.io.Serializable;
 @TableName(value ="Seller")
 @Data
 public class Seller implements Serializable {
+
+    /**
+     *
+     */
+    @TableId
+    private String saccount;
+
+    /**
+     *
+     */
+    private String spassword;
+
     public String getSpassword() {
         return spassword;
     }
@@ -29,17 +41,6 @@ public class Seller implements Serializable {
     public void setSaccount(String saccount) {
         this.saccount = saccount;
     }
-
-    /**
-     * 
-     */
-    @TableId
-    private String saccount;
-
-    /**
-     * 
-     */
-    private String spassword;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

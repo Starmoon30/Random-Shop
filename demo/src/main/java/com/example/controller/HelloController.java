@@ -1,11 +1,8 @@
 package com.example.controller;
 
-import com.example.domain.Seller;
-import com.example.service.SellerService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.domain.User;
+import com.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,27 +14,11 @@ public class HelloController {
     public String hello(){return  "hello ghb";}
 
     @Autowired
-    private SellerService sellerService;
-
-    @GetMapping("/list1")
-    public List<Seller> list1(){
-        System.out.println(sellerService.list());
-        return sellerService.list();
-    }
+    private UserService userService;
 
     @GetMapping("/list")
-    public List<Seller> list(){
-        System.out.println(sellerService.listAll());
-        return sellerService.listAll();
-    }
-
-    @GetMapping("/list_test")
-    public ResponseEntity<String> list_test() throws JsonProcessingException {
-        List<Seller> sellers = sellerService.listAll();
-        System.out.println(sellerService.listAll());
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(sellers);
-        System.out.println("JSON: " + json);
-        return ResponseEntity.ok(json);
+    public List<User> list(){
+        System.out.println(userService.Show_All());
+        return userService.Show_All();
     }
 }
