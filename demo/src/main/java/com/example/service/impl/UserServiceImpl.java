@@ -25,6 +25,38 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return userMapper.Show_All();
     }
 
+    @Override
+    public boolean Add_User(User user) {
+        int affectedRows = userMapper.Add_User(user.getUaccount(),user.getUpassword(),user.getUphone(),user.getUaddress(),1);
+        return affectedRows > 0;
+    }
+
+    public User findUser(String account,String password) {
+        return userMapper.findUser(account,password);
+    }
+
+    @Override
+    public User select_By_Account(String account) {
+        return userMapper.select_By_Account(account);
+    }
+
+    @Override
+    public boolean update_pwd(String account, String newPwd) {
+        int affectedRows = userMapper.update_pwd(account,newPwd);
+        return affectedRows > 0;
+    }
+
+    @Override
+    public boolean reset_admin() {
+        int affectedRows = userMapper.update_pwd("admin123","admin123");
+        return affectedRows > 0;
+    }
+
+    @Override
+    public boolean update_uinfo(String account,String phone,String address) {
+        int affectedRows = userMapper.update_uinfo(account,phone,address);
+        return affectedRows > 0;
+    }
 }
 
 

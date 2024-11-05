@@ -13,8 +13,14 @@
     </resultMap>
 
     <sql id="All_Column">
-        UAccount, UPassword, UPhone,UAddress,UCategory
+        (UAccount, UPassword, UPhone,UAddress,UCategory)
     </sql>
+    <update id="update_pwd">
+        update User set  UPassword = #{newPwd} where UAccount = #{account}
+    </update>
+    <update id="update_uinfo">
+        update User set UPhone = #{phone} , UAddress = #{address} where UAccount = #{account}
+    </update>
 
     <select id="Get_Password_By_Account" resultType="string">
         SELECT UPassword from User where UAccount = #{account}
@@ -22,6 +28,14 @@
 
     <select id="Show_All" resultMap="BaseResultMap">
         select * from User
+    </select>
+
+    <select id="findUser" resultType="com.example.domain.User">
+        SELECT * FROM User WHERE UAccount = #{account} AND UPassword = #{password}
+    </select>
+
+    <select id="select_By_Account" resultType="com.example.domain.User">
+        select * from User where UAccount = #{account}
     </select>
 
     <insert id="Add_User">
