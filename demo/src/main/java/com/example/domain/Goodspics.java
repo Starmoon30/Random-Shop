@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.util.Arrays;
 import lombok.Data;
 
 /**
@@ -28,15 +29,7 @@ public class Goodspics implements Serializable {
     /**
      * 
      */
-    private String picurl;
-
-    public Integer getPicid() {
-        return picid;
-    }
-
-    public void setPicid(Integer picid) {
-        this.picid = picid;
-    }
+    private byte[] picdata;
 
     public Integer getGid() {
         return gid;
@@ -46,12 +39,20 @@ public class Goodspics implements Serializable {
         this.gid = gid;
     }
 
-    public String getPicurl() {
-        return picurl;
+    public Integer getPicid() {
+        return picid;
     }
 
-    public void setPicurl(String picurl) {
-        this.picurl = picurl;
+    public void setPicid(Integer picid) {
+        this.picid = picid;
+    }
+
+    public byte[] getPicdata() {
+        return picdata;
+    }
+
+    public void setPicdata(byte[] picdata) {
+        this.picdata = picdata;
     }
 
     @TableField(exist = false)
@@ -71,7 +72,7 @@ public class Goodspics implements Serializable {
         Goodspics other = (Goodspics) that;
         return (this.getPicid() == null ? other.getPicid() == null : this.getPicid().equals(other.getPicid()))
             && (this.getGid() == null ? other.getGid() == null : this.getGid().equals(other.getGid()))
-            && (this.getPicurl() == null ? other.getPicurl() == null : this.getPicurl().equals(other.getPicurl()));
+            && (Arrays.equals(this.getPicdata(), other.getPicdata()));
     }
 
     @Override
@@ -80,7 +81,7 @@ public class Goodspics implements Serializable {
         int result = 1;
         result = prime * result + ((getPicid() == null) ? 0 : getPicid().hashCode());
         result = prime * result + ((getGid() == null) ? 0 : getGid().hashCode());
-        result = prime * result + ((getPicurl() == null) ? 0 : getPicurl().hashCode());
+        result = prime * result + (Arrays.hashCode(getPicdata()));
         return result;
     }
 
@@ -92,7 +93,7 @@ public class Goodspics implements Serializable {
         sb.append("Hash = ").append(hashCode());
         sb.append(", picid=").append(picid);
         sb.append(", gid=").append(gid);
-        sb.append(", picurl=").append(picurl);
+        sb.append(", picdata=").append(picdata);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

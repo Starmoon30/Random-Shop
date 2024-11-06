@@ -13,5 +13,20 @@
             <result property="oremark" column="ORemark" jdbcType="VARCHAR"/>
             <result property="ostate" column="OState" jdbcType="INTEGER"/>
     </resultMap>
+    <update id="update_oinfo">
+        update "Order" set OPhone = #{phone},OAddress = #{address},ORemark = #{remark} where OID = #{id}
+    </update>
+    <update id="update_ostate">
+        update "Order" set OState = #{state} where OID = #{id}
+    </update>
 
+    <select id="list_Order" resultType="com.example.domain.Order">
+        select * from "Order"
+    </select>
+    <select id="get_History_By_Account" resultType="com.example.domain.Order">
+        select * from "Order" where UAccount = #{account}
+    </select>
+    <select id="get_History_By_Account_And_State" resultType="com.example.domain.Order">
+        select * from "Order" where UAccount = #{account} and OState = #{state}
+    </select>
 </mapper>
