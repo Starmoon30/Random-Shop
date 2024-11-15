@@ -1,4 +1,12 @@
-<script setup>
+<script>
+export default {
+  methods: {
+    openshell() {
+      this.$router.push('/BHome');
+      // Perform the actual login logic here, e.g., using fetch or XMLHttpRequest
+    }
+  }
+}
 import {Edit, Menu, Promotion, Setting, User} from "@element-plus/icons-vue";
 </script>
 
@@ -15,7 +23,7 @@ import {Edit, Menu, Promotion, Setting, User} from "@element-plus/icons-vue";
     <el-sub-menu index="2">
       <!-- 子菜单标题，包含一个菜单图标 -->
       <template #title>
-        <el-icon><Menu /></el-icon>货架管理
+        <el-icon onclick="openshell()"><Menu /></el-icon>货架管理
       </template>
       <el-menu-item-group>
         <!-- 菜单项2-1 -->

@@ -17,9 +17,10 @@ import { ref, onMounted } from 'vue';
 // 在组件挂载时调用fetchData函数
 onMounted(fetchData);*/
 const item = {
-  UAccount: 'user1234',
-  UPhone: '193572384',
-  UAddress: 'No. 189, Grove St, Los Angeles',
+  Good: 'cloth',
+  WarehousingStatus: '1000',
+  Number: '-2'
+
 }
 const tableData = ref(Array.from({ length: 100 }).fill(item))
 const pageSize = 10;
@@ -37,9 +38,9 @@ const handleCurrentChange = (val) => {
   <div>
     <el-scrollbar>
       <el-table :data="tableData" style="width: 100%">
-        <el-table-column prop="UAccount" label="UAccount"/>
-        <el-table-column prop="UPhone" label="UPhone" />
-        <el-table-column prop="UAddress" label="UAddress" />
+        <el-table-column prop="Good" label="Good"/>
+        <el-table-column prop="WarehousingStatus" label="Warehousing Status"/>
+        <el-table-column prop="Number" label="Number" />
       </el-table>
     </el-scrollbar>
     <el-pagination
