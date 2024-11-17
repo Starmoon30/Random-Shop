@@ -3,6 +3,7 @@ import AHome from "@/view/Home-admin.vue";
 import BHome from "@/view/Home-buyer.vue";
 import Login from "@/view/login-home.vue";
 import Ishell from "@/components/block-admin/shell/shell-ing.vue";
+import UserIn from "@/view/Home-buyerInfor.vue";
 const routes = [
   {
     path: '/',
@@ -24,6 +25,12 @@ const routes = [
     name: 'Ishell',
     component: Ishell
   },
+  {
+    path: '/user-info',
+    name: 'UserIn',
+    component: UserIn
+  },
+
 
 ];
 const router = createRouter({
