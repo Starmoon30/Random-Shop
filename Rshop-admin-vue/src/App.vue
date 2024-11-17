@@ -1,18 +1,22 @@
-<script setup>
-import Index from "@/view/Home-admin.vue";
-import Login from "@/view/login.vue";
-import HomeBuyer from "@/view/Home-buyer.vue";
-import HomeBuyerInfor from "@/view/Home-buyerInfor.vue";
-</script>
-
 <template>
-  <HomeBuyerInfor> </HomeBuyerInfor>
+  <div id="app">
+    <router-view></router-view>
+  </div>>
 </template>
+<script>
 
+
+export default {
+  name: 'App',
+}
+</script>
 <style scoped>
-  #app{
-    width: 100%;
-    height: 100%;
-    padding: 0;
+  #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 60px;
   }
 </style>
