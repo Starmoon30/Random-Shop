@@ -5,6 +5,7 @@
 <template>
   <!-- 工具栏 -->
   <div class="toolbar" style="flex-grow: 1;display: contents;height: 80px;width: 100%">
+  <div class="toolbar" style="flex-grow: 1;display: contents;height: 80px">
     <div style="font-size: 20px;font-family: SimSun, sans-serif;">欢迎来到后台管理!</div>
     <!-- 下拉菜单 -->
     <el-dropdown style="position: absolute; right: 20px;">

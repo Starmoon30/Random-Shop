@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
 // 定义表格的一行数据
 //const tableData = ref([]);
