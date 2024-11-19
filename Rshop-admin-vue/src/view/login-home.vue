@@ -26,12 +26,22 @@
       <!-- Registration Modal -->
       <div v-if="showRegistration" class="registration-modal">
         <h3>Registration</h3>
-        <input type="text" v-model="newUser.username" placeholder="Username">
-        <input type="password" v-model="newUser.password" placeholder="Password">
-        <input type="email" v-model="newUser.email" placeholder="Email">
-        <input type="text" v-model="newUser.address" placeholder="Address">
-        <button @click="registerUser" style="margin: 5px">提交</button>
-        <button @click="showRegistration = false" style="margin: 5px">返回</button>
+        <el-form ref="form" :model="newUser" label-width="100px">
+          <el-form-item label="Username" prop="UAccount" required>
+            <el-input v-model="newUser.UAccount" placeholder="Username"></el-input>
+          </el-form-item>
+          <el-form-item label="Password" prop="UPassword" required>
+            <el-input type="password" v-model="newUser.UPassword" placeholder="Password"></el-input>
+          </el-form-item>
+          <el-form-item label="Phone" prop="UPhone" required>
+            <el-input type="phone" v-model="newUser.UPhone" placeholder="Phone"></el-input>
+          </el-form-item>
+          <el-form-item label="Address" prop="UAddress" required>
+            <el-input v-model="newUser.UAddress" placeholder="Address"></el-input>
+          </el-form-item>
+          <el-button @click="registerUser" style="margin: 5px">提交</el-button>
+          <el-button @click="showRegistration = false" style="margin: 5px">返回</el-button>
+        </el-form>
       </div>
     </div>
   </div>
@@ -55,11 +65,16 @@ export default {
         UPassword: ''
       },
       showRegistration: false,
-      newUser: {
+      rUser: {
         username: '',
         password: '',
-        email: '',
-        address: ''
+        ucategory: ''
+      },
+      newUser: {
+        UAccount: '',
+        UPassword: '',
+        UPhone: '',
+        UAddress: ''
       }
     };
   },
@@ -69,24 +84,72 @@ export default {
         uaccount: role === 'user' ? this.user.UAccount : this.admin.UAccount,
         upassword: role === 'user' ? this.user.UPassword : this.admin.UPassword
       };
-
       try {
         const response = await axios.post('http://localhost:8090/user/login', formData);
 
         if (response.data) {
-          // 根据角色跳转到不同的页面
-          this.$router.push(role === 'user' ? '/BHome' : '/AHome');
+          if(role === 'admin'){
+            const data = {
+              account: role === 'user' ? this.user.UAccount : this.admin.UAccount,
+            }
+            const response1 = await axios.post('http://localhost:8090/user/uinfo', data);
+            console.log("返回数组：", response1.data);
+            this.rUser = response1.data;
+            console.log("返回：", this.rUser.ucategory);
+            if (this.rUser.ucategory === 0) {
+              this.$router.push('/AHome');
+            }else{
+              alert('登录失败，权限不足');
+            }
+          }else{
+            this.$router.push('/BHome');
+          }
+
         } else {
           alert('登录失败，请检查用户名和密码是否正确');
         }
       } catch (error) {
         console.error('登录请求失败:', error);
-        alert('登录请求失败，错误信息: ' + error.message);
+        // 检查是否有响应数据
+        if (error.response) {
+          alert('登录请求失败，错误信息: ' + error.response.data.message);
+        } else {
+          alert('登录请求失败，错误信息: ' + error.message);
+        }
       }
     },
-    registerUser() {
-      console.log('Registering new user:', this.newUser);
-      // 实现注册逻辑，比如使用 axios 发送 POST 请求
+    async registerUser() {
+      const formData = {
+        uaccount: this.newUser.UAccount,
+        upassword: this.newUser.UPassword,
+        uphone: this.newUser.UPhone,
+        uaddress: this.newUser.UAddress
+      };
+      try {
+        if (formData.uaccount === ''){
+          alert('请输入账户！');
+        }else if(formData.upassword === ''){
+          alert('请输入密码！');
+        }else if(formData.uphone === ''){
+          alert('请输入联系电话！');
+        }else if(formData.uaddress ===''){
+          alert('请输入地址');
+        }else{
+          const response = await axios.post('http://localhost:8090/user/register', formData);
+          if (response.data) {
+            this.$router.push('/');
+            alert('注册成功！请登录。');
+          }
+        }
+      } catch (error) {
+        console.error('注册请求失败:', error);
+        // 检查是否有响应数据
+        if (error.response) {
+          alert('注册请求失败，错误信息: ' + error.response.data.message);
+        } else {
+          alert('注册请求失败，错误信息: ' + error.message);
+        }
+      }
     }
   }
 };
@@ -144,5 +207,7 @@ button:hover {
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  width: 500px;
+  height: 400px;
 }
 </style>

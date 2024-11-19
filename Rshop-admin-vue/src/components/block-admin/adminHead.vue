@@ -1,5 +1,7 @@
 <script setup>
-
+const goBack = () => {
+  history.back();
+};
 </script>
 
 <template>
@@ -17,7 +19,7 @@
       <template #dropdown>
         <el-dropdown-menu>
           <!-- 下拉菜单项 -->
-          <el-dropdown-item >退出登录</el-dropdown-item>
+          <el-dropdown-item @click="goBack">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
