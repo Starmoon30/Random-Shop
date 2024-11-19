@@ -7,6 +7,7 @@ import com.example.mapper.GoodspicsMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,8 +23,13 @@ public class GoodspicsServiceImpl extends ServiceImpl<GoodspicsMapper, Goodspics
     private GoodspicsMapper goodspicsMapper;
 
     @Override
-    public List<Byte[]> find_data(int gid) {
-        return goodspicsMapper.find_data(gid);
+    public List<byte[]> find_data(int gid) {
+        List<Goodspics> pics = goodspicsMapper.find_data(gid);
+        List<byte[]> datas = new ArrayList<>();
+        for (Goodspics pic : pics){
+            datas.add(pic.getPicdata());
+        }
+        return datas;
     }
 }
 

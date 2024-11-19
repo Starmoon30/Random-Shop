@@ -7,13 +7,16 @@
     <resultMap id="BaseResultMap" type="com.example.domain.Goodspics">
             <id property="picid" column="PicID" jdbcType="INTEGER"/>
             <result property="gid" column="GID" jdbcType="INTEGER"/>
-        <result property="picdata" column="PicData" typeHandler="org.apache.ibatis.type.BlobTypeHandler"/>
+        <result property="picdata" column="PicData" javaType="byte[]" typeHandler="com.example.handler.BlobTypeHandler"/>
+    </resultMap>
+    <resultMap id="BlobResultMap" type="byte[]">
+        <result column="PicData" javaType="byte[]" typeHandler="com.example.handler.BlobTypeHandler"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         (PicID,GID,PicData)
     </sql>
-    <select id="find_data" resultType="Byte[]">
-        select PicData from GoodsPics where GID = #{gid}
+    <select id="find_data" resultMap="BaseResultMap">
+        select * from GoodsPics where GID = #{gid}
     </select>
 </mapper>

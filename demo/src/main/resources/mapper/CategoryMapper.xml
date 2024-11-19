@@ -9,5 +9,4 @@
             <result property="cname" column="CName" jdbcType="VARCHAR"/>
             <result property="cparentid" column="CParentID" jdbcType="INTEGER"/>
     </resultMap>
-
 </mapper>
