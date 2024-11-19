@@ -1,17 +1,17 @@
 <template>
   <el-card class="password-change-card">
     <template v-slot:header>
-<div >修改密码</div>
-</template>
-    <el-form ref="passwordForm" :model="passwordForm" label-width="150px">
-      <el-form-item label="旧密码">
-        <el-input type="password" v-model="passwordForm.oldPassword" autocomplete="off"></el-input>
+      <div>{{ `修改密码 (${account})` }}</div>
+    </template>
+    <el-form ref="passwordForm" :model="passwordForm" label-width="150px" @submit.native.prevent="submitPasswordChange">
+      <el-form-item label="旧密码" :rules="[{ required: true, message: '请输入旧密码', trigger: 'blur' }]">
+        <el-input type="password" v-model="passwordForm.old_pwd" autocomplete="off" required></el-input>
       </el-form-item>
-      <el-form-item label="新密码">
-        <el-input type="password" v-model="passwordForm.newPassword" autocomplete="new-password"></el-input>
+      <el-form-item label="新密码" :rules="[{ required: true, message: '请输入新密码', trigger: 'blur' }]">
+        <el-input type="password" v-model="passwordForm.new_pwd" autocomplete="new-password" required></el-input>
       </el-form-item>
-      <el-form-item label="确认新密码">
-        <el-input type="password" v-model="passwordForm.confirmPassword" autocomplete="new-password"></el-input>
+      <el-form-item label="确认新密码" :rules="[{ required: true, message: '请确认新密码', trigger: 'blur' }]">
+        <el-input type="password" v-model="passwordForm.confirmPassword" autocomplete="new-password" required></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitPasswordChange">提交</el-button>
@@ -20,35 +20,67 @@
   </el-card>
 </template>
 
-<script lang="ts" setup>
-import { reactive, ref } from 'vue';
+<script>
 import { ElMessage } from 'element-plus';
+import axios from 'axios';
+import { defineComponent } from 'vue';
 
-const passwordForm = reactive({
-  oldPassword: '',
-  newPassword: '',
-  confirmPassword: ''
-});
+export default defineComponent({
+  props: {
+    account: {
+      type: String,
+      required: true
+    }
+  },
+  data() {
+    return {
+      passwordForm: {
+        account: this.account,
+        old_pwd: '',
+        new_pwd: '',
+        confirmPassword: ''
+      }
+    };
+  },
+  methods: {
+    async submitPasswordChange() {
 
-const passwordFormRef = ref(null);
+      if (this.passwordForm.new_pwd !== this.passwordForm.confirmPassword) {
+        ElMessage.error('新密码和确认密码不匹配');
+        return;
+      }
 
-const submitPasswordChange = () => {
-  if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-    ElMessage.error('新密码和确认密码不匹配');
-    return;
+      const formData = {
+        account: this.passwordForm.account,
+        old_pwd: this.passwordForm.old_pwd,
+        new_pwd: this.passwordForm.new_pwd
+      };
+
+      // Send the request to change the password
+      try {
+        console.log("新密码：",formData.new_pwd);
+        console.log("账号为：", formData.account);
+        console.log("旧密码为：", formData.old_pwd);
+        const response = await axios.post('http://localhost:8090/user/update_pwd', formData);
+        console.log(response.data);
+        if (response.data) { // Assuming your API returns a success flag
+          ElMessage.success('密码修改成功');
+          this.$router.push('/');
+        } else {
+          ElMessage.error('密码修改失败，请检查旧密码');
+        }
+      } catch (error) {
+        console.error('密码修改请求出错:', error);
+        ElMessage.error('密码修改过程中出现错误');
+      }
+    }
   }
-  // 这里添加实际的密码更新逻辑，例如使用 axios 发送请求
-
-  console.log('提交的密码表单数据:', passwordForm);
-  // 假设密码更新成功
-  ElMessage.success('密码更新成功');
-};
+});
 </script>
 
 <style scoped>
 .password-change-card {
   max-width: 400px;
-  max-height: 100%;
   margin: 20px auto;
 }
 

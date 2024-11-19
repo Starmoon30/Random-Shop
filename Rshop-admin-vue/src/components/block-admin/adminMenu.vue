@@ -1,5 +1,5 @@
 <script setup>
-import {Edit, Menu, Promotion, Setting, User} from "@element-plus/icons-vue";
+import {Discount, Edit, Menu, Promotion, Setting, User} from "@element-plus/icons-vue";
 import { defineEmits } from 'vue';
 // 定义 emits 对象
 const emits = defineEmits(['menu-click']);
@@ -45,7 +45,10 @@ const handleSelect = (index, indexPath) => {
       <el-menu-item index="7"> <el-icon><Promotion /></el-icon>订单管理</el-menu-item>
     </el-menu-item-group>
     <el-menu-item-group>
-      <el-menu-item index="8"><el-icon><Edit /></el-icon>账号管理</el-menu-item>
+      <el-menu-item index="8"><el-icon><Discount /></el-icon>分类管理</el-menu-item>
+    </el-menu-item-group>
+    <el-menu-item-group>
+      <el-menu-item index="9"><el-icon><svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 48 48"><g fill="none" stroke="#000000" stroke-linejoin="round" stroke-width="4"><path stroke-linecap="round" d="M7 42h36"/><path fill="#000000" d="M11 26.72V34h7.317L39 13.308L31.695 6z"/></g></svg></el-icon>账号管理</el-menu-item>
     </el-menu-item-group>
   </el-menu>
 </template>

@@ -17,7 +17,7 @@
         <!-- 主要内容区域 -->
         <el-main style="height: 100%">
           <div style="height: 400px;display: contents">
-            <component :is="currentComponent"></component>
+            <component :is="currentComponent" :account="account"></component>
           </div>
         </el-main>
       </el-container>
@@ -41,10 +41,12 @@ import ShellNever from "@/components/block-admin/shell/shell-never.vue";
 import AdminProduct from "@/components/block-admin/admin-product.vue";
 import AdminDetail from "@/components/block-admin/admin-detail.vue";
 import AdminUpdate from "@/components/block-admin/admin-update.vue";
-
+import AdminCategory from "@/components/block-admin/good-category.vue"
 // 定义一个响应式变量来存储当前显示的组件
 const currentComponent = ref(AdminMainUser);
-
+import {useRoute} from "vue-router";
+const route = useRoute(); // 使用useRoute钩子
+const account = ref(route.query.account); // 读取account参数
 const handleMenuClick = (index) => {
   switch (index) {
     case '1':
@@ -69,6 +71,9 @@ const handleMenuClick = (index) => {
       currentComponent.value = AdminOrder;
       break;
     case '8':
+      currentComponent.value = AdminCategory;
+      break;
+    case '9':
       currentComponent.value = AdminPwd;
       break;
   }

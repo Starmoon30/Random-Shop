@@ -34,7 +34,7 @@
             <el-input type="password" v-model="newUser.UPassword" placeholder="Password"></el-input>
           </el-form-item>
           <el-form-item label="Phone" prop="UPhone" required>
-            <el-input type="phone" v-model="newUser.UPhone" placeholder="Phone"></el-input>
+            <el-input type="text" v-model="newUser.UPhone" placeholder="Phone"></el-input>
           </el-form-item>
           <el-form-item label="Address" prop="UAddress" required>
             <el-input v-model="newUser.UAddress" placeholder="Address"></el-input>
@@ -88,21 +88,20 @@ export default {
         const response = await axios.post('http://localhost:8090/user/login', formData);
 
         if (response.data) {
-          if(role === 'admin'){
-            const data = {
-              account: role === 'user' ? this.user.UAccount : this.admin.UAccount,
-            }
+          const account = role === 'user' ? this.user.UAccount : this.admin.UAccount;
+          if (role === 'admin') {
+            const data = { account };
             const response1 = await axios.post('http://localhost:8090/user/uinfo', data);
-            console.log("返回数组：", response1.data);
             this.rUser = response1.data;
-            console.log("返回：", this.rUser.ucategory);
             if (this.rUser.ucategory === 0) {
-              this.$router.push('/AHome');
-            }else{
+              // Navigate to admin home and pass UAccount
+              this.$router.push({ name: 'AHome', query: { account } });
+            } else {
               alert('登录失败，权限不足');
             }
-          }else{
-            this.$router.push('/BHome');
+          } else {
+            // Navigate to user home and pass UAccount
+            this.$router.push({ name: 'BHome', query: { account } });
           }
 
         } else {
@@ -110,7 +109,6 @@ export default {
         }
       } catch (error) {
         console.error('登录请求失败:', error);
-        // 检查是否有响应数据
         if (error.response) {
           alert('登录请求失败，错误信息: ' + error.response.data.message);
         } else {

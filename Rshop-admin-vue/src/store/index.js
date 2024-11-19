@@ -1,18 +1,21 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import user from './module/user'
-import getters from './get'
-Vue.use(Vuex)
+// store.js
+import Vue from 'vue';
+import Vuex from 'vuex';
+
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    UAccount: ''
   },
-  getters,
   mutations: {
+    setUAccount(state, UAccount) {
+      state.UAccount = UAccount;
+    }
   },
   actions: {
-  },
-  modules: {
-    user
+    login({ commit }, UAccount) {
+      commit('setUAccount', UAccount);
+    }
   }
-})
+});
