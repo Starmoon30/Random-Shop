@@ -14,5 +14,5 @@ import java.util.List;
 */
 @Mapper
 public interface GoodspicsMapper extends BaseMapper<Goodspics> {
-    List<Byte[]> find_data(int gid);
+    List<Goodspics> find_data(int gid);
 }
