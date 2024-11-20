@@ -60,4 +60,8 @@ public class CategoryController {
         int[] id = idList.stream().mapToInt(i -> i).toArray();
         return categoryService.get_all_child(id);
     }
+    @RequestMapping("/list")
+    public List<Category> list() {
+        return categoryService.list();
+    }
 }
