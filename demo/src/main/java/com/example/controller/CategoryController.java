@@ -46,4 +46,18 @@ public class CategoryController {
         }
         return resultArray;
     }
+    @RequestMapping("/get_all_child")
+    public int[] get_all_child(@RequestBody Map<String, Object> catMap) {
+        Object idObject = catMap.get("id");
+        if (idObject == null) {
+            throw new IllegalArgumentException("The 'id' field is required.");
+        }
+        // 确保 idObject 是数组类型
+        if (!(idObject instanceof List)) {
+            throw new IllegalArgumentException("The 'id' field must be an array of integers.");
+        }
+        List<Integer> idList = (List<Integer>) idObject;
+        int[] id = idList.stream().mapToInt(i -> i).toArray();
+        return categoryService.get_all_child(id);
+    }
 }
