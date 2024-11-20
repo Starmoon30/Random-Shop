@@ -1,7 +1,7 @@
 <template>
   <el-main>
     <div class="product-list">
-      <el-card v-for="product in products" :key="product.id" class="product-card">
+      <el-card v-for="product in products" :key="product.gid" class="product-card">
         <img :src="product.image" alt="" class="product-image">
         <div class="product-info">
           <h3>{{ product.name }}</h3>
@@ -14,18 +14,32 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios'; // 确保已经安装了axios
 
 const router = useRouter();
-const products = ref([
-  // 假设的商品数据
-  { id: 1, name: '商品1', price: 100, image: 'path/to/image' },
-  // 更多商品...
-]);
+const products = ref([]); // 用于存储商品数据
+
+// 获取商品信息的函数
+const fetchProducts = async () => {
+  try {
+    // 假设你的接口需要一个GET请求，并且不需要请求体
+    const response = await axios.get('http://localhost:8090/goods/list', {
+      params: { cid: [0] }
+    });
+    products.value = response.data;
+    console.log("获得商品：",products.value);
+  } catch (error) {
+    console.error('获取商品信息失败:', error);
+  }
+};
+
+// 组件挂载时获取商品信息
+onMounted(fetchProducts);
 
 const viewDetails = (product) => {
-  router.push({ name: 'ProductDetails', params: { productId: product.id } });
+  router.push({ name: 'ProductDetails', params: { productId: product.gid } });
 };
 </script>
 
@@ -36,7 +50,7 @@ const viewDetails = (product) => {
   gap: 20px;
 }
 .product-card {
-  width: calc(25% - 20px);
+  width: calc(33.333% - 20px); /* 一行三个 */
 }
 .product-image {
   width: 100%;

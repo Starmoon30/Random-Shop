@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import AHome from "@/view/Home-admin.vue";
 import BHome from "@/view/Home-buyer.vue";
 import Login from "@/view/login-home.vue";
-import Ishell from "@/components/block-admin/shell/shell-ing.vue";
+import Ishell from "@/components/block-admin/shell-ing.vue";
 import UserIn from "@/view/Home-buyerInfor.vue";
 import UpdatePwd from "@/components/block-admin/admin-pwd.vue"
 const routes = [
