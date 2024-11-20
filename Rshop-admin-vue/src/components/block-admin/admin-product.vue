@@ -21,7 +21,6 @@
         <div class="product-info">
           <h3>{{ product.gname }}</h3>
           <p>￥:{{ product.gvalue }}</p>
-          <h3>{{product.gdecs}}</h3>
         </div>
         <el-button type="text" @click="viewDetails(product)">查看详情</el-button>
       </el-card>
