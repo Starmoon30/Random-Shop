@@ -1,49 +1,51 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted} from 'vue';
 import axios from 'axios';
 
-// 定义全部数据的响应式变量
-const allData = ref([]);
 // 定义表格数据的响应式变量
 const tableData = ref([]);
+
 // 定义分页参数
 const pageSize = ref(10);
 const pageNum = ref(1);
 const total = ref(0);
 
-// 获取所有用户数据的函数
-const fetchAllUsers = async () => {
+// 分页事件处理函数
+const handleSizeChange = (val) => {
+  console.log(`${val} items per page`);
+  pageSize.value = val; // 更新每页显示的数量
+  pageNum.value = 1; // 重置到第一页
+  fetchUsers(); // 重新获取数据
+};
+
+const handleCurrentChange = (val) => {
+  console.log(`current page: ${val}`);
+  pageNum.value = val;
+  fetchUsers(); // 重新获取数据
+};
+
+// 获取用户数据的函数
+const fetchUsers = async () => {
   try {
-    const response = await axios.get('http://localhost:8090/user/list');
-    allData.value = response.data; // 假设后端返回所有用户数据
-    total.value = allData.value.length; // 总数据量
-    paginate(allData.value); // 进行分页
+    const response = await axios.get('http://localhost:8090/user/list', {
+      params: {
+        page: pageNum.value,
+        size: pageSize.value
+      }
+    });
+    // 假设后端返回的数据格式为 { list: [], total: 0 }
+    console.log(response.data);
+    tableData.value = response.data; // 假设后端返回的用户列表在 list 属性中
+    total.value = tableData.value.length; // 假设后端返回的总数在 total 属性中
+    console.log("获得数组：", tableData);
   } catch (error) {
     console.error('Error fetching users:', error);
   }
 };
 
-// 分页函数
-const paginate = (data) => {
-  const startIndex = (pageNum.value - 1) * pageSize.value;
-  const endIndex = startIndex + pageSize.value;
-  tableData.value = data.slice(startIndex, endIndex);
-};
-
-// 分页事件处理函数
-const handleSizeChange = (val) => {
-  pageSize.value = val;
-  paginate(allData.value);
-};
-
-const handleCurrentChange = (val) => {
-  pageNum.value = val;
-  paginate(allData.value);
-};
-
-// 组件挂载时获取所有用户数据
+// 组件挂载时获取用户数据
 onMounted(() => {
-  fetchAllUsers();
+  fetchUsers();
 });
 </script>
 
@@ -62,7 +64,7 @@ onMounted(() => {
     <el-pagination
       v-model:current-page="pageNum"
       v-model:page-size="pageSize"
-      :page-sizes="[5, 10, 20]"
+      :page-sizes="[10, 20, 30, 40]"
       :total="total"
       layout="total, sizes, prev, pager, next, jumper"
       @size-change="handleSizeChange"
