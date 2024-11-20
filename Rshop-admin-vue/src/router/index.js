@@ -4,7 +4,10 @@ import BHome from "@/view/Home-buyer.vue";
 import Login from "@/view/login-home.vue";
 import Ishell from "@/components/block-admin/shell-ing.vue";
 import UserIn from "@/view/Home-buyerInfor.vue";
-import UpdatePwd from "@/components/block-admin/admin-pwd.vue"
+import UpdatePwd from "@/components/block-admin/admin-pwd.vue";
+import AGoodData from "@/components/block-admin/admin-detail.vue";
+import NewProduct from "@/components/block-admin/admin-NewPro.vue";
+
 const routes = [
   {
     path: '/',
@@ -21,6 +24,18 @@ const routes = [
     path: '/aHome/updatePwd',
     name: 'UpdatePwd',
     component: UpdatePwd,
+    props: true // 启用 props
+  },
+  {
+    path: '/aHome/aGoodData',
+    name: 'AGoodData',
+    component: AGoodData,
+    props: true // 启用 props
+  },
+  {
+    path: '/aHome/newProduct',
+    name: 'NewProduct',
+    component: NewProduct,
     props: true // 启用 props
   },
   {

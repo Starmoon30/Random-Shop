@@ -1,50 +1,57 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import {ref, onMounted, defineComponent} from 'vue';
 import axios from 'axios';
+import {useRouter} from "vue-router";
 
+    const router = useRouter();
 // 定义全部数据的响应式变量
-const allData = ref([]);
+    const allData = ref([]);
 // 定义表格数据的响应式变量
-const tableData = ref([]);
+    const tableData = ref([]);
 // 定义分页参数
-const pageSize = ref(10);
-const pageNum = ref(1);
-const total = ref(0);
-
-// 获取所有用户数据的函数
-const fetchAllUsers = async () => {
-  try {
-    const response = await axios.get('http://localhost:8090/category/list');
-    allData.value = response.data; // 假设后端返回所有订单数据
-    total.value = allData.value.length; // 总数据量
-    paginate(allData.value); // 进行分页
-  } catch (error) {
-    console.error('Error fetching orders:', error);
-  }
-};
-
+    const pageSize = ref(10);
+    const pageNum = ref(1);
+    const total = ref(0);
+    // 获取商品信息的函数
+    const fetchProducts = async () => {
+      try {
+        const data = {
+          id: [0]
+        };
+        const response = await axios.post('http://localhost:8090/cat/get_cid_by_parent', data);
+        allData.value = response.data; // 假设后端返回所有订单数据
+        total.value = allData.value.length; // 总数据量
+        paginate(allData.value); // 进行分页
+        console.log("获得标签：", allData.value);
+      } catch (error) {
+        console.error('获取信息失败:', error);
+      }
+    };
 // 分页函数
-const paginate = (data) => {
-  const startIndex = (pageNum.value - 1) * pageSize.value;
-  const endIndex = startIndex + pageSize.value;
-  tableData.value = data.slice(startIndex, endIndex);
-};
+    const paginate = (data) => {
+      const startIndex = (pageNum.value - 1) * pageSize.value;
+      const endIndex = startIndex + pageSize.value;
+      tableData.value = data.slice(startIndex, endIndex);
+    };
 
 // 分页事件处理函数
-const handleSizeChange = (val) => {
-  pageSize.value = val;
-  paginate(allData.value);
-};
+    const handleSizeChange = (val) => {
+      pageSize.value = val;
+      paginate(allData.value);
+    };
+    const handleCurrentChange = (val) => {
+      pageNum.value = val;
+      paginate(allData.value);
+    };
+    // 组件挂载时获取商品信息
+    onMounted(fetchProducts);
 
-const handleCurrentChange = (val) => {
-  pageNum.value = val;
-  paginate(allData.value);
-};
+    const viewDetails = (product) => {
+      router.push({ name: 'AGoodData', params: { productId: product.gid } });
+    };
 
-// 组件挂载时获取所有订单数据
-onMounted(() => {
-  fetchAllUsers();
-});
+viewDetails
+
 </script>
 
 <template>
@@ -52,13 +59,9 @@ onMounted(() => {
   <div>
     <el-scrollbar>
       <el-table :data="tableData" class="custom-table-row" style="width: 100%">
-        <el-table-column prop="oid" label="OID"/>
-        <el-table-column prop="gid" label="GID"/>
-        <el-table-column prop="uaccount" label="UAccount"/>
-        <el-table-column prop="ophone" label="OPhone"/>
-        <el-table-column prop="oaddress" label="OAddress"/>
-        <el-table-column prop="oremark" label="ORemark"/>
-        <el-table-column prop="ostate" label="OState"/>
+        <el-table-column prop="cid" label="CID"/>
+        <el-table-column prop="cname" label="GNAME"/>
+        <el-table-column prop="CParentID" label="CParentID"/>
       </el-table>
     </el-scrollbar>
     <el-pagination
