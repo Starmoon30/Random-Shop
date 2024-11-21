@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/random-shop_controller/random-shop_controller.iml" filepath="$PROJECT_DIR$/random-shop_controller/random-shop_controller.iml" />
+      <module fileurl="file://$PROJECT_DIR$/random-shop_dao/random-shop_dao.iml" filepath="$PROJECT_DIR$/random-shop_dao/random-shop_dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/random-shop_pojo/random-shop_pojo.iml" filepath="$PROJECT_DIR$/random-shop_pojo/random-shop_pojo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/random-shop_service/random-shop_service.iml" filepath="$PROJECT_DIR$/random-shop_service/random-shop_service.iml" />
+    </modules>
+  </component>
+</project>

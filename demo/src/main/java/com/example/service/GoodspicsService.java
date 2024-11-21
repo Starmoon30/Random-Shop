@@ -12,5 +12,5 @@ import java.util.List;
 */
 public interface GoodspicsService extends IService<Goodspics> {
 
-    List<Byte[]> find_data(int gid);
+    List<byte[]> find_data(int gid);
 }
