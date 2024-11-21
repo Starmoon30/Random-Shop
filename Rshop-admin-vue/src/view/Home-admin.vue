@@ -10,14 +10,14 @@
     <!-- 侧边栏 -->
     <div style="height: 100%;display: flex;">
       <el-aside width="300px" height="100%">
-        <admin-menu style="height: 100%"></admin-menu>
+        <admin-menu @menu-click="handleMenuClick" style="height: 100%"></admin-menu>
       </el-aside>
       <!-- 主区域 -->
       <el-container>
         <!-- 主要内容区域 -->
         <el-main style="height: 100%">
           <div style="height: 400px;display: contents">
-            <admin-update></admin-update>
+            <component :is="currentComponent" :account="account"></component>
           </div>
         </el-main>
       </el-container>
@@ -26,6 +26,7 @@
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue';
 import AdminMenu from "@/components/block-admin/adminMenu.vue";
 import AdminHead from "@/components/block-admin/adminHead.vue";
 import AdminMainUser from "@/components/block-admin/adminMain-user.vue";
@@ -34,12 +35,49 @@ import AdminOrder from "@/components/block-admin/admin-order.vue";
 import AdminPwd from "@/components/block-admin/admin-pwd.vue";
 import AdminInventory from "@/components/block-admin/admin-Inventory.vue";
 import AdminNewPro from "@/components/block-admin/admin-NewPro.vue";
-import ShellHistory from "@/components/block-admin/shell/shell-history.vue";
-import ShellIng from "@/components/block-admin/shell/shell-ing.vue";
-import ShellNever from "@/components/block-admin/shell/shell-never.vue";
+import ShellHistory from "@/components/block-admin/shell-history.vue";
+import ShellIng from "@/components/block-admin/shell-ing.vue";
+import ShellNever from "@/components/block-admin/shell-never.vue";
 import AdminProduct from "@/components/block-admin/admin-product.vue";
 import AdminDetail from "@/components/block-admin/admin-detail.vue";
 import AdminUpdate from "@/components/block-admin/admin-update.vue";
+import AdminCategory from "@/components/block-admin/good-category.vue"
+// 定义一个响应式变量来存储当前显示的组件
+const currentComponent = ref(AdminMainUser);
+import {useRoute} from "vue-router";
+const route = useRoute(); // 使用useRoute钩子
+const account = ref(route.query.account); // 读取account参数
+const handleMenuClick = (index) => {
+  switch (index) {
+    case '1':
+      currentComponent.value = AdminMainUser;
+      break;
+    case '2':
+      currentComponent.value = ShellIng;
+      break;
+    case '3':
+      currentComponent.value = ShellNever;
+      break;
+    case '4':
+      currentComponent.value = ShellIng;
+      break;
+    case '5':
+      currentComponent.value = ShellHistory;
+      break;
+    case '6':
+      currentComponent.value = AdminProduct;
+      break;
+    case '7':
+      currentComponent.value = AdminOrder;
+      break;
+    case '8':
+      currentComponent.value = AdminCategory;
+      break;
+    case '9':
+      currentComponent.value = AdminPwd;
+      break;
+  }
+};
 </script>
 
 <style scoped>

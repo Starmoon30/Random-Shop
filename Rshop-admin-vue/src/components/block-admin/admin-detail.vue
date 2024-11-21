@@ -17,43 +17,53 @@
   </el-main>
 </template>
 
-<script lang="ts" setup>
-import { ref, computed } from 'vue';
-import { useRoute } from 'vue-router';
+<script lang="ts">
+import {ref, computed, defineComponent, onMounted} from 'vue';
+import {useRoute, useRouter} from 'vue-router';
 import { ElMessage } from 'element-plus';
+import axios from "axios";
 
-const route = useRoute();
-const product = ref({
-  id: route.params.productId,
-  name: '',
-  price: '',
-  image: '',
-  description: ''
-});
+export default defineComponent({
+  setup() {
+    const router = useRouter();
+    const products = ref([]); // 用于存储商品数据
 
-// 假设从后端获取商品详情的逻辑
-const fetchProductDetails = async () => {
-  // 模拟异步请求
-  setTimeout(() => {
-    product.value = {
-      id: 1,
-      name: '商品1',
-      price: 100,
-      image: 'path/to/image',
-      description: '<p>这是商品的富媒体介绍</p>'
+    // 获取商品信息的函数
+    const fetchProducts = async () => {
+      try {
+        const data = {
+          gid: this.productId,
+        };
+        const response = await axios.post('http://localhost:8090/goods/get_info', data);
+        products.value = response.data; // 确保这里赋值给 products.value
+        console.log("获得商品：", response.data);
+      } catch (error) {
+        console.error('获取商品信息失败:', error);
+      }
     };
-  }, 1000);
-};
 
-fetchProductDetails();
+    // 组件挂载时获取商品信息
+    onMounted(fetchProducts);
+
+    const viewDetails = (product) => {
+      router.push({ name: 'AGoodData', params: { productId: product.gid } });
+    };
+    const editProductInfo = (product) => {
+      // 跳转到修改商品信息组件s
+      router.push({ name: 'AGoodUpdate', params: { productId: product.gid } });
+    };
+    return {
+      products, // 只需要返回 products 这个响应式引用
+      viewDetails,
+      data:{
+        cid: [],
+      }
+    };
+  }
+});
 
 const goBack = () => {
   history.back();
-};
-
-const editProductInfo = () => {
-  // 跳转到修改商品信息组件
-  window.location.href = `#/edit-product-info/${product.value.id}`;
 };
 </script>
 
