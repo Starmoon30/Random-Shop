@@ -4,9 +4,11 @@ import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import App from './App.vue'
 import router from './router'
+//import store from './store'
 import './assets/global.css'
 import axios from 'axios'
 const app = createApp(App)
+
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
@@ -15,6 +17,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.use(router)
 app.config.globalProperties.$axios = axios;
 app.use(ElementPlus)
+//app.use(store)
 
 import 'virtual:windi.css'
 

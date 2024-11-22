@@ -1,5 +1,5 @@
 <script setup>
-import {DocumentCopy, Edit, Menu, Promotion, Setting, User} from "@element-plus/icons-vue";
+import {DocumentCopy, Edit, Setting, User} from "@element-plus/icons-vue";
 </script>
 
 <template>
