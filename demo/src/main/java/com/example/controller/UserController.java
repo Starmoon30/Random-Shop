@@ -37,7 +37,15 @@ public class UserController {
     //增
     @RequestMapping("/register")
     public boolean Register(@RequestBody User user){
-        return userService.Add_User(user);
+        String account = user.getUaccount();
+        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(User::getUaccount,account);
+        if(!userService.list(lambdaQueryWrapper).isEmpty()){
+            return false;
+        }
+        else {
+            return userService.Add_User(user);
+        }
     }
     //改
     @RequestMapping("/update_pwd")
