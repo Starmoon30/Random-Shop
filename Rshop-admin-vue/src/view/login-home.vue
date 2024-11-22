@@ -1,6 +1,6 @@
 <template>
-  <ShopLogo style="width: 300px"></ShopLogo>
   <div class="login-container">
+    <ShopLogo class="logo" style="width: 300px"></ShopLogo>
     <!-- Card -->
     <div class="card" style="height: 400px;width: 500px;">
       <select v-model="role" style="width: 80px;height: 40px;fron-size:24px">
@@ -175,6 +175,11 @@ export default {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   text-align: center;
   width: 300px;
+}
+.logo {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 input[type="text"], input[type="password"], input[type="email"], input[type="address"] {
   width: 100%;

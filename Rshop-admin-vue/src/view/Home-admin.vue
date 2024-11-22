@@ -2,7 +2,7 @@
   <!-- 根容器 -->
   <el-container class="layout-container-demo" style="height: 100%;display: flex;flex-direction: column;">
     <div style="height: 100%;display: flex;">
-      <ShopLogo></ShopLogo>
+      <ShopLogo style="background-color: #ffffff"></ShopLogo>
       <el-header style="width: 82%;text-align: right; font-size: 12px; display: flex; align-items: center; height: 80px; background-color: var(--el-color-primary-light-9);">
         <admin-head></admin-head>
       </el-header>

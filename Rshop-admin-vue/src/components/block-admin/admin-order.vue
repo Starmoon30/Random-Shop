@@ -1,7 +1,7 @@
 <template>
-  <!-- 滚动条组件 -->
-  <div>
-    <el-scrollbar>
+  <div class="content-wrapper">
+    <!-- 滚动条组件包裹内容区域 -->
+    <el-scrollbar class="scrollbar-container">
       <el-table :data="tableData" class="custom-table-row" style="width: 100%">
         <el-table-column prop="oid" label="OID"/>
         <el-table-column prop="gid" label="GID"/>
@@ -18,6 +18,9 @@
         </el-table-column>
       </el-table>
     </el-scrollbar>
+  </div>
+  <!-- 分页条固定在底部 -->
+  <div class="pagination-container">
     <el-pagination
       v-model:current-page="pageNum"
       v-model:page-size="pageSize"
@@ -99,5 +102,25 @@ onMounted(() => {
 /* 自定义表格行高 */
 .custom-table-row .el-table .el-table__body {
   --el-table-row-height: 100px; /* 设置行高为100px，可以根据需要调整 */
+}
+
+/* 滚动条容器样式 */
+.scrollbar-container {
+  height: calc(100vh - 60px); /* 减去分页条的高度 */
+  overflow-y: auto; /* 启用垂直滚动 */
+}
+
+/* 分页条固定在底部的样式 */
+.pagination-container {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #fff; /* 根据需要调整背景色 */
+  z-index: 1000; /* 确保分页条在最上层 */
+}
+
+/* 内容区域包裹器，用于计算滚动条高度 */
+.content-wrapper {
+  padding-bottom: 60px; /* 分页条的高度，确保内容不会被遮挡 */
 }
 </style>
