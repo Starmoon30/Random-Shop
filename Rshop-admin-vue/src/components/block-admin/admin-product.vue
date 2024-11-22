@@ -1,5 +1,5 @@
 <template>
-  <el-main>
+  <el-main class="product-list-container">
     <!-- 搜索框和新增商品按钮的容器 -->
     <div style="display: flex; justify-content: center; margin-bottom: 20px;">
       <!-- 搜索框 -->
@@ -15,16 +15,19 @@
       <el-button type="primary" @click="goToAddProduct">新增商品</el-button>
     </div>
 
-    <div class="product-list">
-      <el-card v-for="product in products" :key="product.gid" class="product-card">
-        <img :src="product.image" alt="" class="product-image">
-        <div class="product-info">
-          <h3>{{ product.gname }}</h3>
-          <p>￥:{{ product.gvalue }}</p>
-        </div>
-        <el-button type="text" @click="viewDetails(product)">查看详情</el-button>
-      </el-card>
-    </div>
+    <!-- 滚动条组件包裹产品列表 -->
+    <el-scrollbar class="product-list-scrollbar">
+      <div class="product-list">
+        <el-card v-for="product in products" :key="product.gid" class="product-card">
+          <img :src="product.image" alt="" class="product-image">
+          <div class="product-info">
+            <h3>{{ product.gname }}</h3>
+            <p>￥:{{ product.gvalue }}</p>
+          </div>
+          <el-button type="text" @click="viewDetails(product)">查看详情</el-button>
+        </el-card>
+      </div>
+    </el-scrollbar>
   </el-main>
 </template>
 
@@ -77,6 +80,15 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.product-list-container {
+  height: calc(100vh - 60px); /* 设置固定高度，减去顶部导航栏的高度 */
+}
+
+.product-list-scrollbar {
+  height: 100%; /* 设置滚动条容器高度为100% */
+  overflow-y: auto; /* 启用垂直滚动 */
+}
+
 .product-list {
   display: flex;
   flex-wrap: wrap;
