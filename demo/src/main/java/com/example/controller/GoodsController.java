@@ -69,4 +69,11 @@ public class GoodsController {
         }
         return goods;
     }
+    @RequestMapping("/get_info_by_name")
+    public List<Goods> get_info_by_name(@RequestBody Map<String,Object> goodsMap){
+        String name = (String) goodsMap.get("name");
+        LambdaQueryWrapper<Goods> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.like(Goods::getGname,name);
+        return goodsService.list(lambdaQueryWrapper);
+    }
 }
