@@ -11,6 +11,7 @@ import java.util.List;
 * @createDate 2024-11-03 21:05:20
 */
 public interface OrderService extends IService<Order> {
+    List<Order> get_by_oid(int id);
 
     List<Order> Show_All();
 

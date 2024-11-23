@@ -41,6 +41,28 @@ public class GoodsController {
         return goodsService.update(goods,updateWrapper);
     }
 
+    @RequestMapping("/update_Gshelf")
+    public boolean update_Gshelf(@RequestBody Map<String,Object> goodsMap){
+        int gid = (int) goodsMap.get("gid");
+        int shelf = (int) goodsMap.get("shelf");
+        LambdaUpdateWrapper<Goods> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(Goods::getGid,gid);
+        Goods goods = new Goods();
+        goods.setGshelf(shelf);
+        return goodsService.update(goods,updateWrapper);
+    }
+
+    @RequestMapping("/update_Gstate")
+    public boolean update_Gstate(@RequestBody Map<String,Object> goodsMap){
+        int gid = (int) goodsMap.get("gid");
+        int state = (int) goodsMap.get("state");
+        LambdaUpdateWrapper<Goods> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(Goods::getGid,gid);
+        Goods goods = new Goods();
+        goods.setGstate((float) state);
+        return goodsService.update(goods,updateWrapper);
+    }
+
     @RequestMapping("/get_info")
     public List<Goods> get_info(@RequestBody Map<String,Object> goodsMap){
         int gid = (int) goodsMap.get("gid");

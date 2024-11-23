@@ -22,6 +22,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
     private OrderMapper orderMapper;
 
     @Override
+    public List<Order> get_by_oid(int id) {
+        List<Order> orders = orderMapper.get_by_oid(id);
+        return orders;
+    }
+
+    @Override
     public List<Order> Show_All() {
         List<Order> orders = orderMapper.list_Order();
         return orders;
