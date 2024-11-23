@@ -3,14 +3,7 @@
     <!-- 搜索框和新增商品按钮的容器 -->
     <div style="display: flex; justify-content: center; margin-bottom: 20px;">
       <!-- 搜索框 -->
-      <el-input
-        placeholder="搜索商品"
-        v-model="searchQuery"
-        style="flex-grow: 1; margin-right: 10px;">
-        <template #append>
-          <el-button icon="el-icon-search" @click="fetchProducts">搜索</el-button>
-        </template>
-      </el-input>
+      <goods-search @update:products="handleProductsUpdate"></goods-search>
       <!-- 新增商品按钮 -->
       <el-button type="primary" @click="goToAddProduct">新增商品</el-button>
     </div>
@@ -34,14 +27,17 @@
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios'; // 确保已经安装了axios
+import axios from 'axios';
+import GoodsSearch from "@/components/Goods-Search.vue";
 
 export default defineComponent({
+  components: { GoodsSearch },
   setup() {
     const router = useRouter();
     const products = ref([]); // 用于存储商品数据
     const searchQuery = ref(''); // 用于存储搜索查询
     const pictures = ref([]);
+
     // 获取商品信息的函数
     const fetchProducts = async () => {
       try {
@@ -49,7 +45,7 @@ export default defineComponent({
           cid: [0],
           query: searchQuery.value
         };
-        const response = await axios.post('http://localhost:8090/goods/get_info_by_name', data);
+        const response = await axios.post('http://localhost:8090/goods/list_By_Category', data);
         products.value = response.data; // 确保这里赋值给 products.value
         console.log("获得商品：", response.data);
       } catch (error) {
@@ -59,6 +55,11 @@ export default defineComponent({
 
     // 组件挂载时获取商品信息
     onMounted(fetchProducts);
+
+    // 处理子组件传递的 products 更新
+    const handleProductsUpdate = (newProducts) => {
+      products.value = newProducts;
+    };
 
     const viewDetails = (product) => {
       router.push({ name: 'AGoodData', params: { productId: product.gid } });
@@ -70,11 +71,11 @@ export default defineComponent({
     };
 
     return {
-      products, // 只需要返回 products 这个响应式引用
+      products,
       pictures,
       viewDetails,
       goToAddProduct,
-      searchQuery, // 返回搜索查询的响应式引用
+      handleProductsUpdate
     };
   }
 });
