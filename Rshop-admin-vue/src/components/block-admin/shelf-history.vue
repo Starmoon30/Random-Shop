@@ -1,13 +1,5 @@
 <template>
   <el-main class="product-list-container">
-    <!-- 搜索框和新增商品按钮的容器 -->
-    <div style="display: flex; justify-content: center; margin-bottom: 20px;">
-      <!-- 搜索框 -->
-      <goods-search @update:products="handleProductsUpdate"></goods-search>
-      <!-- 新增商品按钮 -->
-      <el-button type="primary" @click="goToAddProduct">新增商品</el-button>
-    </div>
-
     <!-- 滚动条组件包裹产品列表 -->
     <el-scrollbar class="product-list-scrollbar">
       <div class="product-list">
@@ -20,9 +12,10 @@
           </el-carousel>
           <div class="product-info">
             <h3>{{ product.gname }}</h3>
-            <p>￥:{{ product.gvalue }} 库存:{{ product.gstock }}</p>
+            <p>￥:{{ product.gvalue }} 设置库存:{{ product.gstock }}</p>
           </div>
-          <el-button type="text" @click="viewDetails(product)">查看详情</el-button>
+          <!-- 上架按钮 -->
+          <el-button type="success" @click="shelveProduct(product)">重上架</el-button>
         </el-card>
       </div>
     </el-scrollbar>
@@ -33,15 +26,12 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import GoodsSearch from "@/components/block-search/Goods-Search.vue";
 
 export default defineComponent({
-  components: { GoodsSearch },
   setup() {
     const router = useRouter();
     const products = ref([]); // 用于存储商品数据
     const searchQuery = ref(''); // 用于存储搜索查询
-    const pictures = ref([]);
 
     // 获取商品图片的函数
     const fetchProductPictures = async (gid) => {
@@ -54,7 +44,7 @@ export default defineComponent({
         return [];
       }
     };
-    // 获取商品信息的函数
+
     const fetchProducts = async () => {
       try {
         const data = {
@@ -62,14 +52,40 @@ export default defineComponent({
           query: searchQuery.value
         };
         const response = await axios.post('http://localhost:8090/goods/list_By_Category', data);
+        console.log("后端返回的商品数据：", response.data); // 输出查看返回的数据
         const productsWithPictures = await Promise.all(response.data.map(async product => {
-          const pictures = await fetchProductPictures(product.gid);
-          return { ...product, pictures };
+          // 只处理gshelf为0的商品
+          if (product.gshelf === 2) {
+            const pictures = await fetchProductPictures(product.gid);
+            return { ...product, pictures };
+          }
+          return null;
         }));
-        products.value = productsWithPictures; // 确保这里赋值给 products.value
-        console.log("获得商品：", response.data);
+        const filteredProducts = productsWithPictures.filter(item => item !== null); // 过滤掉null项
+        products.value = filteredProducts; // 确保这里赋值给 products.value
+        console.log("过滤后的商品：", filteredProducts);
       } catch (error) {
         console.error('获取商品信息失败:', error);
+      }
+    };
+
+    // 上架商品的函数
+    const shelveProduct = async (product) => {
+      try {
+        const updateMap = {
+          gid: product.gid,
+          gshelf: '1'
+        };
+        const response = await axios.post('http://localhost:8090/goods/update_Ginfo', updateMap);
+        if (response.data) {
+          console.log('商品上架成功');
+          // 重新获取商品列表
+          fetchProducts();
+        } else {
+          console.error('商品上架失败');
+        }
+      } catch (error) {
+        console.error('商品上架失败:', error);
       }
     };
 
@@ -81,20 +97,9 @@ export default defineComponent({
       products.value = newProducts;
     };
 
-    const viewDetails = (product) => {
-      router.push({ name: 'AGoodData', params: { productId: product.gid } });
-    };
-
-    // 跳转到新增商品页面的方法
-    const goToAddProduct = () => {
-      router.push({ path: '/aHome/newProduct', name: 'NewProduct' });
-    };
-
     return {
       products,
-      pictures,
-      viewDetails,
-      goToAddProduct,
+      shelveProduct,
       handleProductsUpdate
     };
   }
