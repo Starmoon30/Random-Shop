@@ -74,9 +74,9 @@ export default defineComponent({
       try {
         const updateMap = {
           gid: product.gid,
-          gshelf: '1'
+          shelf: 1
         };
-        const response = await axios.post('http://localhost:8090/goods/update_Ginfo', updateMap);
+        const response = await axios.post('http://localhost:8090/goods/update_Gshelf', updateMap);
         if (response.data) {
           console.log('商品上架成功');
           // 重新获取商品列表

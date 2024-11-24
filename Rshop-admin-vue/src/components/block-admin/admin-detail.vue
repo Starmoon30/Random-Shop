@@ -1,41 +1,59 @@
 <template>
   <el-main>
     <div v-if="product" class="product-details">
-      <img :src="product.image" alt="" class="product-image-large">
+      <!-- 轮播图组件 -->
+      <el-carousel :interval="5000" arrow="always" height="200px">
+        <el-carousel-item v-for="(pic, index) in product.pictures" :key="index">
+          <img :src="pic" class="product-image" />
+        </el-carousel-item>
+      </el-carousel>
       <div class="product-info">
-        <h3>{{ product.name }}</h3>
-        <p>￥{{ product.price }}</p>
+        <h3>{{ product.gname }}</h3>
+        <p>￥{{ product.gvalue }}</p>
         <el-button type="primary" @click="editProductInfo">修改信息</el-button>
       </div>
-
       <el-button type="text" @click="goBack">返回</el-button>
-    </div>
-    <div class="product-description">
-      <!-- 富媒体介绍 -->
-      <p v-html="product.description"></p>
     </div>
   </el-main>
 </template>
 
 <script lang="ts">
-import {ref, computed, defineComponent, onMounted} from 'vue';
-import {useRoute, useRouter} from 'vue-router';
-import { ElMessage } from 'element-plus';
+import { ref, defineComponent, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from "axios";
 
 export default defineComponent({
-  setup() {
+  props: {
+    productId: {
+      type: Number,
+      required: true
+    }
+  },
+  setup(props) {
+    const product = ref(null); // 用于存储商品数据
     const router = useRouter();
-    const products = ref([]); // 用于存储商品数据
+
+    // 获取商品图片的函数
+    const fetchProductPictures = async (gid) => {
+      try {
+        const picMap = { gid: gid };
+        const response = await axios.post('http://localhost:8090/pic/get_pic', picMap);
+        return response.data.map(pic => `data:image/jpeg;base64,${pic}`);
+      } catch (error) {
+        console.error('获取商品图片失败:', error);
+        return [];
+      }
+    };
 
     // 获取商品信息的函数
-    const fetchProducts = async () => {
+    const fetchProductDetails = async () => {
       try {
-        const data = {
-          gid: this.productId,
-        };
-        const response = await axios.post('http://localhost:8090/goods/get_info', data);
-        products.value = response.data; // 确保这里赋值给 products.value
+        const response = await axios.post('http://localhost:8090/goods/get_info', { gid: props.productId });
+        const productsWithPictures = await Promise.all(response.data.map(async product => {
+          const pictures = await fetchProductPictures(product.gid);
+          return { ...product, pictures };
+        }));
+        product.value = productsWithPictures; // 确保这里赋值给 products.value
         console.log("获得商品：", response.data);
       } catch (error) {
         console.error('获取商品信息失败:', error);
@@ -43,28 +61,24 @@ export default defineComponent({
     };
 
     // 组件挂载时获取商品信息
-    onMounted(fetchProducts);
+    onMounted(fetchProductDetails);
 
-    const viewDetails = (product) => {
-      router.push({ name: 'AGoodData', params: { productId: product.gid } });
+    const goBack = () => {
+      history.back();
     };
-    const editProductInfo = (product) => {
-      // 跳转到修改商品信息组件s
-      router.push({ name: 'AGoodUpdate', params: { productId: product.gid } });
+
+    const editProductInfo = () => {
+      // 跳转到修改商品信息组件
+      router.push({ name: 'AGoodUpdate', params: { productId: props.productId } });
     };
+
     return {
-      products, // 只需要返回 products 这个响应式引用
-      viewDetails,
-      data:{
-        cid: [],
-      }
+      product,
+      goBack,
+      editProductInfo
     };
   }
 });
-
-const goBack = () => {
-  history.back();
-};
 </script>
 
 <style scoped>
@@ -72,9 +86,9 @@ const goBack = () => {
   display: flex;
   gap: 20px;
 }
-.product-image-large {
-  width: 300px;
-  height: 300px;
+.product-image {
+  width: 100%;
+  height: 200px;
   object-fit: cover;
 }
 .product-info {

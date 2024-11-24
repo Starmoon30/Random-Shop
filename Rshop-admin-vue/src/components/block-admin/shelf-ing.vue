@@ -14,6 +14,8 @@
             <h3>{{ product.gname }}</h3>
             <p>￥:{{ product.gvalue }} 设置库存:{{ product.gstock }}</p>
           </div>
+          <!-- 下架按钮 -->
+          <el-button type="danger" @click="unshelveProduct(product)">下架</el-button>
         </el-card>
       </div>
     </el-scrollbar>
@@ -22,12 +24,10 @@
 
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 export default defineComponent({
   setup() {
-    const router = useRouter();
     const products = ref([]); // 用于存储商品数据
     const searchQuery = ref(''); // 用于存储搜索查询
 
@@ -52,7 +52,7 @@ export default defineComponent({
         const response = await axios.post('http://localhost:8090/goods/list_By_Category', data);
         console.log("后端返回的商品数据：", response.data); // 输出查看返回的数据
         const productsWithPictures = await Promise.all(response.data.map(async product => {
-          // 只处理gshelf为0的商品
+          // 只处理gshelf为1的商品
           if (product.gshelf === 1) {
             const pictures = await fetchProductPictures(product.gid);
             return {...product, pictures};
@@ -67,23 +67,23 @@ export default defineComponent({
       }
     };
 
-    // 上架商品的函数
-    const shelveProduct = async (product) => {
+    // 下架商品的函数
+    const unshelveProduct = async (product) => {
       try {
         const updateMap = {
           gid: product.gid,
-          gshelf: '1'
+          shelf: 2
         };
-        const response = await axios.post('http://localhost:8090/goods/update_Ginfo', updateMap);
+        const response = await axios.post('http://localhost:8090/goods/update_Gshelf', updateMap);
         if (response.data) {
-          console.log('商品上架成功');
+          console.log('商品下架成功');
           // 重新获取商品列表
           fetchProducts();
         } else {
-          console.error('商品上架失败');
+          console.error('商品下架失败');
         }
       } catch (error) {
-        console.error('商品上架失败:', error);
+        console.error('商品下架失败:', error);
       }
     };
 
@@ -97,7 +97,7 @@ export default defineComponent({
 
     return {
       products,
-      shelveProduct,
+      unshelveProduct,
       handleProductsUpdate
     };
   }

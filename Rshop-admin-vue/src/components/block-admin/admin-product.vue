@@ -35,6 +35,7 @@ import { useRouter } from 'vue-router';
 import axios from 'axios';
 import GoodsSearch from "@/components/block-search/Goods-Search.vue";
 
+
 export default defineComponent({
   components: { GoodsSearch },
   setup() {
@@ -82,7 +83,7 @@ export default defineComponent({
     };
 
     const viewDetails = (product) => {
-      router.push({ name: 'AGoodData', params: { productId: product.gid } });
+      router.push({ path: '/aHome/aGoodData', params: { productId: product.gid } });
     };
 
     // 跳转到新增商品页面的方法
