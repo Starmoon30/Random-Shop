@@ -3,7 +3,6 @@ package com.example.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.domain.Category;
 import com.example.service.CategoryService;
-import com.google.common.collect.ArrayListMultimap;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
