@@ -51,17 +51,17 @@ public class GoodsController {
         goods.setGshelf(shelf);
         return goodsService.update(goods,updateWrapper);
     }
-
-    @RequestMapping("/update_Gstate")
-    public boolean update_Gstate(@RequestBody Map<String,Object> goodsMap){
-        int gid = (int) goodsMap.get("gid");
-        int state = (int) goodsMap.get("state");
-        LambdaUpdateWrapper<Goods> updateWrapper = new LambdaUpdateWrapper<>();
-        updateWrapper.eq(Goods::getGid,gid);
-        Goods goods = new Goods();
-        goods.setGstate((float) state);
-        return goodsService.update(goods,updateWrapper);
-    }
+//    商品的冻结状态被优化了
+//    @RequestMapping("/update_Gstate")
+//    public boolean update_Gstate(@RequestBody Map<String,Object> goodsMap){
+//        int gid = (int) goodsMap.get("gid");
+//        int state = (int) goodsMap.get("state");
+//        LambdaUpdateWrapper<Goods> updateWrapper = new LambdaUpdateWrapper<>();
+//        updateWrapper.eq(Goods::getGid,gid);
+//        Goods goods = new Goods();
+//        goods.setGstate((float) state);
+//        return goodsService.update(goods,updateWrapper);
+//    }
 
     @RequestMapping("/get_info")
     public List<Goods> get_info(@RequestBody Map<String,Object> goodsMap){
