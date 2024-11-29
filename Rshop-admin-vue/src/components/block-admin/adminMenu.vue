@@ -48,7 +48,10 @@ const handleSelect = (index, indexPath) => {
       <el-menu-item index="8"><el-icon><Discount /></el-icon>分类管理</el-menu-item>
     </el-menu-item-group>
     <el-menu-item-group>
-      <el-menu-item index="9"><el-icon><svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 48 48"><g fill="none" stroke="#000000" stroke-linejoin="round" stroke-width="4"><path stroke-linecap="round" d="M7 42h36"/><path fill="#000000" d="M11 26.72V34h7.317L39 13.308L31.695 6z"/></g></svg></el-icon>账号管理</el-menu-item>
+      <el-menu-item index="9"><el-icon><Histogram /></el-icon>库存历史管理</el-menu-item>
+    </el-menu-item-group>
+    <el-menu-item-group>
+      <el-menu-item index="10"><el-icon><Edit /></el-icon>账号管理</el-menu-item>
     </el-menu-item-group>
   </el-menu>
 </template>

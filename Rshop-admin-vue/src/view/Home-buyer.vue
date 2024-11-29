@@ -33,12 +33,6 @@
         <p class="product-price">{{ product.price }}</p>
       </div>
     </div>
-    <div class="product-list">
-      <div class="product-item" v-for="product in filteredProducts" :key="product.id">
-        <p class="product-name">{{ product.name }}</p>
-        <p class="product-price">{{ product.price }}</p>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -46,61 +40,93 @@
 import ShopLogo from "@/components/Shop-Logo.vue";
 import BuyerHeader from "@/components/block-buyer/buyer-header.vue";
 import BuyerSearch from "@/components/block-buyer/buyer-search.vue";
+import axios from "axios";
+import { defineComponent, onMounted, ref } from "vue";
 
-export default {
-  components: {BuyerSearch, BuyerHeader, ShopLogo },
-  data() {
-    return {
-      categories: [
-        { value: 'all', label: '全部' },
-        { value: 'upper', label: '上身' },
-        { value: 'lower', label: '下身' },
-      ],
-      subCategories: [
-        { value: 'all', label: '全部' },
-        { value: 'hat', label: '帽子', category: 'upper' },
-        { value: 'clothes', label: '上衣', category: 'upper' },
-        { value: 'pants', label: '裤子', category: 'lower' },
-        { value: 'socks', label: '袜子', category: 'lower' },
-        { value: 'shoes', label: '鞋子', category: 'lower' },
-      ],
-      selectedCategory: 'all',
-      selectedSubCategory: 'all',
-      searchQuery: '',
-      products: [
-        { id: 1, name: '商品1', price: '100元', category: 'upper', subCategory: 'clothes' },
-        { id: 2, name: '商品2', price: '200元', category: 'lower', subCategory: 'pants' },
-        { id: 3, name: '商品3', price: '150元', category: 'upper', subCategory: 'hat' },
-        { id: 4, name: '商品4', price: '250元', category: 'lower', subCategory: 'shoes' },
-        { id: 5, name: '商品5', price: '180元', category: 'upper', subCategory: 'clothes' },
-      ],
-      filteredProducts: [],
+export default defineComponent({
+  components: { BuyerSearch, BuyerHeader, ShopLogo },
+  setup() {
+    const categories = ref([]);
+    const subCategories = ref([]);
+    const selectedCategory = ref('all');
+    const selectedSubCategory = ref('all');
+    const products = ref([]);
+    const filteredProducts = ref([]);
+
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('http://localhost:8090/cat/list', {
+          params: { CParentID: 0 }
+        });
+        categories.value = response.data.map(item => ({
+          value: item.CID,
+          label: item.CNAME,
+        }));
+        categories.value.unshift({ value: 'all', label: '全部' });
+        console.log("一级标签：", categories.value);
+      } catch (error) {
+        console.error('There was an error fetching categories:', error);
+      }
     };
-  },
-  methods: {
-    selectCategory(category) {
-      this.selectedCategory = category;
-      this.filterProducts();
-    },
-    selectSubCategory(subCategory) {
-      this.selectedSubCategory = subCategory;
-      this.filterProducts();
-    },
-    filterProducts() {
-      this.filteredProducts = this.products.filter(product => {
-        const categoryMatch = this.selectedCategory === 'all' || product.category === this.selectedCategory;
-        const subCategoryMatch = this.selectedSubCategory === 'all' || product.subCategory === this.selectedSubCategory;
+
+    const fetchSubCategories = async (parentId) => {
+      try {
+        const response = await axios.post('http://localhost:8090/cat/get_all_child', { id: [parentId] });
+        const childIds = response.data;
+        const subCatArray = [];
+        for (const id of childIds) {
+          const subResponse = await axios.get(`http://localhost:8090/cat/list`, {
+            params: { CParentID: id }
+          });
+          subCatArray.push(...subResponse.data.map(item => ({
+            value: item.CID,
+            label: item.CNAME,
+          })));
+        }
+        subCategories.value = [{ value: 'all', label: '全部' }, ...subCatArray];
+      } catch (error) {
+        console.error('There was an error fetching subcategories:', error);
+      }
+    };
+
+    const selectCategory = (category) => {
+      selectedCategory.value = category;
+      if (category !== 'all') {
+        fetchSubCategories(category);
+      } else {
+        subCategories.value = [];
+      }
+    };
+
+    const selectSubCategory = (subCategory) => {
+      selectedSubCategory.value = subCategory;
+    };
+
+    const filterProducts = () => {
+      filteredProducts.value = products.value.filter(product => {
+        const categoryMatch = selectedCategory.value === 'all' || product.category === selectedCategory.value;
+        const subCategoryMatch = selectedSubCategory.value === 'all' || product.subCategory === selectedSubCategory.value;
         return categoryMatch && subCategoryMatch;
       });
-    },
-    logout() {
-      // Implement logout functionality here
-    }
+    };
+
+    onMounted(() => {
+      fetchCategories();
+    });
+
+    return {
+      categories,
+      subCategories,
+      selectedCategory,
+      selectedSubCategory,
+      products,
+      filteredProducts,
+      selectCategory,
+      selectSubCategory,
+      filterProducts,
+    };
   },
-  created() {
-    this.filterProducts();
-  },
-};
+});
 </script>
 
 <style>

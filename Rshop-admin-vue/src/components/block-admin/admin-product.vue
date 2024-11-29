@@ -49,6 +49,7 @@ export default defineComponent({
       try {
         const picMap = { gid: gid };
         const response = await axios.post('http://localhost:8090/pic/get_pic', picMap);
+        console.log(response.data);
         return response.data.map(pic => `data:image/jpeg;base64,${pic}`);
       } catch (error) {
         console.error('获取商品图片失败:', error);

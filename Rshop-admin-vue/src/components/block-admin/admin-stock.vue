@@ -2,15 +2,13 @@
   <div class="content-wrapper">
     <!-- 滚动条组件包裹内容区域 -->
     <el-scrollbar class="scrollbar-container">
-      <div style="display: flex; justify-content: flex-start; align-items: flex-start; margin-top: 20px;">
-        <!-- 新增标签按钮 -->
-        <el-button type="primary" @click="addNewLabel">新增标签</el-button>
-      </div>
       <el-table :data="tableData" class="custom-table-row" style="width: 100%">
-        <el-table-column prop="cid" label="CID"/>
-        <el-table-column prop="cname" label="CNAME"/>
-        <el-table-column prop="cparentid" label="CParentID"/>
-        <!-- 可以继续添加其他列 -->
+        <el-table-column prop="hid" label="HID"/>
+        <el-table-column prop="htime" label="HTime"/>
+        <el-table-column prop="hreason" label="HReason"/>
+        <el-table-column prop="gid" label="GID"/>
+        <el-table-column prop="hstockO" label="原库存"/>
+        <el-table-column prop="hstockN" label="新库存"/>
       </el-table>
     </el-scrollbar>
   </div>
@@ -31,9 +29,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import { useRouter } from 'vue-router';
 
-const router = useRouter();
 // 定义全部数据的响应式变量
 const allData = ref([]);
 // 定义表格数据的响应式变量
@@ -43,16 +39,16 @@ const pageSize = ref(10);
 const pageNum = ref(1);
 const total = ref(0);
 
-// 获取信息的函数
-const fetchProducts = async () => {
+// 获取所有用户数据的函数
+const fetchAllUsers = async () => {
   try {
-    const response = await axios.post('http://localhost:8090/cat/list');
+    const response = await axios.get('http://localhost:8090/history/list');
     allData.value = response.data; // 假设后端返回所有数据
+    console.log("历史：",allData.value);
     total.value = allData.value.length; // 总数据量
     paginate(allData.value); // 进行分页
-    console.log("获得标签：", allData.value);
   } catch (error) {
-    console.error('获取信息失败:', error);
+    console.error('Error fetching orders:', error);
   }
 };
 
@@ -74,17 +70,10 @@ const handleCurrentChange = (val) => {
   paginate(allData.value);
 };
 
-// 组件挂载时获取商品信息
-onMounted(fetchProducts);
-
-const viewDetails = (product) => {
-  router.push({ name: 'AGoodData', params: { productId: product.gid } });
-};
-
-// 新增标签的方法
-const addNewLabel = () => {
-  router.push({ name: 'AddNewLabel', params: { } }); // 假设 'AddNewLabel' 是新增标签页面的路由名称
-};
+// 组件挂载时获取所有订单数据
+onMounted(() => {
+  fetchAllUsers();
+});
 </script>
 
 <style scoped>
@@ -106,7 +95,6 @@ const addNewLabel = () => {
   width: 100%;
   background-color: #fff; /* 根据需要调整背景色 */
   z-index: 1000; /* 确保分页条在最上层 */
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* 可选，添加阴影效果 */
 }
 
 /* 内容区域包裹器，用于计算滚动条高度 */

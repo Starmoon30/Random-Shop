@@ -41,7 +41,9 @@ import ShellNever from "@/components/block-admin/shelf-never.vue";
 import AdminProduct from "@/components/block-admin/admin-product.vue";
 import AdminDetail from "@/components/block-admin/admin-detail.vue";
 import AdminUpdate from "@/components/block-admin/admin-update.vue";
+import AdminHistory from "@/components/block-admin/admin-stock.vue";
 import AdminCategory from "@/components/block-admin/good-category.vue"
+
 // 定义一个响应式变量来存储当前显示的组件
 const currentComponent = ref(AdminMainUser);
 import {useRoute} from "vue-router";
@@ -74,6 +76,9 @@ const handleMenuClick = (index) => {
       currentComponent.value = AdminCategory;
       break;
     case '9':
+      currentComponent.value = AdminHistory;
+      break;
+    case '10':
       currentComponent.value = AdminPwd;
       break;
   }
