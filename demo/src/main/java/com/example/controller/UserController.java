@@ -22,13 +22,13 @@ public class UserController {
     public List<User> Get_All_Users(){
         return userService.Show_All();
     }
-    @RequestMapping("/login")
-    public boolean Login(@RequestBody User user){
-        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(User::getUaccount,user.getUaccount());
-        lambdaQueryWrapper.eq(User::getUpassword,user.getUpassword());
-        return !userService.list(lambdaQueryWrapper).isEmpty();
-    }
+//    @RequestMapping("/login")
+//    public boolean Login(@RequestBody User user){
+//        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+//        lambdaQueryWrapper.eq(User::getUaccount,user.getUaccount());
+//        lambdaQueryWrapper.eq(User::getUpassword,user.getUpassword());
+//        return !userService.list(lambdaQueryWrapper).isEmpty();
+//    }
     @RequestMapping("/uinfo")
     public User uinfo(@RequestBody Map<String,Object> userMap){
         String account = (String) userMap.get("account");

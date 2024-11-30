@@ -13,10 +13,9 @@ import java.util.List;
 public interface UserService extends IService<User> {
     List<User> Show_All();
     boolean Add_User(User user);
-    User findUser(String account,String password);
+    User findUser(User user);
     User select_By_Account(String account);
     boolean update_pwd(String account, String newPwd);
     boolean reset_admin();
-
     boolean update_uinfo(String account,String phone,String address);
 }

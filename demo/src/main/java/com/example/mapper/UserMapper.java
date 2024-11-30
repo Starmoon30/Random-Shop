@@ -21,7 +21,6 @@ public interface UserMapper extends BaseMapper<User> {
     User findUser(String account, String password);
     User select_By_Account(String account);
     int update_pwd(String account, String newPwd);
-
     int update_uinfo(String account,String phone,String address);
 }
 
