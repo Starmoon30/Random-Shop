@@ -31,7 +31,9 @@ import AdminMenu from "@/components/block-admin/adminMenu.vue";
 import AdminHead from "@/components/block-admin/adminHead.vue";
 import AdminMainUser from "@/components/block-admin/adminMain-user.vue";
 import ShopLogo from "@/components/Shop-Logo.vue";
-import AdminOrder from "@/components/block-admin/admin-order.vue";
+import AdminOrderUn from "@/components/block-admin/admin-order-un.vue";
+import AdminOrderIng from "@/components/block-admin/admin-order-ing.vue";
+import AdminOrderHis from "@/components/block-admin/admin-order-finish.vue";
 import AdminPwd from "@/components/block-admin/admin-pwd.vue";
 import AdminInventory from "@/components/block-admin/admin-Inventory.vue";
 import AdminNewPro from "@/components/block-admin/admin-NewPro.vue";
@@ -71,30 +73,33 @@ const handleMenuClick = (index) => {
       currentComponent.value = AdminMainUser;
       break;
     case '2':
-      currentComponent.value = ShellIng;
-      break;
-    case '3':
       currentComponent.value = ShellNever;
       break;
-    case '4':
+    case '3':
       currentComponent.value = ShellIng;
       break;
-    case '5':
+    case '4':
       currentComponent.value = ShellHistory;
       break;
-    case '6':
+    case '5':
       currentComponent.value = AdminProduct;
       break;
+    case '6':
+      currentComponent.value = AdminOrderUn;
+      break;
     case '7':
-      currentComponent.value = AdminOrder;
+      currentComponent.value = AdminOrderIng;
       break;
     case '8':
-      currentComponent.value = AdminCategory;
+      currentComponent.value = AdminOrderHis;
       break;
     case '9':
-      currentComponent.value = AdminHistory;
+      currentComponent.value = AdminCategory;
       break;
     case '10':
+      currentComponent.value = AdminHistory;
+      break;
+    case '11':
       currentComponent.value = AdminPwd;
       break;
   }

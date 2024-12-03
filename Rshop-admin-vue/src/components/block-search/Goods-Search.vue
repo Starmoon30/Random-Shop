@@ -13,7 +13,7 @@
 <script>
 import { defineComponent, ref } from 'vue';
 import axios from 'axios';
-
+const token = localStorage.getItem('token');
 export default defineComponent({
   setup(props, { emit }) {
     const searchQuery = ref(''); // 用于存储搜索查询
@@ -22,7 +22,11 @@ export default defineComponent({
     const fetchProductPictures = async (gid) => {
       try {
         const picMap = { gid: gid };
-        const response = await axios.post('http://localhost:8090/pic/get_pic', picMap);
+        const response = await axios.post('http://localhost:8090/pic/get_pic', picMap, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
         return response.data.map(pic => `data:image/jpeg;base64,${pic}`);
       } catch (error) {
         console.error('获取商品图片失败:', error);
@@ -34,6 +38,10 @@ export default defineComponent({
       try {
         const response = await axios.post('http://localhost:8090/goods/get_info_by_name', {
           name: searchQuery.value // 传入搜索框中的内容
+        }, {
+          headers: {
+            'Authorization': `${token}`,
+          }
         });
         const productsWithPictures = await Promise.all(response.data.map(async product => {
           const pictures = await fetchProductPictures(product.gid);

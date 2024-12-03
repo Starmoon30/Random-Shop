@@ -52,7 +52,11 @@ export default defineComponent({
     // 获取商品信息的函数
     const fetchProductDetails = async () => {
       try {
-        const response = await axios.post('http://localhost:8090/goods/get_info', { gid: props.productId });
+        const response = await axios.post('http://localhost:8090/goods/get_info', { gid: props.productId }, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
         const productsWithPictures = await Promise.all(response.data.map(async product => {
           const pictures = await fetchProductPictures(product.gid);
           return { ...product, pictures };
