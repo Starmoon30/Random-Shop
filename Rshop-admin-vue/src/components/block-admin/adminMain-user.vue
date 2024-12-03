@@ -35,11 +35,18 @@ const tableData = ref([]);
 const pageSize = ref(10);
 const pageNum = ref(1);
 const total = ref(0);
-
+const token = localStorage.getItem('token');
+console.log("token:",token);
 // 获取所有用户数据的函数
 const fetchAllUsers = async () => {
   try {
-    const response = await axios.get('http://localhost:8090/user/list');
+    console.log("miling：",localStorage.getItem('token'));
+    const response = await axios.get('http://localhost:8090/user/list', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    });
+    console.log("返回：",response);
     allData.value = response.data; // 假设后端返回所有用户数据
     total.value = allData.value.length; // 总数据量
     paginate(allData.value); // 进行分页

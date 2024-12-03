@@ -60,3 +60,19 @@ const router = createRouter({
   routes
 })
 export default router;
+router.beforeEach((to, from, next) => {
+//to到哪儿  from从哪儿离开  next跳转 为空就是放行
+  if (to.path === '/') {
+    //如果跳转为登录，就放行
+    next();
+  } else {
+    //取出localStorage判断
+    const token = localStorage.getItem('token');
+    console.log("lingpai:", token);
+    if (token == null || token === '') {
+      alert('请先登录')
+      next({name: 'Login'});
+    } else {
+      next();
+    }
+  }});

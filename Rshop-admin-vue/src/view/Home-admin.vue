@@ -17,7 +17,7 @@
         <!-- 主要内容区域 -->
         <el-main style="height: 100%">
           <div style="height: 400px;display: contents">
-            <component :is="currentComponent" :account="account"></component>
+            <component :is="currentComponent" :token="token"></component>
           </div>
         </el-main>
       </el-container>
@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import AdminMenu from "@/components/block-admin/adminMenu.vue";
 import AdminHead from "@/components/block-admin/adminHead.vue";
 import AdminMainUser from "@/components/block-admin/adminMain-user.vue";
@@ -42,13 +42,29 @@ import AdminProduct from "@/components/block-admin/admin-product.vue";
 import AdminDetail from "@/components/block-admin/admin-detail.vue";
 import AdminUpdate from "@/components/block-admin/admin-update.vue";
 import AdminHistory from "@/components/block-admin/admin-stock.vue";
-import AdminCategory from "@/components/block-admin/good-category.vue"
+import AdminCategory from "@/components/block-admin/good-category.vue";
+import { useRoute } from "vue-router";
+import { jwtDecode } from "jwt-decode";
 
 // 定义一个响应式变量来存储当前显示的组件
 const currentComponent = ref(AdminMainUser);
-import {useRoute} from "vue-router";
-const route = useRoute(); // 使用useRoute钩子
-const account = ref(route.query.account); // 读取account参数
+
+// 定义响应式变量来存储token
+const route = useRoute();
+const token = ref(route.query.token);
+
+// 如果需要解析token
+const decodedToken = ref({});
+onMounted(async () => {
+  if (token.value) {
+    try {
+      decodedToken.value = jwtDecode(token.value);
+    } catch (error) {
+      console.error("Failed to decode token:", error);
+    }
+  }
+});
+
 const handleMenuClick = (index) => {
   switch (index) {
     case '1':

@@ -3,7 +3,7 @@
     <ShopLogo class="logo" style="width: 300px"></ShopLogo>
     <!-- Card -->
     <div class="card" style="height: 400px;width: 500px;">
-      <select v-model="role" style="width: 80px;height: 40px;fron-size:24px">
+      <select v-model="role" style="width: 80px;height: 40px;font-size:16px">
         <option value="user">User</option>
         <option value="admin">Admin</option>
       </select>
@@ -49,6 +49,7 @@
 
 <script>
 import axios from 'axios'; // 引入 Axios
+import { jwtDecode } from 'jwt-decode'; // 正确导入jwt-decode
 import ShopLogo from "@/components/Shop-Logo.vue";
 
 export default {
@@ -85,23 +86,28 @@ export default {
         upassword: role === 'user' ? this.user.UPassword : this.admin.UPassword
       };
       try {
-        const response = await axios.post('http://localhost:8090/user/login', formData);
-
-        if (response.data) {
-          const account = role === 'user' ? this.user.UAccount : this.admin.UAccount;
+        const response = await axios.post('http://localhost:8090/login', formData);
+        const token = response.data.data;
+        if (token) {
+          localStorage.setItem('token', token);
+        }
+        const data = response.data;
+        console.log("res:",data);
+        if (data.message === "Success" && data.code === 200) {
+          this.rUser = data;
+          const token = this.rUser.data;
+          const claims = jwtDecode(token);
+          console.log("role:",claims)
           if (role === 'admin') {
-            const data = { account };
-            const response1 = await axios.post('http://localhost:8090/user/uinfo', data);
-            this.rUser = response1.data;
-            if (this.rUser.ucategory === 0) {
+            if (claims['Ucategory'] === 0) {
               // Navigate to admin home and pass UAccount
-              this.$router.push({ name: 'AHome', query: { account } });
+              this.$router.push({ name: 'AHome', query: { token } });
             } else {
               alert('登录失败，权限不足');
             }
           } else {
             // Navigate to user home and pass UAccount
-            this.$router.push({ name: 'BHome', query: { account } });
+            this.$router.push({ name: 'BHome', query: { token } });
           }
 
         } else {
@@ -130,7 +136,7 @@ export default {
           alert('请输入密码！');
         }else if(formData.uphone === ''){
           alert('请输入联系电话！');
-        }else if(formData.uaddress ===''){
+        }else if(formData.uaddress === ''){
           alert('请输入地址');
         }else{
           const response = await axios.post('http://localhost:8090/user/register', formData);
@@ -158,7 +164,7 @@ export default {
 <style scoped>
 /* 样式部分保持不变 */
 .login-container {
-  background-image: url('https://tse1-mm.cn.bing.net/th/id/OIP-C.KknZ82d9g6mi2ISfFEK7IgHaEK?w=309&h=180&c=7&r=0&o=5&dpr=1.5&pid=1.7');
+  background-image: url('https://tse1-mm.cn.bing.net/th/id/OIP-C.KknZ82d9g6mi2ISfFEK7IgHaEK?w=309&h=180&c=7&r=0&o=5&dpr=1.5&pid=1.7&#39;');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

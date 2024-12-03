@@ -44,7 +44,6 @@ export default defineComponent({
   },
   methods: {
     async submitPasswordChange() {
-
       if (this.passwordForm.new_pwd !== this.passwordForm.confirmPassword) {
         ElMessage.error('新密码和确认密码不匹配');
         return;

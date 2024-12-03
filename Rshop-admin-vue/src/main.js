@@ -18,7 +18,18 @@ app.use(router)
 app.config.globalProperties.$axios = axios;
 app.use(ElementPlus)
 //app.use(store)
-
+// axios.interceptors.request.use(
+//   config =>{
+//     let token = localStorage.getItem('token')
+//     if(token){
+//       //这里面获取的请求头的键(tokenHeader)根据每个后端的习惯封装的名称各不相同
+//       config.headers.common['Authorization'] = token
+//     }
+//     return config
+//   }, error =>{
+//     return Promise.reject(error)
+//   }
+// )
 import 'virtual:windi.css'
 
 app.mount('#app')
