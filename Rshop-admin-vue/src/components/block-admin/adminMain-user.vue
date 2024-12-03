@@ -40,10 +40,11 @@ console.log("token:",token);
 // 获取所有用户数据的函数
 const fetchAllUsers = async () => {
   try {
+
     console.log("miling：",localStorage.getItem('token'));
     const response = await axios.get('http://localhost:8090/user/list', {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Authorization': `${token}`,
       }
     });
     console.log("返回：",response);

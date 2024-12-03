@@ -21,7 +21,7 @@
 import { ref, defineComponent, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from "axios";
-
+const token = localStorage.getItem('token');
 export default defineComponent({
   props: {
     productId: {
@@ -37,7 +37,11 @@ export default defineComponent({
     const fetchProductPictures = async (gid) => {
       try {
         const picMap = { gid: gid };
-        const response = await axios.post('http://localhost:8090/pic/get_pic', picMap);
+        const response = await axios.post('http://localhost:8090/pic/get_pic', picMap, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
         return response.data.map(pic => `data:image/jpeg;base64,${pic}`);
       } catch (error) {
         console.error('获取商品图片失败:', error);

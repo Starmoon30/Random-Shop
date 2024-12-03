@@ -17,7 +17,7 @@
         <!-- 主要内容区域 -->
         <el-main style="height: 100%">
           <div style="height: 400px;display: contents">
-            <component :is="currentComponent" :token="token"></component>
+            <component :is="currentComponent"></component>
           </div>
         </el-main>
       </el-container>

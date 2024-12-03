@@ -43,12 +43,16 @@ export default defineComponent({
     const products = ref([]); // 用于存储商品数据
     const searchQuery = ref(''); // 用于存储搜索查询
     const pictures = ref([]);
-
+    const token=localStorage.getItem('token');
     // 获取商品图片的函数
     const fetchProductPictures = async (gid) => {
       try {
         const picMap = { gid: gid };
-        const response = await axios.post('http://localhost:8090/pic/get_pic', picMap);
+        const response = await axios.post('http://localhost:8090/pic/get_pic', picMap, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
         console.log(response.data);
         return response.data.map(pic => `data:image/jpeg;base64,${pic}`);
       } catch (error) {
@@ -63,7 +67,11 @@ export default defineComponent({
           cid: [0],
           query: searchQuery.value
         };
-        const response = await axios.post('http://localhost:8090/goods/list_By_Category', data);
+        const response = await axios.post('http://localhost:8090/goods/list_By_Category', data, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
         const productsWithPictures = await Promise.all(response.data.map(async product => {
           const pictures = await fetchProductPictures(product.gid);
           return { ...product, pictures };

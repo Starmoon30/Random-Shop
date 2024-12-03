@@ -26,7 +26,7 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-
+const token = localStorage.getItem('token');
 export default defineComponent({
   setup() {
     const router = useRouter();
@@ -51,7 +51,11 @@ export default defineComponent({
           cid: [0],
           query: searchQuery.value
         };
-        const response = await axios.post('http://localhost:8090/goods/list_By_Category', data);
+        const response = await axios.post('http://localhost:8090/goods/list_By_Category', data, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
         console.log("后端返回的商品数据：", response.data); // 输出查看返回的数据
         const productsWithPictures = await Promise.all(response.data.map(async product => {
           // 只处理gshelf为0的商品
@@ -76,7 +80,11 @@ export default defineComponent({
           gid: product.gid,
           shelf: 1
         };
-        const response = await axios.post('http://localhost:8090/goods/update_Gshelf', updateMap);
+        const response = await axios.post('http://localhost:8090/goods/update_Gshelf', updateMap, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
         if (response.data) {
           console.log('商品上架成功');
           // 重新获取商品列表

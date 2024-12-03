@@ -22,7 +22,7 @@
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
-
+const token=localStorage.getItem('token');
 const route = useRoute();
 const product = ref({
   id: route.params.productId,

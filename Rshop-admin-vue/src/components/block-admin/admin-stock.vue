@@ -38,11 +38,15 @@ const tableData = ref([]);
 const pageSize = ref(10);
 const pageNum = ref(1);
 const total = ref(0);
-
+const token = localStorage.getItem('token');
 // 获取所有用户数据的函数
 const fetchAllUsers = async () => {
   try {
-    const response = await axios.get('http://localhost:8090/history/list');
+    const response = await axios.get('http://localhost:8090/history/list', {
+      headers: {
+        'Authorization': `${token}`,
+      }
+    });
     allData.value = response.data; // 假设后端返回所有数据
     console.log("历史：",allData.value);
     total.value = allData.value.length; // 总数据量
