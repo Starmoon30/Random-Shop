@@ -13,8 +13,11 @@
         <!-- 新增的按钮列 -->
         <el-table-column label="操作">
           <template #default="scope">
-            <el-button type="primary" size="small" @click="acceptOrder(scope.row)">完成</el-button>
-            <el-button type="primary" size="small" style="background-color: #ea4444" @click="canselOrder(scope.row)">取消接受</el-button>
+            <div style="justify-content: center;align-items: center;">
+              <el-button type="primary" size="small" @click="acceptOrder(scope.row)">完成</el-button>
+              <el-button type="primary" size="small" style="background-color: #ea4444" @click="canselOrder(scope.row)">取消接受</el-button>
+            </div>
+
           </template>
         </el-table-column>
       </el-table>

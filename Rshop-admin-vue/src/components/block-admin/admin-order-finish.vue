@@ -10,8 +10,12 @@
         <el-table-column prop="oaddress" label="OAddress"/>
         <el-table-column prop="oremark" label="ORemark"/>
         <el-table-column prop="ostate" label="OState"/>
-        <!-- 新增的按钮列 -->
-        <el-table-column label="操作">
+        <el-table-column label="状态">
+          <template #default="scope">
+            <!-- 根据ostate的值显示“已完成”并应用样式 -->
+            <span v-if="scope.row.ostate === 2" class="status-completed">已完成</span>
+          </template>
+
         </el-table-column>
       </el-table>
     </el-scrollbar>

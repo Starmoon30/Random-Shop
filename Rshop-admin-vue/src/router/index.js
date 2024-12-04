@@ -5,7 +5,8 @@ import Login from "@/view/login-home.vue";
 import Ishell from "@/components/block-admin/shelf-ing.vue";
 import UserIn from "@/view/Home-buyerInfor.vue";
 import UpdatePwd from "@/components/block-admin/admin-pwd.vue";
-import AGoodData from "@/components/block-admin/admin-detail.vue";
+import UpdateGood from "@/components/block-admin/admin-update.vue";
+import ProductDet from "@/components/block-admin/admin-detail.vue";
 import NewProduct from "@/components/block-admin/admin-NewPro.vue";
 
 const routes = [
@@ -27,9 +28,9 @@ const routes = [
     props: true // 启用 props
   },
   {
-    path: '/aHome/aGoodData',
-    name: 'AGoodData',
-    component: AGoodData,
+    path: '/aHome/updateGood',
+    name: 'UpdateGood',
+    component: UpdateGood,
     props: true // 启用 props
   },
   {
@@ -37,6 +38,11 @@ const routes = [
     name: 'NewProduct',
     component: NewProduct,
     props: true // 启用 props
+  },
+  {
+    path: '/aHome/productDet/:pid',
+    name: 'ProductDet',
+    component: ProductDet
   },
   {
     path: '/bHome',

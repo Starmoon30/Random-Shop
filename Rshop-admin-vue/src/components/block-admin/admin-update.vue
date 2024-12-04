@@ -1,4 +1,10 @@
 <template>
+  <div style="height: 100%; display: flex;">
+    <ShopLogo style="background-color: #ffffff"></ShopLogo>
+    <el-header style="width: 82%; text-align: right; font-size: 12px; display: flex; align-items: center; height: 80px; background-color: var(--el-color-primary-light-9);">
+      <admin-head></admin-head>
+    </el-header>
+  </div>
   <el-main>
     <div v-if="product" class="edit-product-info">
       <el-form :model="product">
@@ -19,41 +25,83 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
-const token=localStorage.getItem('token');
+import axios from 'axios';
+import ShopLogo from "@/components/Shop-Logo.vue";
+import AdminHead from "@/components/block-admin/adminHead.vue";
+
+const token = localStorage.getItem('token');
 const route = useRoute();
+const gid = Number(route.params.pid);
 const product = ref({
-  id: route.params.productId,
+  id: gid,
   name: '',
   price: '',
   // 更多商品信息...
 });
 
-// 假设从后端获取商品信息的逻辑
-const fetchProductInfo = async () => {
-  // 模拟异步请求
-  setTimeout(() => {
-    product.value = {
-      id: 1,
-      name: '商品1',
-      price: 100,
-      // 更多商品信息...
-    };
-  }, 1000);
+// 从后端获取商品信息
+const fetchProductInfo = async (gid) => {
+  try {
+    const response = await axios.post('http://localhost:8090/goods/get_info', { gid }, {
+      headers: {
+        'Authorization': `${token}`,
+      }
+    });
+    if (response.data.length > 0) {
+      const fetchedProduct = response.data[0];
+      const pictures = await fetchProductPictures(fetchedProduct.gid);
+      product.value = { ...fetchedProduct, pictures };
+    }
+  } catch (error) {
+    console.error("获取商品详情失败:", error);
+    // 这里可以添加更多的错误处理逻辑，例如显示错误消息
+  }
 };
 
-fetchProductInfo();
+const fetchProductPictures = async (gid) => {
+  try {
+    const response = await axios.post('http://localhost:8090/pic/get_pic', { gid }, {
+      headers: {
+        'Authorization': `${token}`,
+      }
+    });
+    return response.data.map(pic => `data:image/jpeg;base64,${pic}`);
+  } catch (error) {
+    console.error('获取商品图片失败:', error);
+    return [];
+  }
+};
+
+// 提交商品信息修改
+const submitProductInfo = async () => {
+  try {
+    const response = await axios.post(`http://localhost:8090/goods/update`, product.value, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+    ElMessage.success('商品信息修改成功');
+  } catch (error) {
+    console.error("提交商品信息失败:", error);
+    ElMessage.error('提交商品信息失败');
+  }
+};
+
+// 在组件挂载时获取商品信息
+onMounted(() => {
+  if (!isNaN(gid)) {
+    fetchProductInfo(gid);
+  } else {
+    console.error('商品ID无效');
+    // 这里可以添加更多的错误处理逻辑，例如跳转到错误页面或显示错误消息
+  }
+});
 
 const goBack = () => {
   history.back();
-};
-
-const submitProductInfo = () => {
-  // 提交商品信息修改的逻辑
-  console.log('提交的商品信息:', product.value);
-  ElMessage.success('商品信息修改成功');
 };
 </script>
 
