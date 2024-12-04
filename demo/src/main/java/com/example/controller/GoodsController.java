@@ -6,6 +6,7 @@ import com.example.domain.Goods;
 import com.example.service.CategoryService;
 import com.example.service.GoodsService;
 import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -101,5 +102,9 @@ public class GoodsController {
     @RequestMapping("/add_goods")
     public boolean add_goods(@RequestBody Goods goods){
         return goodsService.save(goods);
+    }
+    @RequestMapping("/delete_goods/{id}")
+    public boolean delete_goods(@PathVariable int id){
+        return goodsService.removeById(id);
     }
 }
