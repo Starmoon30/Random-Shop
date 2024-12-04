@@ -98,4 +98,8 @@ public class GoodsController {
         lambdaQueryWrapper.like(Goods::getGname,name);
         return goodsService.list(lambdaQueryWrapper);
     }
+    @RequestMapping("/add_goods")
+    public boolean add_goods(@RequestBody Goods goods){
+        return goodsService.save(goods);
+    }
 }

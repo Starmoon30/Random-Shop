@@ -60,7 +60,14 @@ public class CategoryController {
         return categoryService.get_all_child(id);
     }
     @RequestMapping("/list")
-    public List<Category> list() {
-        return categoryService.list();
+    public List<Category> list() {return categoryService.list();}
+    @RequestMapping("/creat")
+    public boolean creat(@RequestBody Category category) {
+        return categoryService.save(category);
+    }
+    @RequestMapping("/delete")
+    public boolean delete(@RequestBody Map<String, Object> catMap) {
+        int id = (int)catMap.get("cid");
+        return categoryService.removeById(id);
     }
 }
