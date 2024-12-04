@@ -7,53 +7,31 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import lombok.Data;
 
-/**
- * 
- * @TableName Goods
- */
 @TableName(value ="Goods")
 @Data
 public class Goods implements Serializable {
-    /**
-     * 
-     */
-    @TableId(type = IdType.AUTO)
+
+    @TableId(value = "GID", type = IdType.AUTO)
     private Integer gid;
 
-    /**
-     * 
-     */
+
+    @TableField(value = "GName")
     private String gname;
 
-    /**
-     * 
-     */
+    @TableField(value = "GDesc")
     private String gdesc;
 
-    /**
-     * 
-     */
+    @TableField(value = "GStock")
     private Integer gstock;
 
-    /**
-     * 
-     */
+    @TableField(value = "GValue")
     private Integer gvalue;
 
-    /**
-     * 
-     */
+    @TableField(value = "CID")
     private Integer cid;
 
-    /**
-     * 
-     */
+    @TableField(value = "GShelf")
     private Integer gshelf;
-
-    /**
-     * 
-     */
-    private Float gstate;
 
     public Integer getGid() {
         return gid;
@@ -111,14 +89,6 @@ public class Goods implements Serializable {
         this.gshelf = gshelf;
     }
 
-    public Float getGstate() {
-        return gstate;
-    }
-
-    public void setGstate(Float gstate) {
-        this.gstate = gstate;
-    }
-
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
@@ -140,8 +110,7 @@ public class Goods implements Serializable {
             && (this.getGstock() == null ? other.getGstock() == null : this.getGstock().equals(other.getGstock()))
             && (this.getGvalue() == null ? other.getGvalue() == null : this.getGvalue().equals(other.getGvalue()))
             && (this.getCid() == null ? other.getCid() == null : this.getCid().equals(other.getCid()))
-            && (this.getGshelf() == null ? other.getGshelf() == null : this.getGshelf().equals(other.getGshelf()))
-            && (this.getGstate() == null ? other.getGstate() == null : this.getGstate().equals(other.getGstate()));
+            && (this.getGshelf() == null ? other.getGshelf() == null : this.getGshelf().equals(other.getGshelf()));
     }
 
     @Override
@@ -155,7 +124,6 @@ public class Goods implements Serializable {
         result = prime * result + ((getGvalue() == null) ? 0 : getGvalue().hashCode());
         result = prime * result + ((getCid() == null) ? 0 : getCid().hashCode());
         result = prime * result + ((getGshelf() == null) ? 0 : getGshelf().hashCode());
-        result = prime * result + ((getGstate() == null) ? 0 : getGstate().hashCode());
         return result;
     }
 
@@ -172,7 +140,6 @@ public class Goods implements Serializable {
         sb.append(", gvalue=").append(gvalue);
         sb.append(", cid=").append(cid);
         sb.append(", gshelf=").append(gshelf);
-        sb.append(", gstate=").append(gstate);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

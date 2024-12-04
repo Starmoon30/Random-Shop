@@ -1,5 +1,6 @@
 package com.example.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.domain.User;
 import com.example.service.UserService;
@@ -30,9 +31,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         int affectedRows = userMapper.Add_User(user.getUaccount(),user.getUpassword(),user.getUphone(),user.getUaddress(),1);
         return affectedRows > 0;
     }
-
-    public User findUser(String account,String password) {
-        return userMapper.findUser(account,password);
+    @Override
+    public User findUser(User user) {
+        return userMapper.findUser(user.getUaccount(),user.getUpassword());
     }
 
     @Override

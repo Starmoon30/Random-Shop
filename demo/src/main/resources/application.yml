@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:sqlite:demo/src/main/resources/random-shop.db
+    url: jdbc:sqlite:src/main/resources/random-shop.db
     driver-class-name: org.sqlite.JDBC
     username:
     password:

@@ -6,6 +6,7 @@ import com.example.domain.Goods;
 import com.example.service.CategoryService;
 import com.example.service.GoodsService;
 import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,6 +42,28 @@ public class GoodsController {
         return goodsService.update(goods,updateWrapper);
     }
 
+    @RequestMapping("/update_Gshelf")
+    public boolean update_Gshelf(@RequestBody Map<String,Object> goodsMap){
+        int gid = (int) goodsMap.get("gid");
+        int shelf = (int) goodsMap.get("shelf");
+        LambdaUpdateWrapper<Goods> updateWrapper = new LambdaUpdateWrapper<>();
+        updateWrapper.eq(Goods::getGid,gid);
+        Goods goods = new Goods();
+        goods.setGshelf(shelf);
+        return goodsService.update(goods,updateWrapper);
+    }
+//    商品的冻结状态被优化了
+//    @RequestMapping("/update_Gstate")
+//    public boolean update_Gstate(@RequestBody Map<String,Object> goodsMap){
+//        int gid = (int) goodsMap.get("gid");
+//        int state = (int) goodsMap.get("state");
+//        LambdaUpdateWrapper<Goods> updateWrapper = new LambdaUpdateWrapper<>();
+//        updateWrapper.eq(Goods::getGid,gid);
+//        Goods goods = new Goods();
+//        goods.setGstate((float) state);
+//        return goodsService.update(goods,updateWrapper);
+//    }
+
     @RequestMapping("/get_info")
     public List<Goods> get_info(@RequestBody Map<String,Object> goodsMap){
         int gid = (int) goodsMap.get("gid");
@@ -68,5 +91,20 @@ public class GoodsController {
             goods.addAll(goodsService.list(lambdaQueryWrapper));
         }
         return goods;
+    }
+    @RequestMapping("/get_info_by_name")
+    public List<Goods> get_info_by_name(@RequestBody Map<String,Object> goodsMap){
+        String name = (String) goodsMap.get("name");
+        LambdaQueryWrapper<Goods> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.like(Goods::getGname,name);
+        return goodsService.list(lambdaQueryWrapper);
+    }
+    @RequestMapping("/add_goods")
+    public boolean add_goods(@RequestBody Goods goods){
+        return goodsService.save(goods);
+    }
+    @RequestMapping("/delete_goods/{id}")
+    public boolean delete_goods(@PathVariable int id){
+        return goodsService.removeById(id);
     }
 }

@@ -24,18 +24,17 @@
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
 import { defineComponent } from 'vue';
-
+import {jwtDecode} from "jwt-decode";
+const token=localStorage.getItem('token');
+const claims = jwtDecode(token);
+const account = claims.account;
+console.log("account:",account);
 export default defineComponent({
-  props: {
-    account: {
-      type: String,
-      required: true
-    }
-  },
   data() {
     return {
+      account: claims.account,
       passwordForm: {
-        account: this.account,
+        account: account,
         old_pwd: '',
         new_pwd: '',
         confirmPassword: ''
@@ -44,7 +43,6 @@ export default defineComponent({
   },
   methods: {
     async submitPasswordChange() {
-
       if (this.passwordForm.new_pwd !== this.passwordForm.confirmPassword) {
         ElMessage.error('新密码和确认密码不匹配');
         return;
@@ -61,7 +59,11 @@ export default defineComponent({
         console.log("新密码：",formData.new_pwd);
         console.log("账号为：", formData.account);
         console.log("旧密码为：", formData.old_pwd);
-        const response = await axios.post('http://localhost:8090/user/update_pwd', formData);
+        const response = await axios.post('http://localhost:8090/user/update_pwd', formData, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
         console.log(response.data);
         if (response.data) { // Assuming your API returns a success flag
           ElMessage.success('密码修改成功');

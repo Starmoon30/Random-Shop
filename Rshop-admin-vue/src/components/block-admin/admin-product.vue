@@ -1,54 +1,77 @@
 <template>
-  <el-main>
+  <el-main class="product-list-container">
     <!-- 搜索框和新增商品按钮的容器 -->
     <div style="display: flex; justify-content: center; margin-bottom: 20px;">
       <!-- 搜索框 -->
-      <el-input
-        placeholder="搜索商品"
-        v-model="searchQuery"
-        style="flex-grow: 1; margin-right: 10px;">
-        <template #append>
-          <el-button icon="el-icon-search" @click="fetchProducts">搜索</el-button>
-        </template>
-      </el-input>
+      <goods-search @update:products="handleProductsUpdate"></goods-search>
       <!-- 新增商品按钮 -->
       <el-button type="primary" @click="goToAddProduct">新增商品</el-button>
     </div>
 
-    <div class="product-list">
-      <el-card v-for="product in products" :key="product.gid" class="product-card">
-        <img :src="product.image" alt="" class="product-image">
-        <div class="product-info">
-          <h3>{{ product.gname }}</h3>
-          <p>￥:{{ product.gvalue }}</p>
-        </div>
-        <el-button type="text" @click="viewDetails(product)">查看详情</el-button>
-      </el-card>
-    </div>
+    <!-- 滚动条组件包裹产品列表 -->
+    <el-scrollbar class="product-list-scrollbar">
+      <div class="product-list">
+        <el-card v-for="product in products" :key="product.gid" class="product-card">
+          <!-- 轮播图组件 -->
+          <el-carousel :interval="5000" arrow="always" height="200px">
+            <el-carousel-item v-for="(pic, index) in product.pictures" :key="index">
+              <img :src="pic" class="product-image" />
+            </el-carousel-item>
+          </el-carousel>
+          <div class="product-info">
+            <h3>{{ product.gname }}</h3>
+            <p>￥:{{ product.gvalue }} 库存:{{ product.gstock }}</p>
+          </div>
+          <el-button type="text" @click="viewDetails(product)">查看详情</el-button>
+        </el-card>
+      </div>
+    </el-scrollbar>
   </el-main>
 </template>
 
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios'; // 确保已经安装了axios
+import axios from 'axios';
+import GoodsSearch from "@/components/block-search/Goods-Search.vue";
 
 export default defineComponent({
+  components: { GoodsSearch },
   setup() {
     const router = useRouter();
     const products = ref([]); // 用于存储商品数据
-    const searchQuery = ref(''); // 用于存储搜索查询
+    const token = localStorage.getItem('token');
+
+    // 获取商品图片的函数
+    const fetchProductPictures = async (gid) => {
+      try {
+        const picMap = { gid: gid };
+        const response = await axios.post('http://localhost:8090/pic/get_pic', picMap, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
+        return response.data.map(pic => `data:image/jpeg;base64,${pic}`);
+      } catch (error) {
+        console.error('获取商品图片失败:', error);
+        return [];
+      }
+    };
 
     // 获取商品信息的函数
     const fetchProducts = async () => {
       try {
-        const data = {
-          cid: [0],
-          query: searchQuery.value
-        };
-        const response = await axios.post('http://localhost:8090/goods/list_By_Category', data);
-        products.value = response.data; // 确保这里赋值给 products.value
-        console.log("获得商品：", response.data);
+        const data = { cid: [0], query: '' }; // 示例数据，查询条件为一个空字符串
+        const response = await axios.post('http://localhost:8090/goods/list_By_Category', data, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
+        const productsWithPictures = await Promise.all(response.data.map(async product => {
+          const pictures = await fetchProductPictures(product.gid);
+          return { ...product, pictures };
+        }));
+        products.value = productsWithPictures;
       } catch (error) {
         console.error('获取商品信息失败:', error);
       }
@@ -57,8 +80,19 @@ export default defineComponent({
     // 组件挂载时获取商品信息
     onMounted(fetchProducts);
 
+    // 处理子组件传递的 products 更新
+    const handleProductsUpdate = (newProducts) => {
+      products.value = newProducts;
+    };
+
+    // 跳转到商品详情页面
     const viewDetails = (product) => {
-      router.push({ name: 'AGoodData', params: { productId: product.gid } });
+      const id = product.gid;
+      const route = {
+        name: 'ProductDet', // 详情页面的路由名称
+        params: { pid: id }
+      };
+      router.push(route);
     };
 
     // 跳转到新增商品页面的方法
@@ -67,24 +101,35 @@ export default defineComponent({
     };
 
     return {
-      products, // 只需要返回 products 这个响应式引用
+      products,
       viewDetails,
       goToAddProduct,
-      searchQuery, // 返回搜索查询的响应式引用
+      handleProductsUpdate
     };
   }
 });
 </script>
 
 <style scoped>
+.product-list-container {
+  height: calc(100vh - 60px);
+}
+
+.product-list-scrollbar {
+  height: 100%;
+  overflow-y: auto;
+}
+
 .product-list {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
 }
+
 .product-card {
-  width: calc(33.333% - 20px); /* 一行三个 */
+  width: calc(33.333% - 20px);
 }
+
 .product-image {
   width: 100%;
   height: 200px;

@@ -19,6 +19,22 @@
       <el-form-item label="商品介绍">
         <el-input type="textarea" v-model="productForm.description"></el-input>
       </el-form-item>
+      <el-form-item label="商品图片">
+        <el-upload
+          :on-preview="handlePreview"
+          :on-remove="handleRemove"
+          :before-remove="beforeRemove"
+          :on-success="handleSuccess"
+          :on-error="handleError"
+          multiple
+          :limit="3"
+          :on-exceed="handleExceed"
+          :file-list="productForm.images"
+          list-type="picture">
+          <el-button size="small" type="primary">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过3张</div>
+        </el-upload>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="submitProduct">新增商品</el-button>
       </el-form-item>
@@ -36,13 +52,39 @@ const productForm = reactive({
   name: '',
   price: '',
   stock: '',
-  description: ''
+  description: '',
+  images: [] // 用于存储图片的数组
 });
-
-const productFormRef = ref(null);
 
 const goBack = () => {
   router.back();
+};
+
+const handlePreview = (file) => {
+  // 处理图片预览逻辑
+};
+
+const handleRemove = (file, fileList) => {
+  // 处理图片移除逻辑
+};
+
+const beforeRemove = (file, fileList) => {
+  // 处理图片移除前的确认逻辑
+  return true;
+};
+
+const handleExceed = (files, fileList) => {
+  ElMessage.warning(`当前限制选择 3 张图片，本次选择了 ${files.length} 张，共选择了 ${files.length + fileList.length} 张`);
+};
+
+const handleSuccess = (response, file) => {
+  // 文件上传成功的处理逻辑
+  // 可以在这里更新 file 的 url 属性，以便显示预览图
+};
+
+const handleError = (err, file) => {
+  // 文件上传失败的处理逻辑
+  ElMessage.error('图片上传失败');
 };
 
 const submitProduct = () => {
