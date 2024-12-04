@@ -1,58 +1,94 @@
 <script setup>
-import {Discount, Edit, Menu, Promotion, Setting, User} from "@element-plus/icons-vue";
-import { defineEmits } from 'vue';
+import { Discount, Edit, Menu, Promotion, Setting, User } from "@element-plus/icons-vue";
+import { defineEmits, ref } from 'vue';
+
 // 定义 emits 对象
-const emits = defineEmits(['menu-click']);
+const emits = defineEmits(['menu-click', 'shelf-click', 'order-click']);
+
+// 用于控制子菜单展开状态
+const isShelfMenuOpen = ref(false);
+const isOrderMenuOpen = ref(false);
 
 // 处理菜单选择事件
-const handleSelect = (index, indexPath) => {
-  // 触发 menu-click 事件，并传递索引
+const handleSelect = (index) => {
   emits('menu-click', index);
+};
+
+// 处理货架管理点击事件
+const handleShelfClick = () => {
+  // 切换货架管理子菜单的展开状态
+  isShelfMenuOpen.value = !isShelfMenuOpen.value;
+  emits('shelf-click');
+};
+
+// 处理订单管理点击事件
+const handleOrderClick = () => {
+  // 切换订单管理子菜单的展开状态
+  isOrderMenuOpen.value = !isOrderMenuOpen.value;
+  emits('order-click');
 };
 </script>
 
 <template>
-  <!-- 菜单组件，设置默认展开的菜单项 -->
   <el-menu
-    :default-openeds="['1', '8']"
+    :default-openeds="['1', '11']"
     style="background-color: var(--el-color-primary-light-9)"
     :collapse="isCollapse"
     @select="handleSelect"
   >
-    <!-- 子菜单1，索引为1 -->
     <el-menu-item-group>
-      <el-menu-item index="1"> <el-icon><User /></el-icon>用户管理</el-menu-item>
+      <el-menu-item index="1">
+        <el-icon><User /></el-icon>用户管理
+      </el-menu-item>
     </el-menu-item-group>
-    <!-- 子菜单2，索引为2 -->
-    <el-sub-menu index="2">
-      <!-- 子菜单标题，包含一个菜单图标 -->
+
+    <el-sub-menu :default-opened="isShelfMenuOpen">
       <template #title>
-        <el-icon onclick="openshell()"><Menu /></el-icon>货架管理
+        <el-icon @click.prevent="handleShelfClick"><Menu /></el-icon>货架管理
       </template>
       <el-menu-item-group>
-        <!-- 菜单项2-1 -->
-        <el-menu-item index="3">预备上架</el-menu-item>
-        <!-- 菜单项2-2 -->
-        <el-menu-item index="4">已上架</el-menu-item>
-        <el-menu-item index="5">历史上架</el-menu-item>
+        <el-menu-item index="2">预备上架</el-menu-item>
+        <el-menu-item index="3">已上架</el-menu-item>
+        <el-menu-item index="4">历史上架</el-menu-item>
       </el-menu-item-group>
     </el-sub-menu>
-    <!-- 子菜单3，索引为3 -->
+
     <el-menu-item-group>
-      <el-menu-item index="6"> <el-icon><setting /></el-icon>商品管理</el-menu-item>
+      <el-menu-item index="5">
+        <el-icon><Setting /></el-icon>商品管理
+      </el-menu-item>
     </el-menu-item-group>
+
+    <el-sub-menu :default-opened="isOrderMenuOpen">
+      <template #title>
+        <el-icon @click.prevent="handleOrderClick"><Promotion /></el-icon>订单管理
+      </template>
+      <el-menu-item-group>
+        <el-menu-item index="6">未接受</el-menu-item>
+        <el-menu-item index="7">已接受</el-menu-item>
+        <el-menu-item index="8">已完成</el-menu-item>
+      </el-menu-item-group>
+    </el-sub-menu>
+
     <el-menu-item-group>
-      <el-menu-item index="7"> <el-icon><Promotion /></el-icon>订单管理</el-menu-item>
+      <el-menu-item index="9">
+        <el-icon><Discount /></el-icon>分类管理
+      </el-menu-item>
     </el-menu-item-group>
+
     <el-menu-item-group>
-      <el-menu-item index="8"><el-icon><Discount /></el-icon>分类管理</el-menu-item>
+      <el-menu-item index="10">
+        <el-icon><Histogram /></el-icon>库存历史管理
+      </el-menu-item>
     </el-menu-item-group>
+
     <el-menu-item-group>
-      <el-menu-item index="9"><el-icon><svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 48 48"><g fill="none" stroke="#000000" stroke-linejoin="round" stroke-width="4"><path stroke-linecap="round" d="M7 42h36"/><path fill="#000000" d="M11 26.72V34h7.317L39 13.308L31.695 6z"/></g></svg></el-icon>账号管理</el-menu-item>
+      <el-menu-item index="11">
+        <el-icon><Edit /></el-icon>账号管理
+      </el-menu-item>
     </el-menu-item-group>
   </el-menu>
 </template>
 
 <style scoped>
-
 </style>

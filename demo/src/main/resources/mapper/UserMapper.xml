@@ -37,7 +37,6 @@
     <select id="select_By_Account" resultType="com.example.domain.User">
         select * from User where UAccount = #{account}
     </select>
-
     <insert id="Add_User">
         insert into User <include refid="All_Column" /> values (#{account},#{password},#{phone},#{address},#{category})
     </insert>

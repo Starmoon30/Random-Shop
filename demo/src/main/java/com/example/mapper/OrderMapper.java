@@ -22,6 +22,8 @@ public interface OrderMapper extends BaseMapper<Order> {
     int update_oinfo(int id, String phone, String address, String remark);
 
     int update_ostate(int id, int state);
+
+    List<Order> get_by_oid(int id);
 }
 
 

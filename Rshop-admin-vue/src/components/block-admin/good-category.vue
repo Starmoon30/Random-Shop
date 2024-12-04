@@ -32,7 +32,7 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useRouter } from 'vue-router';
-
+const token=localStorage.getItem('token');
 const router = useRouter();
 // 定义全部数据的响应式变量
 const allData = ref([]);
@@ -43,11 +43,15 @@ const pageSize = ref(10);
 const pageNum = ref(1);
 const total = ref(0);
 
-// 获取商品信息的函数
+// 获取信息的函数
 const fetchProducts = async () => {
   try {
-    const response = await axios.post('http://localhost:8090/cat/list');
-    allData.value = response.data; // 假设后端返回所有订单数据
+    const response = await axios.get('http://localhost:8090/cat/list',{
+      headers: {
+        'Authorization': `${token}`,
+      }
+    });
+    allData.value = response.data; // 假设后端返回所有数据
     total.value = allData.value.length; // 总数据量
     paginate(allData.value); // 进行分页
     console.log("获得标签：", allData.value);

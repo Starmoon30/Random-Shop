@@ -1,9 +1,9 @@
 package com.example.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.domain.Goodspics;
 import com.example.service.GoodspicsService;
 import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +27,10 @@ public class PicController {
         goodspics.setGid(gid);
         goodspics.setPicdata(data);
         return goodspicsService.save(goodspics);
+    }
+    @RequestMapping("/delete/{id}")
+    public boolean delete(@PathVariable int id){
+        return goodspicsService.removeById(id);
     }
     @RequestMapping("/get_pic")
     public List<String> get_pic(@RequestBody Map<String,Object> picMap){

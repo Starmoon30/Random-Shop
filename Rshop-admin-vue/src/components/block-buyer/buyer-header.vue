@@ -1,5 +1,7 @@
 <script setup>
-
+const logout = () => {
+  history.back();
+};
 </script>
 
 <template>

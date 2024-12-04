@@ -7,27 +7,16 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import lombok.Data;
 
-/**
- * 
- * @TableName Category
- */
+
 @TableName(value ="Category")
 @Data
 public class Category implements Serializable {
-    /**
-     * 
-     */
+
     @TableId(type = IdType.AUTO)
     private Integer cid;
 
-    /**
-     * 
-     */
     private String cname;
 
-    /**
-     * 
-     */
     private Integer cparentid;
 
     public Integer getCid() {

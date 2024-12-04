@@ -29,4 +29,7 @@
     <select id="get_History_By_Account_And_State" resultType="com.example.domain.Order">
         select * from "Order" where UAccount = #{account} and OState = #{state}
     </select>
+    <select id="get_by_oid" resultType="com.example.domain.Order">
+        select * from "Order" where oid = #{id}
+    </select>
 </mapper>

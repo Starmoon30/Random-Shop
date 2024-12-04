@@ -17,7 +17,7 @@
         <!-- 主要内容区域 -->
         <el-main style="height: 100%">
           <div style="height: 400px;display: contents">
-            <component :is="currentComponent" :account="account"></component>
+            <component :is="currentComponent"></component>
           </div>
         </el-main>
       </el-container>
@@ -26,54 +26,80 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import AdminMenu from "@/components/block-admin/adminMenu.vue";
 import AdminHead from "@/components/block-admin/adminHead.vue";
 import AdminMainUser from "@/components/block-admin/adminMain-user.vue";
 import ShopLogo from "@/components/Shop-Logo.vue";
-import AdminOrder from "@/components/block-admin/admin-order.vue";
+import AdminOrderUn from "@/components/block-admin/admin-order-un.vue";
+import AdminOrderIng from "@/components/block-admin/admin-order-ing.vue";
+import AdminOrderHis from "@/components/block-admin/admin-order-finish.vue";
 import AdminPwd from "@/components/block-admin/admin-pwd.vue";
 import AdminInventory from "@/components/block-admin/admin-Inventory.vue";
 import AdminNewPro from "@/components/block-admin/admin-NewPro.vue";
-import ShellHistory from "@/components/block-admin/shell-history.vue";
-import ShellIng from "@/components/block-admin/shell-ing.vue";
-import ShellNever from "@/components/block-admin/shell-never.vue";
+import ShellHistory from "@/components/block-admin/shelf-history.vue";
+import ShellIng from "@/components/block-admin/shelf-ing.vue";
+import ShellNever from "@/components/block-admin/shelf-never.vue";
 import AdminProduct from "@/components/block-admin/admin-product.vue";
 import AdminDetail from "@/components/block-admin/admin-detail.vue";
 import AdminUpdate from "@/components/block-admin/admin-update.vue";
-import AdminCategory from "@/components/block-admin/good-category.vue"
+import AdminHistory from "@/components/block-admin/admin-stock.vue";
+import AdminCategory from "@/components/block-admin/good-category.vue";
+import { useRoute } from "vue-router";
+import { jwtDecode } from "jwt-decode";
+
 // 定义一个响应式变量来存储当前显示的组件
 const currentComponent = ref(AdminMainUser);
-import {useRoute} from "vue-router";
-const route = useRoute(); // 使用useRoute钩子
-const account = ref(route.query.account); // 读取account参数
+
+// 定义响应式变量来存储token
+const route = useRoute();
+const token = ref(route.query.token);
+
+// 如果需要解析token
+const decodedToken = ref({});
+onMounted(async () => {
+  if (token.value) {
+    try {
+      decodedToken.value = jwtDecode(token.value);
+    } catch (error) {
+      console.error("Failed to decode token:", error);
+    }
+  }
+});
+
 const handleMenuClick = (index) => {
   switch (index) {
     case '1':
       currentComponent.value = AdminMainUser;
       break;
     case '2':
-      currentComponent.value = ShellIng;
-      break;
-    case '3':
       currentComponent.value = ShellNever;
       break;
-    case '4':
+    case '3':
       currentComponent.value = ShellIng;
       break;
-    case '5':
+    case '4':
       currentComponent.value = ShellHistory;
       break;
-    case '6':
+    case '5':
       currentComponent.value = AdminProduct;
       break;
+    case '6':
+      currentComponent.value = AdminOrderUn;
+      break;
     case '7':
-      currentComponent.value = AdminOrder;
+      currentComponent.value = AdminOrderIng;
       break;
     case '8':
-      currentComponent.value = AdminCategory;
+      currentComponent.value = AdminOrderHis;
       break;
     case '9':
+      currentComponent.value = AdminCategory;
+      break;
+    case '10':
+      currentComponent.value = AdminHistory;
+      break;
+    case '11':
       currentComponent.value = AdminPwd;
       break;
   }
