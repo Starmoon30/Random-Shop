@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.example.domain.Category;
 import com.example.service.CategoryService;
 import jakarta.annotation.Resource;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,9 +66,8 @@ public class CategoryController {
     public boolean creat(@RequestBody Category category) {
         return categoryService.save(category);
     }
-    @RequestMapping("/delete")
-    public boolean delete(@RequestBody Map<String, Object> catMap) {
-        int id = (int)catMap.get("cid");
+    @RequestMapping("/delete/{id}")
+    public boolean delete(@PathVariable int id) {
         return categoryService.removeById(id);
     }
 }
