@@ -22,12 +22,6 @@ const routes = [
     props: true // 启用 props
   },
   {
-    path: '/aHome/updatePwd',
-    name: 'UpdatePwd',
-    component: UpdatePwd,
-    props: true // 启用 props
-  },
-  {
     path: '/aHome/updateGood',
     name: 'UpdateGood',
     component: UpdateGood,
@@ -60,6 +54,11 @@ const routes = [
     name: 'UserIn',
     component: UserIn
   },
+  {
+    path: '/updatePwd',
+    name: 'UpdatePwd',
+    component: UpdatePwd
+  },
 ];
 const router = createRouter({
   history: createWebHistory(),
@@ -74,10 +73,9 @@ router.beforeEach((to, from, next) => {
   } else {
     //取出localStorage判断
     const token = localStorage.getItem('token');
-    console.log("lingpai:", token);
-    if (token == null || token === '') {
+    if (token === null || token === '') {
       alert('请先登录')
-      next({name: 'Login'});
+      next({path: '/'});
     } else {
       next();
     }
