@@ -3,8 +3,10 @@ package com.example.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.example.domain.Goods;
+import com.example.domain.Stockhistory;
 import com.example.service.CategoryService;
 import com.example.service.GoodsService;
+import com.example.service.StockhistoryService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +25,8 @@ public class GoodsController {
     private GoodsService goodsService;
     @Resource
     private CategoryService categoryService;
+    @Resource
+    private StockhistoryService stockhistoryService;
 
     @RequestMapping("/update_Ginfo")
     public boolean update_Ginfo(@RequestBody Map<String,Object> goodsMap){
@@ -31,6 +36,7 @@ public class GoodsController {
         int stock = (int) goodsMap.get("stock");
         int value = (int) goodsMap.get("value");
         int cid = (int) goodsMap.get("cid");
+        Goods g = goodsService.getById(gid);
         LambdaUpdateWrapper<Goods> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Goods::getGid,gid);
         Goods goods = new Goods();
@@ -39,7 +45,21 @@ public class GoodsController {
         goods.setGstock(stock);
         goods.setGvalue(value);
         goods.setCid(cid);
-        return goodsService.update(goods,updateWrapper);
+        if(goodsService.update(goods,updateWrapper)){
+            if(stock!=g.getGstock()){
+                Stockhistory stockhistory = new Stockhistory();
+                stockhistory.setGID(gid);
+                stockhistory.setSHStockO(g.getGstock());
+                stockhistory.setSHStockN(stock);
+                stockhistory.setSHTime(new Date());
+                stockhistory.setSHReason(1);//0表示该库存记录变更原因为手动修改
+                return stockhistoryService.save(stockhistory);
+            }else {
+                return true;
+            }
+        }else {
+            return false;
+        }
     }
 
     @RequestMapping("/update_Gshelf")
