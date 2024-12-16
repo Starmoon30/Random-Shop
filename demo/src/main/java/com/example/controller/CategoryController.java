@@ -70,4 +70,8 @@ public class CategoryController {
     public boolean delete(@PathVariable int id) {
         return categoryService.removeById(id);
     }
+    @RequestMapping("/get_info_by_cid/{id}")
+    public Category get_info_by_cid(@PathVariable int id) {
+        return categoryService.getById(id);
+    }
 }
