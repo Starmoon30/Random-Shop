@@ -1,11 +1,14 @@
 package com.example.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.example.domain.Goods;
+import com.example.domain.Goodspics;
 import com.example.domain.Stockhistory;
 import com.example.service.CategoryService;
 import com.example.service.GoodsService;
+import com.example.service.GoodspicsService;
 import com.example.service.StockhistoryService;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +26,8 @@ import java.util.Map;
 public class GoodsController {
     @Resource
     private GoodsService goodsService;
+    @Resource
+    private GoodspicsService goodspicsService;
     @Resource
     private CategoryService categoryService;
     @Resource
@@ -66,12 +71,17 @@ public class GoodsController {
     public boolean update_Gshelf(@RequestBody Map<String,Object> goodsMap){
         int gid = (int) goodsMap.get("gid");
         int shelf = (int) goodsMap.get("shelf");
+        if (shelf==1){
+            QueryWrapper<Goodspics> wrapper = new QueryWrapper<>();
+            wrapper.eq("gid", gid);
+            if (goodspicsService.count(wrapper)==0) return false;
+        }
         LambdaUpdateWrapper<Goods> updateWrapper = new LambdaUpdateWrapper<>();
         updateWrapper.eq(Goods::getGid,gid);
         Goods goods = new Goods();
         goods.setGshelf(shelf);
         return goodsService.update(goods,updateWrapper);
-    }
+        }
 //    商品的冻结状态被优化了
 //    @RequestMapping("/update_Gstate")
 //    public boolean update_Gstate(@RequestBody Map<String,Object> goodsMap){
