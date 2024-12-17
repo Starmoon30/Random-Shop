@@ -52,7 +52,10 @@ public class OrderController {
         String remark = (String) orderMap.get("remark");
         return orderService.update_oinfo(id,phone,address,remark);
     }
-
+    @RequestMapping("/creat")
+    public boolean creat(@RequestBody Order order){
+        return orderService.save(order);
+    }
     @RequestMapping("/update_Ostate")
     public boolean update_Ostate(@RequestBody Map<String,Object> orderMap){
         int id = (int) orderMap.get("id");
