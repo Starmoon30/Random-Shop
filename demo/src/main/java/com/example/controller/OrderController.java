@@ -54,7 +54,7 @@ public class OrderController {
     }
     @RequestMapping("/creat")
     public boolean creat(@RequestBody Order order){
-        return orderService.save(order);
+        return orderService.creat(order);
     }
     @RequestMapping("/update_Ostate")
     public boolean update_Ostate(@RequestBody Map<String,Object> orderMap){
