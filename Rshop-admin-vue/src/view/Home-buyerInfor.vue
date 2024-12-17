@@ -14,7 +14,7 @@
       <el-container style="flex: 1;background-color: #e8eaeb">
         <el-main>
           <div>
-            <h1>欢迎！Account！</h1>
+            <router-view></router-view>
           </div>
         </el-main>
       </el-container>
