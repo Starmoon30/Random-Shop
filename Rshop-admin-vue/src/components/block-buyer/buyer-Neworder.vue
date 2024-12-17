@@ -29,58 +29,60 @@
 </template>
 
 <script setup>
-  import {ref, onMounted} from 'vue';
-  import {ElFormItem, ElInput, ElButton, ElMessage } from 'element-plus';
-  import ShopLogo from "@/components/Shop-Logo.vue";
-  import BuyerHeader from "@/components/block-buyer/buyer-header.vue";
-  import {jwtDecode} from "jwt-decode";
-  import axios from 'axios';
-  import {useRoute} from "vue-router";
-  const route = useRoute();
-  const gid = Number(route.params.id);
-  console.log("商品id:",gid);
-  const token = localStorage.getItem('token');
-  const claims = jwtDecode(token);
-  console.log("claim:", claims);
-  const form = ref({
-    gid: Number(route.params.id),
-    uaccount: '',
-    ophone: '',
-    oaddress: '',
-    oremark: '',
-    ostate: 0
-  });
+import {ref, onMounted} from 'vue';
+import {ElFormItem, ElInput, ElButton, ElMessage} from 'element-plus';
+import ShopLogo from "@/components/Shop-Logo.vue";
+import BuyerHeader from "@/components/block-buyer/buyer-header.vue";
+import {jwtDecode} from "jwt-decode";
+import axios from 'axios';
+import {useRoute} from "vue-router";
+import router from "@/router/index.js";
 
-  const submitForm = async () => {
-    try {
-      console.log("form:",form.value)
-      const response = await axios.post('http://localhost:8090/order/creat', form.value, {
-        headers: {
-          'Authorization': `${token}`,
-        }
-      });
-      if (response.data) {
-        ElMessage.success('订单创建成功！');
-      } else {
-        ElMessage.error('订单错误');
+const route = useRoute();
+const gid = Number(route.params.id);
+console.log("商品id:", gid);
+const token = localStorage.getItem('token');
+const claims = jwtDecode(token);
+console.log("claim:", claims);
+const form = ref({
+  gid: Number(route.params.id),
+  uaccount: '',
+  ophone: '',
+  oaddress: '',
+  oremark: '',
+  ostate: 0
+});
+
+const submitForm = async () => {
+  try {
+    console.log("form:", form.value)
+    const response = await axios.post('http://localhost:8090/order/creat', form.value, {
+      headers: {
+        'Authorization': `${token}`,
       }
-    } catch (error) {
-      console.error('Error:', error);
+    });
+    if (response.data) {
+      ElMessage.success('订单创建成功！');
+    } else {
       ElMessage.error('订单错误');
     }
-  };
+  } catch (error) {
+    console.error('Error:', error);
+    ElMessage.error('订单错误');
+  }
+};
 
-  const goBack = () => {
-    window.history.back();
-  };
+const goBack = () => {
+  window.history.back();
+};
 
-  onMounted(() => {
-    // 假设 claims 中的属性名是 account, phone, address
-    // 请根据实际的属性名进行调整
-    form.value.uaccount = claims.account || '';
-    form.value.ophone = claims.phone || '';
-    form.value.oaddress = claims.address || '';
-  });
+onMounted(() => {
+  // 假设 claims 中的属性名是 account, phone, address
+  // 请根据实际的属性名进行调整
+  form.value.uaccount = claims.account || '';
+  form.value.ophone = claims.phone || '';
+  form.value.oaddress = claims.address || '';
+});
 </script>
 
 <style scoped>

@@ -9,8 +9,10 @@ import UpdateGood from "@/components/block-admin/admin-update.vue";
 import AProductDet from "@/components/block-admin/admin-detail.vue";
 import BProductDet from "@/components/block-buyer/buyer-detail.vue";
 import NewProduct from "@/components/block-admin/admin-NewPro.vue";
-import NewOrder from "@/components/block-buyer/buyer-Neworder.vue"
-import SearchRes from "@/components/block-buyer/buyer-searchGoods.vue"
+import NewOrder from "@/components/block-buyer/buyer-Neworder.vue";
+import SearchRes from "@/components/block-buyer/buyer-searchGoods.vue";
+import NewLabel from "@/components/block-admin/admin-newCat.vue"
+
 const routes = [
   {
     path: '/',
@@ -33,6 +35,12 @@ const routes = [
     path: '/aHome/newProduct',
     name: 'NewProduct',
     component: NewProduct,
+    props: true // 启用 props
+  },
+  {
+    path: '/aHome/newLabel',
+    name: 'NewLabel',
+    component: NewLabel,
     props: true // 启用 props
   },
   {

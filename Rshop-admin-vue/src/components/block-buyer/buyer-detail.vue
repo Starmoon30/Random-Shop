@@ -126,7 +126,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-<style scoped>
 body {
   font-family: 'Helvetica', 'Arial', sans-serif;
   margin: 0; /* 移除默认的边距 */
