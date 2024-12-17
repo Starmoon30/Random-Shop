@@ -1,0 +1,12 @@
+com\example\service\HistoryService.class
+com\example\controller\CategoryController.class
+com\example\controller\GoodsController.class
+com\example\controller\HistoryController.class
+com\example\service\GoodsService.class
+com\example\domain\Goods.class
+com\example\config\WebConfig.class
+com\example\domain\Category.class
+com\example\DemoApplication.class
+com\example\service\CategoryService.class
+com\example\interceptor\JwtInterceptor.class
+com\example\domain\History.class
