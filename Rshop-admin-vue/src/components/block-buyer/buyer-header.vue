@@ -1,5 +1,7 @@
 <script setup>
-
+const logout = () => {
+  history.back();
+};
 </script>
 
 <template>
@@ -10,7 +12,7 @@
     <div class="header-right">
       <div class="user-management" style="padding-right: 20px">
         <img class="avatar" src="https://tse2-mm.cn.bing.net/th/id/OIP-C.qYeM02sjAeO7kgvR6TDA8AAAAA?w=211&h=211&c=7&r=0&o=5&dpr=1.5&pid=1.7" alt="Avatar">
-        <a href="/user-home" class="user-info-link" style="color: #093b7f">用户信息</a>
+        <a href="/user-info" class="user-info-link" style="color: #093b7f">用户信息</a>
         <button @click="logout" class="logout-button" style="background-color: #0c4388">退出登录</button>
       </div>
     </div>

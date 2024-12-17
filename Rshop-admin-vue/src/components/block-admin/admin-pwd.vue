@@ -1,7 +1,8 @@
 <template>
   <el-card class="password-change-card">
     <template v-slot:header>
-      <div>{{ `修改密码 (${account})` }}</div>
+      <div>{{ `修改密码` }}</div>
+      <div class="account-info">当前账号为：{{ account }}</div>
     </template>
     <el-form ref="passwordForm" :model="passwordForm" label-width="150px" @submit.native.prevent="submitPasswordChange">
       <el-form-item label="旧密码" :rules="[{ required: true, message: '请输入旧密码', trigger: 'blur' }]">
@@ -20,22 +21,40 @@
   </el-card>
 </template>
 
+<style scoped>
+.password-change-card {
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+.el-form-item {
+  margin-bottom: 20px;
+}
+</style>
+
 <script>
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
 import { defineComponent } from 'vue';
+import { jwtDecode } from "jwt-decode";
 
 export default defineComponent({
-  props: {
-    account: {
-      type: String,
-      required: true
+  created() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const claims = jwtDecode(token);
+      this.account = claims.account;
+      this.passwordForm.account = claims.account;
+      console.log("pwd页面：", this.account);
+    } else {
+      this.$router.push({ path: '/'});
     }
   },
   data() {
     return {
+      account: '',
       passwordForm: {
-        account: this.account,
+        account: '',
         old_pwd: '',
         new_pwd: '',
         confirmPassword: ''
@@ -44,7 +63,6 @@ export default defineComponent({
   },
   methods: {
     async submitPasswordChange() {
-
       if (this.passwordForm.new_pwd !== this.passwordForm.confirmPassword) {
         ElMessage.error('新密码和确认密码不匹配');
         return;
@@ -61,7 +79,11 @@ export default defineComponent({
         console.log("新密码：",formData.new_pwd);
         console.log("账号为：", formData.account);
         console.log("旧密码为：", formData.old_pwd);
-        const response = await axios.post('http://localhost:8090/user/update_pwd', formData);
+        const response = await axios.post('http://localhost:8090/user/update_pwd', formData, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
         console.log(response.data);
         if (response.data) { // Assuming your API returns a success flag
           ElMessage.success('密码修改成功');
@@ -77,14 +99,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped>
-.password-change-card {
-  max-width: 400px;
-  margin: 20px auto;
-}
-
-.el-form-item {
-  margin-bottom: 20px;
-}
-</style>

@@ -2,16 +2,17 @@ import { createRouter, createWebHistory } from 'vue-router'
 import AHome from "@/view/Home-admin.vue";
 import BHome from "@/view/Home-buyer.vue";
 import Login from "@/view/login-home.vue";
-import Ishell from "@/components/block-admin/shell-ing.vue";
+import Ishell from "@/components/block-admin/shelf-ing.vue";
 import UserIn from "@/view/Home-buyerInfor.vue";
 import UpdatePwd from "@/components/block-admin/admin-pwd.vue";
-import AGoodData from "@/components/block-admin/admin-detail.vue";
+import UpdateGood from "@/components/block-admin/admin-update.vue";
+import ProductDet from "@/components/block-admin/admin-detail.vue";
 import NewProduct from "@/components/block-admin/admin-NewPro.vue";
-import UserInfo from '../components/block-buyer/UserInfo.vue';
-import OrderManagement from '../components/block-buyer/OrderManagement.vue';
-import ShippingManagement from '../components/block-buyer/ShippingManagement.vue';
-import AccountManagement from '../components/block-buyer/AccountManagement.vue';
-import WelcomePage from "@/components/block-buyer/welcome.vue";
+import UserInfo from '../components/block-buyer/buyer-imformation/UserInfo.vue';
+import OrderManagement from '../components/block-buyer/buyer-imformation/OrderManagement.vue';
+import ShippingManagement from '../components/block-buyer/buyer-imformation/ShippingManagement.vue';
+import AccountManagement from '../components/block-buyer/buyer-imformation/AccountManagement.vue';
+import WelcomePage from "@/components/block-buyer/buyer-imformation/welcome.vue";
 
 
 const routes = [
@@ -27,15 +28,9 @@ const routes = [
     props: true // 启用 props
   },
   {
-    path: '/aHome/updatePwd',
-    name: 'UpdatePwd',
-    component: UpdatePwd,
-    props: true // 启用 props
-  },
-  {
-    path: '/aHome/aGoodData',
-    name: 'AGoodData',
-    component: AGoodData,
+    path: '/aHome/updateGood',
+    name: 'UpdateGood',
+    component: UpdateGood,
     props: true // 启用 props
   },
   {
@@ -43,6 +38,11 @@ const routes = [
     name: 'NewProduct',
     component: NewProduct,
     props: true // 启用 props
+  },
+  {
+    path: '/aHome/productDet/:pid',
+    name: 'ProductDet',
+    component: ProductDet
   },
   {
     path: '/bHome',
@@ -54,6 +54,16 @@ const routes = [
     path: '/ingshell',
     name: 'Ishell',
     component: Ishell
+  },
+  {
+    path: '/user-info',
+    name: 'UserIn',
+    component: UserIn
+  },
+  {
+    path: '/updatePwd',
+    name: 'UpdatePwd',
+    component: UpdatePwd
   },
   {
     path: '/user-home',
@@ -86,10 +96,24 @@ const routes = [
       },
     ]
   },
-
 ];
 const router = createRouter({
   history: createWebHistory(),
   routes
 })
 export default router;
+router.beforeEach((to, from, next) => {
+//to到哪儿  from从哪儿离开  next跳转 为空就是放行
+  if (to.path === '/') {
+    //如果跳转为登录，就放行
+    next();
+  } else {
+    //取出localStorage判断
+    const token = localStorage.getItem('token');
+    if (token === null || token === '') {
+      alert('请先登录')
+      next({path: '/'});
+    } else {
+      next();
+    }
+  }});

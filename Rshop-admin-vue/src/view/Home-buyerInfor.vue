@@ -14,7 +14,6 @@
       <el-container style="flex: 1;background-color: #e8eaeb">
         <el-main>
           <div>
-            <!-- 动态显示子路由组件 -->
             <router-view></router-view>
           </div>
         </el-main>
@@ -50,13 +49,26 @@ export default {
   padding: 0;
   color: var(--el-text-color-primary);
 }
+.layout-container-demo .el-menu {
+  padding: 0;
+  border-right: none;
+}
 .layout-container-demo .el-main {
   padding: 0;
 }
-
+.layout-container-demo .toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
 html, body, #app {
   height: 100%;
   margin: 0;
 }
 
+.logo img {
+  max-width: 100%; /* Ensure the logo scales with the container */
+  height: 100%; /* Ensures logo height matches container */
+}
 </style>
