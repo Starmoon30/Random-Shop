@@ -1,8 +1,7 @@
 <template>
-  <!-- 滚动条组件 -->
   <div>
     <el-scrollbar>
-      <el-table :data="tableData" class="custom-table-row" style="width: 100%">
+      <el-table :data="acceptedTableData" class="custom-table-row" style="width: 100%">
         <el-table-column prop="oid" label="OID"/>
         <el-table-column prop="gid" label="GID"/>
         <el-table-column prop="uaccount" label="UAccount"/>
@@ -10,19 +9,13 @@
         <el-table-column prop="oaddress" label="OAddress"/>
         <el-table-column prop="oremark" label="ORemark"/>
         <el-table-column prop="ostate" label="OState"/>
-        <!-- 新增的按钮列 -->
-        <el-table-column label="操作">
-          <template #default="scope">
-            <el-button type="primary" size="small" @click="acceptOrder(scope.row)">接受订单</el-button>
-          </template>
-        </el-table-column>
       </el-table>
     </el-scrollbar>
     <el-pagination
-      v-model:current-page="pageNum"
+      v-model:current-page="acceptedPageNum"
       v-model:page-size="pageSize"
       :page-sizes="[5, 10, 20]"
-      :total="total"
+      :total="acceptedTotal"
       layout="total, sizes, prev, pager, next, jumper"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -37,11 +30,11 @@ import axios from 'axios';
 // 定义全部数据的响应式变量
 const allData = ref([]);
 // 定义表格数据的响应式变量
-const tableData = ref([]);
+const acceptedTableData = ref([]);
 // 定义分页参数
 const pageSize = ref(10);
-const pageNum = ref(1);
-const total = ref(0);
+const acceptedPageNum = ref(1);
+const acceptedTotal = ref(0);
 
 // 获取存储在 localStorage 中的用户信息
 const userInfo = JSON.parse(localStorage.getItem('userInfo'));
@@ -62,7 +55,7 @@ const fetchAllUsers = async () => {
       });
     }
 
-    total.value = allData.value.length; // 更新总数据量
+    acceptedTotal.value = allData.value.length; // 更新总数据量
     paginate(allData.value); // 进行分页
   } catch (error) {
     console.error('Error fetching orders:', error);
@@ -71,9 +64,9 @@ const fetchAllUsers = async () => {
 
 // 分页函数
 const paginate = (data) => {
-  const startIndex = (pageNum.value - 1) * pageSize.value;
+  const startIndex = (acceptedPageNum.value - 1) * pageSize.value;
   const endIndex = startIndex + pageSize.value;
-  tableData.value = data.slice(startIndex, endIndex);
+  acceptedTableData.value = data.slice(startIndex, endIndex);
 };
 
 // 分页事件处理函数
@@ -83,24 +76,8 @@ const handleSizeChange = (val) => {
 };
 
 const handleCurrentChange = (val) => {
-  pageNum.value = val;
+  acceptedPageNum.value = val;
   paginate(allData.value);
-};
-
-// 接受订单的方法
-const acceptOrder = async (order) => {
-  try {
-    const response = await axios.post('http://localhost:8090/order/accept', {oid: order.oid});
-    if (response.data.success) {
-      // 假设后端返回success字段表示操作成功
-      fetchAllUsers(); // 重新获取订单数据
-    } else {
-      // 处理失败情况
-      console.error('Error accepting order:', response.data.message);
-    }
-  } catch (error) {
-    console.error('Error accepting order:', error);
-  }
 };
 
 // 组件挂载时获取所有订单数据

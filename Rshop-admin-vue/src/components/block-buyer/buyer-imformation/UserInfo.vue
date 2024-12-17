@@ -26,6 +26,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode'; // 引入 jwt-decode
 
 // 定义响应式变量
 const userInfo = ref({
@@ -35,32 +36,52 @@ const userInfo = ref({
 });
 const loading = ref(true); // 加载状态
 
-// 获取当前登录用户的账号和其他信息（假设存储在 localStorage 中）
-const getCurrentUserInfo = () => {
-  const userInfoStored = JSON.parse(localStorage.getItem('userInfo')) || {}; // 获取并解析
-  return {
-    uaccount: userInfoStored.uaccount || '', // 从存储的数据中提取 uaccount
-    uphone: userInfoStored.uphone || '', // 从存储的数据中提取 uphone
-    uaddress: userInfoStored.uaddress || '' // 从存储的数据中提取 uaddress
-  };
+// 获取当前登录用户的Token（假设存储在 localStorage 中）
+const getCurrentUserToken = () => {
+  return localStorage.getItem('token') || null;
+};
+
+// 解析Token以获取用户的基本信息
+const getUserInfoFromToken = (token) => {
+  if (!token) return null;
+  try {
+    const decoded = jwtDecode(token);
+    return {
+      uaccount: decoded.UAccount || '', // 从Token中提取 uaccount
+      uphone: decoded.UPhone || '',     // 从Token中提取 uphone
+      uaddress: decoded.UAddress || ''   // 从Token中提取 uaddress
+    };
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    return null;
+  }
 };
 
 // 获取用户信息
 const fetchUserInfo = async () => {
   try {
-    const currentUserInfo = getCurrentUserInfo();  // 获取当前登录用户的账号和其他信息
-    if (!currentUserInfo.uaccount) {
+    const token = getCurrentUserToken();  // 获取当前登录用户的Token
+    if (!token) {
       console.error('No user is logged in.');
       loading.value = false;
       return;
     }
 
-    // 向后端发送 POST 请求，获取当前用户的个人信息
+    // 解析Token以获取用户的基本信息
+    const currentUserInfo = getUserInfoFromToken(token);
+    if (!currentUserInfo || !currentUserInfo.uaccount) {
+      console.error('Invalid or incomplete token.');
+      loading.value = false;
+      return;
+    }
+
+    // 向后端发送 POST 请求，获取当前用户的详细个人信息
     const response = await axios.post('http://localhost:8090/user/uinfo',
       { account: currentUserInfo.uaccount }, // 将 account 包含在请求体中
       {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // 添加Token到请求头
         }
       }
     );
