@@ -3,12 +3,12 @@
     <!-- 滚动条组件包裹内容区域 -->
     <el-scrollbar class="scrollbar-container">
       <el-table :data="tableData" class="custom-table-row" style="width: 100%">
-        <el-table-column prop="hid" label="HID"/>
-        <el-table-column prop="htime" label="HTime"/>
-        <el-table-column prop="hreason" label="HReason"/>
+        <el-table-column prop="shid" label="SHID"/>
+        <el-table-column prop="shtime" label="SHTime"/>
+        <el-table-column prop="shreason" label="SHReason"/>
         <el-table-column prop="gid" label="GID"/>
-        <el-table-column prop="hstockO" label="原库存"/>
-        <el-table-column prop="hstockN" label="新库存"/>
+        <el-table-column prop="shstock_O" label="原库存"/>
+        <el-table-column prop="shstock_N" label="新库存"/>
       </el-table>
     </el-scrollbar>
   </div>

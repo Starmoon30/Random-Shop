@@ -1,0 +1,473 @@
+commit d1cc68018f9660090f4fa3f08aaa82a22fcb4752
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Dec 5 08:32:36 2024 +0800
+
+    ppt
+
+commit e89c124a6c28cfb3da72dcfc27ad208b1818a8f9
+Merge: eec2654 cc71cc9
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Dec 5 00:20:22 2024 +0800
+
+    Merge branch 'develop' of https://github.com/darkdungeon30/Random-Shop into develop
+
+commit eec2654bdb59199a4f77e791e50d8bcfb9597259
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Dec 5 00:20:03 2024 +0800
+
+    示例图片
+
+commit cc71cc9e1fd64d8c97a57946c1b255dfd468861f
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Thu Dec 5 00:10:30 2024 +0800
+
+    增加wiki图片
+
+commit 07114430c7c0d9c6eb383e490c574c1defb19a32
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Wed Dec 4 23:22:11 2024 +0800
+
+    将现有进度同步至开发版本
+
+commit 57717671e0f4a3c063039d74a7806866399eb2f5
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Wed Dec 4 13:16:42 2024 +0800
+
+    History表改为StockHistory
+
+commit ce16ed9197df5e9af6d245f8dad36c643485b521
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Fri Nov 29 14:34:16 2024 +0800
+
+    更新 random-shop.db
+
+commit 34a9f9f0bc63c5b01954755ce8de05010198dcd6
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Nov 28 09:56:48 2024 +0800
+
+    移除旧版本
+
+commit 24013967a83d3ff283092ceee486e2de09b44a91
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Nov 28 08:49:43 2024 +0800
+
+    数据库更新
+    
+    添加History表
+
+commit 589b3ff54574aa96f0c2c883a13db3ca9204c372
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Sat Nov 23 15:27:40 2024 +0800
+
+    Create 图片21.png
+
+commit d26e7c8e44d695e281a712e0884805f96fe89326
+Merge: 9a68b80 6d57848
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Fri Nov 22 14:07:42 2024 +0800
+
+    Merge branch 'develop' of https://github.com/darkdungeon30/Random-Shop into develop
+
+commit 9a68b805495de278e4e6946af4aaa5c0920e3d4a
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Fri Nov 22 14:07:37 2024 +0800
+
+    增加了Goods的/get_info_by_name接口用于搜索功能
+
+commit 6d57848824ef92429a1c70797999fab51f785d10
+Author: hall <1487613373@qq.com>
+Date:   Fri Nov 22 13:54:00 2024 +0800
+
+    更新页面布局、logo图片、main区域各组件滚动栏表现
+
+commit 39ea87a162b889479e894522b3790d288d102b36
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Fri Nov 22 08:39:36 2024 +0800
+
+    配置了CORS策略，试运行
+
+commit 10b1f68748e00e9366517425cfc03b45353d68d3
+Merge: b6a04af 9ee7b86
+Author: Starmoon30 <121606599+Starmoon30@users.noreply.github.com>
+Date:   Thu Nov 21 09:23:32 2024 +0800
+
+    Merge pull request #1 from Starmoon30/develop
+    
+    Hall
+
+commit 9ee7b8641e42a12ef3bbf675cdfc5b46db76de1c
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Nov 21 09:19:17 2024 +0800
+
+    临时代传
+
+commit 3fcdb0bc7b75b1e04a0c71a42ce18e6c79211c2b
+Merge: 1ce2b82 b6a04af
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Nov 21 09:13:18 2024 +0800
+
+    Merge branch 'main' into develop
+
+commit 1ce2b828a89a377765898010be9a0de2fbc63862
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Nov 21 02:49:35 2024 +0800
+
+    测试
+
+commit a2b15c24d310086659eb1d0c46aa8b4fa6032e3f
+Merge: 2155411 a7c7553
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Thu Nov 21 00:33:22 2024 +0800
+
+    Merge branch 'develop' of https://github.com/Starmoon30/Random-Shop into develop
+
+commit 2155411e6c092badc992148e062d85de91ec1027
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Thu Nov 21 00:31:08 2024 +0800
+
+    11/21
+    
+    Wiki图片，修正了错误的相对路径
+
+commit a7c7553c785d429c3a0f7a4a2cc3c334aeb03e3b
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Wed Nov 20 23:52:04 2024 +0800
+
+    Delete start.txt
+
+commit a87ec7bb4e318e246ee29ff1dfda13de961ab6a3
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Wed Nov 20 23:50:55 2024 +0800
+
+    sql
+
+commit 49d334d3aa12e3c741c5ea6b2f04cc6407d588d3
+Author: hall <1487613373@qq.com>
+Date:   Wed Nov 20 23:24:58 2024 +0800
+
+    hall
+
+commit df0e3e4e95637cd1a68cb79f67e4d308b8e836c8
+Merge: e825491 ee2765f
+Author: hall <1487613373@qq.com>
+Date:   Wed Nov 20 23:05:39 2024 +0800
+
+    Merge branch 'develop' of https://github.com/Starmoon30/Random-Shop into develop
+
+commit ee2765f54c6a06720f55f40d70d957b6f1bfcc04
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Wed Nov 20 23:00:10 2024 +0800
+
+    增加了/cat/list接口
+
+commit e82549144be8fdacd24996d03dc84ba6c42dff0f
+Author: hall <1487613373@qq.com>
+Date:   Wed Nov 20 22:58:42 2024 +0800
+
+    hall
+
+commit b8dc9ed025dbbdc179ac18296121e27fe15976a6
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Wed Nov 20 22:42:57 2024 +0800
+
+    增加了/cat/get_all_child接口
+
+commit 5b0e7d889945e9d10bf00a1800c6d529a7f019ff
+Merge: 51f83a5 a99e20c
+Author: hall <1487613373@qq.com>
+Date:   Wed Nov 20 17:06:34 2024 +0800
+
+    Merge branch 'develop' of https://github.com/Starmoon30/Random-Shop into develop
+
+commit 51f83a53ed4c9368cf106c37f9840402f646d54a
+Author: hall <1487613373@qq.com>
+Date:   Wed Nov 20 17:06:24 2024 +0800
+
+    hall
+
+commit a99e20c0a05bcfd5476c5193e37fd54cdcfa503c
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Wed Nov 20 16:29:45 2024 +0800
+
+    Reapply "Merge branch 'develop' of https://github.com/Starmoon30/Random-Shop into develop"
+    
+    This reverts commit f1d12901f3554ea64f5b3106558d4010a213ce72.
+
+commit 235f88b0ef7a29b7043bcd6ae7741b7b2f1a404b
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Wed Nov 20 16:29:21 2024 +0800
+
+    Create start.txt
+
+commit f1d12901f3554ea64f5b3106558d4010a213ce72
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Wed Nov 20 16:28:10 2024 +0800
+
+    Revert "Merge branch 'develop' of https://github.com/Starmoon30/Random-Shop into develop"
+    
+    This reverts commit 08261bedda3028a8f18f5cefbcfc8c7aad874979, reversing
+    changes made to a0d0398fcc64f1cf2a8013ece9e6c91c416eae57.
+
+commit 08261bedda3028a8f18f5cefbcfc8c7aad874979
+Merge: a0d0398 70b41ba
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Wed Nov 20 16:27:05 2024 +0800
+
+    Merge branch 'develop' of https://github.com/Starmoon30/Random-Shop into develop
+
+commit a0d0398fcc64f1cf2a8013ece9e6c91c416eae57
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Wed Nov 20 16:27:02 2024 +0800
+
+    修改了数据库调用的绝对路径为相对路径
+
+commit 70b41bab0b812197e9144b50babd028cc69f4b4c
+Author: hall <1487613373@qq.com>
+Date:   Wed Nov 20 15:47:17 2024 +0800
+
+    hall
+
+commit 884f868b34daed0fb8eea194fd1fe88cd182d256
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Wed Nov 20 15:31:30 2024 +0800
+
+    后端打包的jar
+
+commit 2fcc739962dc84381e10c27124e5bee1cbe6e1b9
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Wed Nov 20 15:10:26 2024 +0800
+
+    登录页的图片调用改为相对路径
+
+commit ae64ae117752aed2ebade41415b891d40db21acd
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Wed Nov 20 15:06:53 2024 +0800
+
+    Update encodings.xml
+
+commit 3b8ab71c5c8ca23fe0635ab4d0b52cf8be82cd46
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Wed Nov 20 15:06:13 2024 +0800
+
+    Update misc.xml
+
+commit 57ba8f2e9ae3b67c0da66131f026caa1011991e2
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Wed Nov 20 14:57:41 2024 +0800
+
+    Delete random-shop.db
+
+commit 3d8913ff6dea9d9a61295bd8db71c85c6a27e240
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Wed Nov 20 03:00:40 2024 +0800
+
+    Create random-shop.db
+
+commit 83cb0c649f6c013fc0e1d11fe31ffc5619cfae49
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Wed Nov 20 02:50:26 2024 +0800
+
+    接口修正
+
+commit b6a04af3bdacc3a1187e26a313d0d64f76345408
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Tue Nov 19 23:01:48 2024 +0800
+
+    11/19
+    
+    实现了按类别获取其及其子类的商品数据，实现了图片接口中的二进制文件的存入和读取
+
+commit f84c51f25a68f1976fcd50697cb572a575498509
+Author: hall <1487613373@qq.com>
+Date:   Tue Nov 19 22:25:28 2024 +0800
+
+    Hall
+
+commit 908d83fdf3cc9d71547592872f0f9ae0dfa399db
+Author: hall <1487613373@qq.com>
+Date:   Tue Nov 19 18:15:18 2024 +0800
+
+    hall
+
+commit 550bb208d760cd7f30d10a8f8f0f40219adfdbee
+Author: hall <1487613373@qq.com>
+Date:   Mon Nov 18 21:32:23 2024 +0800
+
+    Hall
+
+commit 02e683e997d69dcc970e6c8451d924ed93663ee9
+Author: xiaojia <12834440+small-leave@user.noreply.gitee.com>
+Date:   Mon Nov 18 17:16:26 2024 +0800
+
+    增加了分类相关接口及默认基础数据库
+
+commit f6404c18a1a8df527d01a6878060a8de4f65fa43
+Author: hall <1487613373@qq.com>
+Date:   Sun Nov 17 12:38:15 2024 +0800
+
+    更新 App.vue
+
+commit cf0c25237c103eb95067d9eb94765c2b598ba4c5
+Merge: 8c7c538 896ca10
+Author: hall <1487613373@qq.com>
+Date:   Sun Nov 17 12:36:50 2024 +0800
+
+    Merge branch 'main' of https://github.com/Starmoon30/Random-Shop
+
+commit 8c7c538ed36503376b69d25768442a22630306ba
+Author: hall <1487613373@qq.com>
+Date:   Sun Nov 17 12:28:03 2024 +0800
+
+    更新 index.js
+
+commit 873aed25d0d89ad107cf1318d26d277f6610eca6
+Author: hall <1487613373@qq.com>
+Date:   Fri Nov 15 21:17:41 2024 +0800
+
+    HALL
+
+commit 896ca10041ab3a56f6498457ce508c99bbcfae40
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Nov 7 09:40:37 2024 +0800
+
+    111
+
+commit e227a435065d11746c0180a45554adf37d311ac6
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Wed Nov 6 23:37:19 2024 +0800
+
+    111
+
+commit 9f2af90476ccc0f6ba50e8145741fd46334e4bd0
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Wed Nov 6 23:29:43 2024 +0800
+
+    11.6
+
+commit 454ff2b25faa230b3776fec0a8d0dd6e5f7b3150
+Author: xiaojia114514 <2189206772@qq.com>
+Date:   Wed Nov 6 23:00:47 2024 +0800
+
+    11/6 23：00
+
+commit 1ce269b78187b8830eec9077ca9b4ef831b0c890
+Author: hall <1487613373@qq.com>
+Date:   Wed Nov 6 21:58:05 2024 +0800
+
+    Rshop-vue
+
+commit e1d9b845a700b31a3dd4375e6a1acef43cb4648f
+Author: xiaojia114514 <2189206772@qq.com>
+Date:   Tue Nov 5 21:19:39 2024 +0800
+
+    11/5 21：19
+
+commit c85b1f026cc903718b7832abbcee4b38f782203b
+Author: xiaojia114514 <2189206772@qq.com>
+Date:   Mon Nov 4 03:10:30 2024 +0800
+
+    11/4  3:10
+
+commit fac4cfa2273ed706f198b45e70a61cff51a1c189
+Author: xiaojia114514 <2189206772@qq.com>
+Date:   Sun Nov 3 01:57:23 2024 +0800
+
+    11/3   1：57
+
+commit 7b2e5ae97ce9b468e611a0a170b97bc9b2eef6ac
+Author: xiaojia114514 <2189206772@qq.com>
+Date:   Fri Nov 1 12:07:01 2024 +0800
+
+    11/1 12：00
+
+commit ec2e918a0e45c67f87e362723b12362dea7e281a
+Author: xiaojia114514 <2189206772@qq.com>
+Date:   Thu Oct 31 19:29:30 2024 +0800
+
+    10/31
+
+commit 6ed81d824a6b159c2b7562034caa56d28a559b4d
+Author: xiaojia114514 <2189206772@qq.com>
+Date:   Thu Oct 31 19:15:06 2024 +0800
+
+    10/31
+
+commit 8a3c617c3e457d63ad05585790d6bfd0be9eab6c
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Oct 24 10:07:50 2024 +0800
+
+    路径一致
+
+commit 0461609d4dbf17d50ec858c1aeb2115d5d4531c2
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Oct 24 10:06:23 2024 +0800
+
+    111
+
+commit 0e0534de7b1430922c22c6acc4856c6a8c59dacd
+Author: xiaojia114514 <2189206772@qq.com>
+Date:   Tue Oct 22 15:42:32 2024 +0800
+
+    2024/10/22
+    
+    新的maven架构
+
+commit 7ec1f43356e79bfcb6047f20cb383fdf63d5e02f
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Oct 17 19:19:52 2024 +0800
+
+    111
+
+commit f921fe9bfcfbad0d093c6dfc3dc56ed889db770e
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Oct 17 02:32:42 2024 +0800
+
+    111
+
+commit 6649038c5360322839db182c50b175f06ed6c53e
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Oct 17 00:38:29 2024 +0800
+
+    111
+
+commit f69a25d32ed585e46f626cee7226613a114ec3e9
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Oct 17 00:30:10 2024 +0800
+
+    111
+
+commit 2b519e01641975dfb236b8b793525a83f9230902
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Wed Oct 16 23:53:44 2024 +0800
+
+    2024.10.16
+
+commit f5a8b2ae46c47f9da0895a67e8095f3b7025435d
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Oct 10 08:58:23 2024 +0800
+
+    ppt
+
+commit fec5a72c2c5f414672f5062032e48806c78e92a5
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Oct 10 08:27:38 2024 +0800
+
+    取消多余
+
+commit a9977884477948751fb9dba47d149335f03c0dbe
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Oct 10 08:23:31 2024 +0800
+
+    文档
+
+commit a019a3e5f560e8edea0c24c288143afc29417c97
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Oct 10 08:21:46 2024 +0800
+
+    2024.10.10
+
+commit 5eaa3c77d09d7d402894af8793fdef954e6556de
+Author: Starmoon30 <1973442140@qq.com>
+Date:   Thu Oct 10 08:16:37 2024 +0800
+
+    Initial commit

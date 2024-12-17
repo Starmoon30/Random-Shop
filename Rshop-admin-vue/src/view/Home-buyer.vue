@@ -3,35 +3,45 @@
     <buyer-header></buyer-header>
     <div style="display: flex">
       <ShopLogo></ShopLogo>
-      <buyer-search></buyer-search>
+      <Goodssearch></Goodssearch>
     </div>
     <div class="filters">
       <div class="category-filter">
-        <span
-          v-for="category in categories"
-          :key="category.value"
+        <div
           class="filter-tag"
-          :class="{active: selectedCategory === category.value}"
-          @click="selectCategory(category.value)">
-          {{ category.label }}
-        </span>
+          v-for="category in topCategories"
+          :key="category.cid"
+          :style="selectedCategory.value === category.cid ? selectedCategoryStyle : {}"
+          @click="selectCategory(category.cid)"
+        >
+          {{ category.cname }}
+        </div>
       </div>
-      <div class="sub-category-filter">
-        <span
-          v-for="subCategory in subCategories"
-          :key="subCategory.value"
+    </div>
+    <div class="filters">
+      <div class="category-filter" v-if="selectedSubCategory.length">
+        <div
           class="filter-tag"
-          :class="{active: selectedSubCategory === subCategory.value}"
-          @click="selectSubCategory(subCategory.value)">
-          {{ subCategory.label }}
-        </span>
+          v-for="subcategory in selectedSubCategory"
+          :key="subcategory"
+          @click="selectSubCategory(subcategory)"
+        >
+          {{ subcategory }}
+        </div>
       </div>
     </div>
     <div class="product-list">
-      <div class="product-item" v-for="product in filteredProducts" :key="product.id">
-        <p class="product-name">{{ product.name }}</p>
-        <p class="product-price">{{ product.price }}</p>
-      </div>
+      <el-card v-for="product in products" :key="product.gid" class="product-card">
+        <el-carousel :interval="5000" arrow="always" height="200px">
+          <el-carousel-item v-for="(pic, index) in product.pictures" :key="index">
+            <img :src="pic" class="product-image" />
+          </el-carousel-item>
+        </el-carousel>
+        <div class="product-info">
+          <h3>{{ product.gname }}</h3>
+          <p>￥:{{ product.gvalue }} 库存:{{ product.gstock }}</p>
+        </div>
+      </el-card>
     </div>
   </div>
 </template>
@@ -39,235 +49,212 @@
 <script>
 import ShopLogo from "@/components/Shop-Logo.vue";
 import BuyerHeader from "@/components/block-buyer/buyer-header.vue";
-import BuyerSearch from "@/components/block-buyer/buyer-search.vue";
+import Goodssearch from "@/components/block-search/Goods-Search.vue";
 import axios from "axios";
-import { defineComponent, onMounted, ref } from "vue";
+const token = localStorage.getItem('token');
+import { defineComponent, onMounted, ref, computed } from "vue";
 
 export default defineComponent({
-  components: { BuyerSearch, BuyerHeader, ShopLogo },
+  components: { Goodssearch, BuyerHeader, ShopLogo },
   setup() {
     const categories = ref([]);
     const subCategories = ref([]);
     const selectedCategory = ref('all');
-    const selectedSubCategory = ref('all');
-    const products = ref([]);
+    const selectedSubCategory = ref([]);
+    const products = ref([]); // 用于存储商品数据
     const filteredProducts = ref([]);
+    const searchQuery = ref(''); // 用于存储搜索查询
+    const selectedCategoryStyle = ref({});
+    const selectedSubCategoryStyle = ref({});
+    // 计算属性，只返回前四个类别
+    const topCategories = computed(() => categories.value.slice(0, 4));
 
     const fetchCategories = async () => {
       try {
         const response = await axios.get('http://localhost:8090/cat/list', {
-          params: { CParentID: 0 }
+          headers: {
+            'Authorization': `${token}`,
+          }
         });
-        categories.value = response.data.map(item => ({
-          value: item.CID,
-          label: item.CNAME,
-        }));
-        categories.value.unshift({ value: 'all', label: '全部' });
-        console.log("一级标签：", categories.value);
+        console.log("data:", response.data);
+        categories.value = response.data;
+        // 默认选中第一个标签
+        selectCategory(response.data[0].cid);
       } catch (error) {
-        console.error('There was an error fetching categories:', error);
+        console.error('Error fetching categories:', error);
       }
     };
 
-    const fetchSubCategories = async (parentId) => {
+    const fetchSubCategories = async (categoryId) => {
+      const catMap = { id: [categoryId] };
       try {
-        const response = await axios.post('http://localhost:8090/cat/get_all_child', { id: [parentId] });
-        const childIds = response.data;
-        const subCatArray = [];
-        for (const id of childIds) {
-          const subResponse = await axios.get(`http://localhost:8090/cat/list`, {
-            params: { CParentID: id }
-          });
-          subCatArray.push(...subResponse.data.map(item => ({
-            value: item.CID,
-            label: item.CNAME,
-          })));
-        }
-        subCategories.value = [{ value: 'all', label: '全部' }, ...subCatArray];
+        const response = await axios.post('http://localhost:8090/cat/get_all_child', catMap, {
+          headers: {
+            'Authorization': `${token}`,
+            'Content-Type': 'application/json',
+          }
+        });
+        console.log("erji:",response.data)
+        selectedSubCategory.value = response.data;
       } catch (error) {
-        console.error('There was an error fetching subcategories:', error);
+        console.error('Error fetching subcategories:', error);
+      }
+    };
+// 获取商品图片的函数
+    const fetchProductPictures = async (gid) => {
+      try {
+        const picMap = { gid: gid };
+        const response = await axios.post('http://localhost:8090/pic/get_pic', picMap, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
+        return response.data.map(pic => `data:image/jpeg;base64,${pic}`);
+      } catch (error) {
+        console.error('获取商品图片失败:', error);
+        return [];
       }
     };
 
-    const selectCategory = (category) => {
-      selectedCategory.value = category;
-      if (category !== 'all') {
-        fetchSubCategories(category);
-      } else {
-        subCategories.value = [];
+    const fetchProducts = async (cid) => {
+      try {
+        const data = {
+          cid: [cid],
+          query: searchQuery.value
+        };
+        const response = await axios.post('http://localhost:8090/goods/list_By_Category', data, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
+        const productsWithPictures = await Promise.all(response.data.map(async product => {
+            const pictures = await fetchProductPictures(product.gid);
+            return { ...product, pictures };
+        }));
+        const filteredProducts = productsWithPictures.filter(item => item !== null); // 过滤掉null项
+        products.value = filteredProducts; // 确保这里赋值给 products.value
+
+        console.log("过滤后的商品：", filteredProducts);
+      } catch (error) {
+        console.error('获取商品信息失败:', error);
       }
     };
-
-    const selectSubCategory = (subCategory) => {
-      selectedSubCategory.value = subCategory;
-    };
-
-    const filterProducts = () => {
-      filteredProducts.value = products.value.filter(product => {
-        const categoryMatch = selectedCategory.value === 'all' || product.category === selectedCategory.value;
-        const subCategoryMatch = selectedSubCategory.value === 'all' || product.subCategory === selectedSubCategory.value;
-        return categoryMatch && subCategoryMatch;
-      });
-    };
-
     onMounted(() => {
       fetchCategories();
+      fetchProducts(0);
     });
 
+    const selectCategory = (cid) => {
+      selectedCategory.value = cid;
+      selectedCategoryStyle.value = { backgroundColor: '#666666', color: 'white' };
+      fetchSubCategories(cid);
+    };
+
+    const selectSubCategory = (sid) => {
+      // 这里可以添加根据选中的子分类进行操作的逻辑
+      selectedSubCategoryStyle.value = { backgroundColor: '#666666', color: 'white' };
+      fetchProducts(sid);
+    };
+
+    const selectedSubCategoryActive = (sid) => {
+      // 这里可以添加逻辑来判断子分类是否被选中
+    };
+
     return {
-      categories,
-      subCategories,
-      selectedCategory,
-      selectedSubCategory,
       products,
-      filteredProducts,
+      topCategories,
+      selectedCategory,
       selectCategory,
+      selectedSubCategory,
       selectSubCategory,
-      filterProducts,
+      selectedSubCategoryActive,
+      selectedCategoryStyle,
+      selectedSubCategoryStyle,
     };
   },
 });
 </script>
 
+
 <style>
 .product-page {
-  font-family: Arial, sans-serif;
-}
-
-.header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  height: 60px;
-  background-color: #f5f5f5;
-}
-
-.header-left {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "宋体", SimSun, sans-serif;
-}
-
-.welcome-message {
-  margin: 0;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-}
-
-.user-management {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.user-info-link {
-  text-decoration: none;
-  color: black;
-  margin-right: 10px;
-}
-
-.logout-button {
-  padding: 5px 10px;
-  background-color: #f44336;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.logout-button:hover {
-  background-color: #d32f2f;
-}
-
-.search-bar {
-  height: 50px;
-  display: flex;
-  margin-top: 10px;
-  justify-content: center;
-  width: 100%;
-}
-
-.search-bar input {
-  padding: 10px;
-  flex: 1;
-}
-
-.search-bar button {
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.search-bar button:hover {
-  background-color: #0056b3;
+  flex-direction: column;
 }
 
 .filters {
-  margin-top: 20px;
-  background-color: #eae9e9; /* 更改为淡蓝色 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  background-color: #f5f5f5; /* 设置背景为浅灰色 */
+  padding: 10px; /* 添加内边距 */
+  border: 1px solid #ddd; /* 添加边框 */
+  border-radius: 4px; /* 添加圆角边框 */
 }
 
 .category-filter {
   display: flex;
-  flex-wrap: wrap; /* 允许换行 */
-  gap: 10px; /* 标签之间的间距 */
-  margin-top: 3px;
-  margin-bottom: 10px; /* 让每一行标签之间有间距 */
-  background-color: #cfd0d1;
-}
-
-.sub-category-filter {
-  display: flex;
-  flex-wrap: wrap; /* 允许换行 */
-  gap: 10px; /* 标签之间的间距 */
-  margin-top: 3px;
-  margin-bottom: 10px; /* 让每一行标签之间有间距 */
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .filter-tag {
-  padding: 10px 15px;
+  padding: 5px 10px;
+  border: 1px solid #ccc; /* 设置边框颜色 */
+  border-radius: 4px;
   cursor: pointer;
-  background-color: transparent; /* 默认标签背景颜色 */
-  border-radius: 5px;
+  background-color: #fff; /* 设置标签背景颜色 */
+  color: #333; /* 设置标签文字颜色 */
+  transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
 }
 
+.filter-tag:hover {
+  background-color: #e6e6e6; /* 鼠标悬停时的背景颜色 */
+}
+
+/* 更新被选中时标签的样式 */
 .filter-tag.active {
-  background-color: #ffffff; /* 选中标签背景颜色 */
+  background-color: #666666; /* 被选中时的背景颜色加深为灰色 */
+  color: white; /* 被选中时的文字颜色为白色 */
 }
 
 .product-list {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  margin-top: 20px;
+  justify-content: space-between; /* 添加间距 */
 }
 
-.product-item {
-  border: 1px solid #ccc;
+.product-card {
+  width: calc(25% - 20px); /* 每张卡片占据25%的宽度，减去间距 */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* 添加阴影效果 */
+  border-radius: 8px; /* 圆角边框 */
+  overflow: hidden; /* 隐藏溢出的内容 */
+  display: flex;
+  flex-direction: column;
+}
+
+.el-carousel {
+  height: 300px; /* 增加轮播图的高度 */
+}
+
+.el-carousel__item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.product-image {
+  width: 100%; /* 图片宽度100% */
+  height: 100%; /* 高度100%，填满容器 */
+  object-fit: cover; /* 保持图片的比例 */
+  display: block; /* 防止图片下方出现空隙 */
+}
+
+.product-info {
   padding: 10px;
-  width: calc(20% - 20px);
-  text-align: center;
-}
-
-.product-name {
-  font-weight: bold;
-}
-
-.product-price {
-  color: red;
+  background-color: #fff; /* 信息区域背景色 */
+  border-top: 1px solid #eee; /* 分隔线 */
 }
 </style>

@@ -1,7 +1,8 @@
 <template>
   <el-card class="password-change-card">
     <template v-slot:header>
-      <div>{{ `修改密码 (${account})` }}</div>
+      <div>{{ `修改密码` }}</div>
+      <div class="account-info">当前账号为：{{ account }}</div>
     </template>
     <el-form ref="passwordForm" :model="passwordForm" label-width="150px" @submit.native.prevent="submitPasswordChange">
       <el-form-item label="旧密码" :rules="[{ required: true, message: '请输入旧密码', trigger: 'blur' }]">
@@ -20,21 +21,40 @@
   </el-card>
 </template>
 
+<style scoped>
+.password-change-card {
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+.el-form-item {
+  margin-bottom: 20px;
+}
+</style>
+
 <script>
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
 import { defineComponent } from 'vue';
-import {jwtDecode} from "jwt-decode";
-const token=localStorage.getItem('token');
-const claims = jwtDecode(token);
-const account = claims.account;
-console.log("account:",account);
+import { jwtDecode } from "jwt-decode";
+
 export default defineComponent({
+  created() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const claims = jwtDecode(token);
+      this.account = claims.account;
+      this.passwordForm.account = claims.account;
+      console.log("pwd页面：", this.account);
+    } else {
+      this.$router.push({ path: '/'});
+    }
+  },
   data() {
     return {
-      account: claims.account,
+      account: '',
       passwordForm: {
-        account: account,
+        account: '',
         old_pwd: '',
         new_pwd: '',
         confirmPassword: ''
@@ -79,14 +99,3 @@ export default defineComponent({
   }
 });
 </script>
-
-<style scoped>
-.password-change-card {
-  max-width: 400px;
-  margin: 20px auto;
-}
-
-.el-form-item {
-  margin-bottom: 20px;
-}
-</style>
