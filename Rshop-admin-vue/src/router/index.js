@@ -6,9 +6,11 @@ import Ishell from "@/components/block-admin/shelf-ing.vue";
 import UserIn from "@/view/Home-buyerInfor.vue";
 import UpdatePwd from "@/components/block-admin/admin-pwd.vue";
 import UpdateGood from "@/components/block-admin/admin-update.vue";
-import ProductDet from "@/components/block-admin/admin-detail.vue";
+import AProductDet from "@/components/block-admin/admin-detail.vue";
+import BProductDet from "@/components/block-buyer/buyer-detail.vue";
 import NewProduct from "@/components/block-admin/admin-NewPro.vue";
-
+import NewOrder from "@/components/block-buyer/buyer-Neworder.vue"
+import SearchRes from "@/components/block-buyer/buyer-searchGoods.vue"
 const routes = [
   {
     path: '/',
@@ -35,13 +37,31 @@ const routes = [
   },
   {
     path: '/aHome/productDet/:pid',
-    name: 'ProductDet',
-    component: ProductDet
+    name: 'AProductDet',
+    component: AProductDet
   },
   {
     path: '/bHome',
     name: 'BHome',
     component: BHome,
+    props: true // 启用 props
+  },
+  {
+    path: '/bHome/productDet/:pid',
+    name: 'BProductDet',
+    component: BProductDet,
+    props: true // 启用 props
+  },
+  {
+    path: '/bHome/newOrder/:id',
+    name: 'NewOrder',
+    component: NewOrder,
+    props: true // 启用 props
+  },
+  {
+    path: '/bHome/searchRes/:query',
+    name: 'SearchRes',
+    component: SearchRes,
     props: true // 启用 props
   },
   {

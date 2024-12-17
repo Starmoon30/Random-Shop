@@ -1,6 +1,9 @@
 <script setup>
+import { useRouter } from 'vue-router';
+const router = useRouter();
 const logout = () => {
-  history.back();
+  localStorage.removeItem('token');
+  router.push('/');
 };
 </script>
 
