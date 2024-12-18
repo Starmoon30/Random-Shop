@@ -14,7 +14,7 @@
       <el-container style="flex: 1;background-color: #e8eaeb">
         <el-main>
           <div>
-            <h1>欢迎！Account！</h1>
+            <router-view></router-view>
           </div>
         </el-main>
       </el-container>
@@ -25,7 +25,7 @@
 <script>
 import ShopLogo from "@/components/Shop-Logo.vue";
 import BuyerMenu from "@/components/block-buyer/buyer-menu.vue";
-import BuyerSearch from "@/components/block-search/buyer-search.vue";
+import BuyerSearch from "@/components/block-buyer/buyer-search.vue";
 import BuyerHeader from "@/components/block-buyer/buyer-header.vue";
 
 export default {

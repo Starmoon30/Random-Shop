@@ -89,7 +89,7 @@ export default defineComponent({
     const viewDetails = (product) => {
       const id = product.gid;
       const route = {
-        name: 'AProductDet', // 详情页面的路由名称
+        name: 'ProductDet', // 详情页面的路由名称
         params: { pid: id }
       };
       router.push(route);

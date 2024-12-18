@@ -24,10 +24,12 @@
 
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import axios from 'axios';
 const token = localStorage.getItem('token');
 export default defineComponent({
   setup() {
+    const router = useRouter();
     const products = ref([]); // 用于存储商品数据
     const searchQuery = ref(''); // 用于存储搜索查询
 

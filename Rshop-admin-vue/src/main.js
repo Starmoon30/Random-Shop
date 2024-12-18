@@ -10,14 +10,10 @@ import axios from 'axios'
 const app = createApp(App)
 
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import VueQuillEditor from 'vue-quill-editor';
-import 'quill/dist/quill.core.css';
-import 'quill/dist/quill.snow.css';
-import 'quill/dist/quill.bubble.css';
+
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
-app.use(VueQuillEditor);
 app.use(router)
 app.config.globalProperties.$axios = axios;
 app.use(ElementPlus)

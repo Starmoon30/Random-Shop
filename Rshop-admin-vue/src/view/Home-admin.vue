@@ -43,7 +43,6 @@ import ShellNever from "@/components/block-admin/shelf-never.vue";
 import AdminProduct from "@/components/block-admin/admin-product.vue";
 import AdminDetail from "@/components/block-admin/admin-detail.vue";
 import AdminUpdate from "@/components/block-admin/admin-update.vue";
-import AdminNewGood from "@/components/block-admin/admin-NewPro.vue";
 import AdminHistory from "@/components/block-admin/admin-stock.vue";
 import AdminCategory from "@/components/block-admin/good-category.vue";
 import { useRoute } from "vue-router";
@@ -102,9 +101,6 @@ const handleMenuClick = (index) => {
       break;
     case '11':
       currentComponent.value = AdminPwd;
-      break;
-    case '12':
-      currentComponent.value = AdminNewGood;
       break;
   }
 };

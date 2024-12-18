@@ -6,12 +6,16 @@ import Ishell from "@/components/block-admin/shelf-ing.vue";
 import UserIn from "@/view/Home-buyerInfor.vue";
 import UpdatePwd from "@/components/block-admin/admin-pwd.vue";
 import UpdateGood from "@/components/block-admin/admin-update.vue";
-import AProductDet from "@/components/block-admin/admin-detail.vue";
-import BProductDet from "@/components/block-buyer/buyer-detail.vue";
+import ProductDet from "@/components/block-admin/admin-detail.vue";
 import NewProduct from "@/components/block-admin/admin-NewPro.vue";
-import NewOrder from "@/components/block-buyer/buyer-Neworder.vue";
-import SearchRes from "@/components/block-buyer/buyer-searchGoods.vue";
-import NewLabel from "@/components/block-admin/admin-newCat.vue"
+import UserInfo from '../components/block-buyer/buyer-imformation/UserInfo.vue';
+import ShippingManagement from '../components/block-buyer/buyer-imformation/ShippingManagement.vue';
+import AccountManagement from '../components/block-buyer/buyer-imformation/AccountManagement.vue';
+import WelcomePage from "@/components/block-buyer/buyer-imformation/welcome.vue";
+import UnacceptedOrders from '../components/block-buyer/buyer-imformation/orders/unaccepted.vue';
+import AcceptedOrders from '../components/block-buyer/buyer-imformation/orders/accepted.vue';
+import CompletedOrders from '../components/block-buyer/buyer-imformation/orders/completed.vue';
+
 
 const routes = [
   {
@@ -26,7 +30,7 @@ const routes = [
     props: true // 启用 props
   },
   {
-    path: '/aHome/updateGood/:pid',
+    path: '/aHome/updateGood',
     name: 'UpdateGood',
     component: UpdateGood,
     props: true // 启用 props
@@ -38,38 +42,14 @@ const routes = [
     props: true // 启用 props
   },
   {
-    path: '/aHome/newLabel',
-    name: 'NewLabel',
-    component: NewLabel,
-    props: true // 启用 props
-  },
-  {
     path: '/aHome/productDet/:pid',
-    name: 'AProductDet',
-    component: AProductDet
+    name: 'ProductDet',
+    component: ProductDet
   },
   {
     path: '/bHome',
     name: 'BHome',
     component: BHome,
-    props: true // 启用 props
-  },
-  {
-    path: '/bHome/productDet/:pid',
-    name: 'BProductDet',
-    component: BProductDet,
-    props: true // 启用 props
-  },
-  {
-    path: '/bHome/newOrder/:id',
-    name: 'NewOrder',
-    component: NewOrder,
-    props: true // 启用 props
-  },
-  {
-    path: '/bHome/searchRes/:query',
-    name: 'SearchRes',
-    component: SearchRes,
     props: true // 启用 props
   },
   {
@@ -87,6 +67,48 @@ const routes = [
     name: 'UpdatePwd',
     component: UpdatePwd
   },
+  {
+    path: '/user-home',
+    component:UserIn,
+    children: [
+      {
+        path: '', // 默认子路由，渲染欢迎界面
+        name: 'Welcome',
+        component: WelcomePage
+      },
+      {
+        path: '/userinfo', // 嵌套路由
+        name: 'UserInfo',
+        component: UserInfo
+      },
+      {
+        path: '/shipping-management',
+        name: 'ShippingManagement',
+        component: ShippingManagement,
+      },
+      {
+        path: '/account-management',
+        name: 'AccountManagement',
+        component: AccountManagement,
+      },
+      {
+        path: '/orders/unaccepted',
+        name: 'UnacceptedOrders',
+        component: UnacceptedOrders,
+      },
+      {
+        path: '/orders/accepted',
+        name: 'AcceptedOrders',
+        component: AcceptedOrders,
+      },
+      {
+        path: '/orders/completed',
+        name: 'CompletedOrders',
+        component: CompletedOrders,
+      },
+    ]
+  },
+
 ];
 const router = createRouter({
   history: createWebHistory(),

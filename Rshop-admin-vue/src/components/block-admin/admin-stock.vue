@@ -4,17 +4,8 @@
     <el-scrollbar class="scrollbar-container">
       <el-table :data="tableData" class="custom-table-row" style="width: 100%">
         <el-table-column prop="shid" label="SHID"/>
-        <el-table-column prop="shtime" label="SHTime">
-          <template #default="{ row }">
-            <span>{{ formatDateTime(row.shtime) }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="shreason" label="SHReason">
-          <template #default="{ row }">
-            <span v-if="row.shreason === 0">管理员修改。</span>
-            <span v-else-if="row.shreason === 1">完成订单。</span>
-          </template>
-        </el-table-column>
+        <el-table-column prop="shtime" label="SHTime"/>
+        <el-table-column prop="shreason" label="SHReason"/>
         <el-table-column prop="gid" label="GID"/>
         <el-table-column prop="shstock_O" label="原库存"/>
         <el-table-column prop="shstock_N" label="新库存"/>
@@ -48,21 +39,6 @@ const pageSize = ref(10);
 const pageNum = ref(1);
 const total = ref(0);
 const token = localStorage.getItem('token');
-
-// 时间格式化函数
-const formatDateTime = (dateTime) => {
-  const date = new Date(dateTime);
-  return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false
-  });
-};
-
 // 获取所有用户数据的函数
 const fetchAllUsers = async () => {
   try {

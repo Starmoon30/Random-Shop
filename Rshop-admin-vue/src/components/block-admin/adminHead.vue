@@ -1,8 +1,6 @@
 <script setup>
-import router from "@/router/index.js";
 const goBack = () => {
-  localStorage.removeItem('token');
-  router.push('/');
+  history.back();
 };
 </script>
 
