@@ -24,6 +24,8 @@ public interface OrderMapper extends BaseMapper<Order> {
     int update_ostate(int id, int state);
 
     List<Order> get_by_oid(int id);
+
+    int creat(Order order);
 }
 
 

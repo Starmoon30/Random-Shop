@@ -25,7 +25,7 @@
 <script>
 import ShopLogo from "@/components/Shop-Logo.vue";
 import BuyerMenu from "@/components/block-buyer/buyer-menu.vue";
-import BuyerSearch from "@/components/block-buyer/buyer-search.vue";
+import BuyerSearch from "@/components/block-search/buyer-search.vue";
 import BuyerHeader from "@/components/block-buyer/buyer-header.vue";
 
 export default {

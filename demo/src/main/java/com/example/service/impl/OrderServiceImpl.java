@@ -54,6 +54,12 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order>
         int affectedRows = orderMapper.update_ostate(id,state);
         return affectedRows > 0;
     }
+
+    @Override
+    public boolean creat(Order order) {
+        int affectedRows = orderMapper.creat(order);
+        return affectedRows > 0;
+    }
 }
 
 

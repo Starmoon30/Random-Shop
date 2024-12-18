@@ -22,4 +22,6 @@ public interface OrderService extends IService<Order> {
     boolean update_oinfo(int id, String phone, String address, String remark);
 
     boolean update_ostate(int id, int state);
+
+    boolean creat(Order order);
 }

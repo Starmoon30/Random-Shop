@@ -1,11 +1,10 @@
 <template>
-  <div style="height: 100%; display: flex;">
-    <ShopLogo style="background-color: #ffffff"></ShopLogo>
-    <el-header style="width: 82%; text-align: right; font-size: 12px; display: flex; align-items: center; height: 80px; background-color: var(--el-color-primary-light-9);">
-      <admin-head></admin-head>
-    </el-header>
-  </div>
-  <el-main class="product-detail-container">
+  <div style="height: 100%; display: flex; flex-direction: column;">
+    <buyer-header></buyer-header>
+    <div style="display: flex">
+      <ShopLogo></ShopLogo>
+      <Goodssearch></Goodssearch>
+    </div>
     <el-main class="product-detail-container">
       <el-card v-if="product" class="product-card">
         <div class="product-layout">
@@ -20,7 +19,7 @@
               <h3>{{ product.gname }}</h3>
               <p>价格: ￥{{ product.gvalue }}</p>
               <p>库存: {{ product.gstock }}</p>
-              <el-button type="primary" @click="editProduct(product.gid)">编辑商品</el-button>
+              <el-button type="primary" @click="buyProduct(product)">购买</el-button>
             </div>
           </div>
         </div>
@@ -28,12 +27,11 @@
           <img v-for="(pic, index) in product.pictures" :key="index" :src="pic" class="preview-image" @click="selectPicture(index)" />
         </div>
         <div class="product-description">
-          <!-- 使用 v-html 指令来渲染 HTML 字符串 -->
-          <div v-html="product.gdesc"></div>
+          <p>{{ product.gdesc }}</p>
         </div>
       </el-card>
     </el-main>
-  </el-main>
+  </div>
 </template>
 
 <script>
@@ -41,10 +39,11 @@ import { defineComponent, ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 import ShopLogo from "@/components/Shop-Logo.vue";
-import AdminHead from "@/components/block-admin/adminHead.vue";
+import BuyerHeader from "@/components/block-buyer/buyer-header.vue";
+import Goodssearch from "@/components/block-search/buyer-search.vue";
 
 export default defineComponent({
-  components: { AdminHead, ShopLogo },
+  components: {Goodssearch, BuyerHeader, ShopLogo },
   setup() {
     const product = ref(null);
     const currentPicture = ref('');
@@ -89,12 +88,17 @@ export default defineComponent({
       router.go(-1);
     };
 
-    const editProduct = (gid) => {
-      console.log("gid:",gid)
+    const buyProduct = (product) => {
+      const gid = product.gid;
       if (gid) {
-        router.push({ name: 'UpdateGood', params: { pid: gid } });
+        console.log("id:",gid)
+        const route = {
+          name: 'NewOrder',
+          params: { id: gid }
+        };
+        router.push(route);
       } else {
-        console.error('商品ID未找到');
+        console.error('商品信息未找到');
       }
     };
 
@@ -114,7 +118,7 @@ export default defineComponent({
       product,
       currentPicture,
       goBack,
-      editProduct,
+      buyProduct,
       selectPicture,
     };
   }
@@ -124,6 +128,8 @@ export default defineComponent({
 <style scoped>
 body {
   font-family: 'Helvetica', 'Arial', sans-serif;
+  margin: 0; /* 移除默认的边距 */
+  padding: 0; /* 移除默认的内边距 */
 }
 
 .product-image-container {
@@ -174,7 +180,7 @@ body {
 .product-info h3 {
   font-size: 24px;
   color: #333;
-  margin: 0; /* Remove margin for better alignment */
+  margin: 0; /* 移除默认的外边距 */
 }
 
 .product-info p {
@@ -194,16 +200,13 @@ body {
   line-height: 1.6;
 }
 
-.back-button-container {
-  margin-left: auto; /* Align back button to the right */
-}
-
 .preview-container {
   display: flex;
   overflow-x: auto; /* 允许横向滚动 */
   gap: 10px; /* 预览图之间的间隙 */
   margin-top: 10px; /* 大图与预览图之间的间隙 */
   padding: 0 10px; /* 预览图滚动时的内边距 */
+  width: 100%; /* 铺满整行 */
 }
 
 .preview-image {
@@ -248,5 +251,20 @@ body {
 
 .product-info .info-content p {
   text-align: center; /* 文本居中 */
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .product-layout {
+    flex-direction: column; /* 在小屏幕上堆叠布局 */
+  }
+
+  .product-image-container {
+    height: 300px; /* 在小屏幕上减小高度 */
+  }
+
+  .preview-container {
+    justify-content: center; /* 在小屏幕上居中显示 */
+  }
 }
 </style>

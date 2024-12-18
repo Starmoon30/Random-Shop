@@ -13,6 +13,9 @@
             <result property="oremark" column="ORemark" jdbcType="VARCHAR"/>
             <result property="ostate" column="OState" jdbcType="INTEGER"/>
     </resultMap>
+    <insert id="creat">
+        insert into "Order" (gid,uaccount,ophone, oaddress, oremark, ostate) values (#{gid},#{uaccount},#{ophone},#{oaddress},#{oremark},#{ostate})
+    </insert>
     <update id="update_oinfo">
         update "Order" set OPhone = #{phone},OAddress = #{address},ORemark = #{remark} where OID = #{id}
     </update>

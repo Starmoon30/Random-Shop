@@ -3,35 +3,49 @@
     <buyer-header></buyer-header>
     <div style="display: flex">
       <ShopLogo></ShopLogo>
-      <buyer-search></buyer-search>
+      <Goodssearch></Goodssearch>
     </div>
     <div class="filters">
       <div class="category-filter">
-        <span
-          v-for="category in categories"
-          :key="category.value"
+        <div
           class="filter-tag"
-          :class="{active: selectedCategory === category.value}"
-          @click="selectCategory(category.value)">
-          {{ category.label }}
-        </span>
+          v-for="category in topCategories"
+          :key="category.cid"
+          @click="selectCategory(category.cid)"
+          tabindex="1"
+        >
+        {{ category.cname }}
       </div>
-      <div class="sub-category-filter">
-        <span
-          v-for="subCategory in subCategories"
-          :key="subCategory.value"
-          class="filter-tag"
-          :class="{active: selectedSubCategory === subCategory.value}"
-          @click="selectSubCategory(subCategory.value)">
-          {{ subCategory.label }}
-        </span>
+    </div>
+    </div>
+    <div class="subfilters">
+      <div class="category-filter" v-if="selectedSubCategory.length">
+        <div
+          class="filter-subtag"
+          v-for="(subcategory,index) in selectedSubCategory"
+          :key="subcategory.cid"
+          @click="selectSubCategory(subcategory.cid)"
+          tabindex="2"
+        >
+          {{ index === 0 ? '全部' : subcategory.cname }}
+        </div>
       </div>
     </div>
     <div class="product-list">
-      <div class="product-item" v-for="product in filteredProducts" :key="product.id">
-        <p class="product-name">{{ product.name }}</p>
-        <p class="product-price">{{ product.price }}</p>
-      </div>
+      <el-card v-for="product in products"
+               :key="product.gid"
+               class="product-card"
+               @click="goToProductDetail(product.gid)">
+        <el-carousel :interval="5000" arrow="always" height="200px">
+          <el-carousel-item v-for="(pic, index) in product.pictures" :key="index">
+            <img :src="pic" class="product-image" />
+          </el-carousel-item>
+        </el-carousel>
+        <div class="product-info">
+          <h3>{{ product.gname }}</h3>
+          <p>￥:{{ product.gvalue }} 库存:{{ product.gstock }}</p>
+        </div>
+      </el-card>
     </div>
   </div>
 </template>
@@ -39,91 +53,199 @@
 <script>
 import ShopLogo from "@/components/Shop-Logo.vue";
 import BuyerHeader from "@/components/block-buyer/buyer-header.vue";
-import BuyerSearch from "@/components/block-buyer/buyer-search.vue";
+import Goodssearch from "@/components/block-search/buyer-search.vue";
 import axios from "axios";
-import { defineComponent, onMounted, ref } from "vue";
+
+const token = localStorage.getItem('token');
+console.log("token", token);
+
+import { defineComponent, onMounted, ref, computed } from "vue";
+import {useRouter} from "vue-router";
 
 export default defineComponent({
-  components: { BuyerSearch, BuyerHeader, ShopLogo },
+  components: { Goodssearch, BuyerHeader, ShopLogo },
   setup() {
     const categories = ref([]);
     const subCategories = ref([]);
     const selectedCategory = ref('all');
-    const selectedSubCategory = ref('all');
-    const products = ref([]);
+    const selectedSubCategory = ref([]);
+    const products = ref([]); // 用于存储商品数据
     const filteredProducts = ref([]);
+    const searchQuery = ref(''); // 用于存储搜索查询
+    const selectedCategoryStyle = ref({});
+    const selectedSubCategoryStyle = ref({});
 
+    const topCategories = computed(() => categories.value);
+    const router = useRouter(); // 创建 router 实例
+
+    const goToProductDetail = (gid) => {
+      const route = {
+        name: 'BProductDet', // 详情页面的路由名称
+        params: { pid: gid }
+      };
+      router.push(route);
+    };
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:8090/cat/list', {
-          params: { CParentID: 0 }
-        });
-        categories.value = response.data.map(item => ({
-          value: item.CID,
-          label: item.CNAME,
-        }));
-        categories.value.unshift({ value: 'all', label: '全部' });
-        console.log("一级标签：", categories.value);
-      } catch (error) {
-        console.error('There was an error fetching categories:', error);
-      }
-    };
-
-    const fetchSubCategories = async (parentId) => {
-      try {
-        const response = await axios.post('http://localhost:8090/cat/get_all_child', { id: [parentId] });
-        const childIds = response.data;
-        const subCatArray = [];
-        for (const id of childIds) {
-          const subResponse = await axios.get(`http://localhost:8090/cat/list`, {
-            params: { CParentID: id }
-          });
-          subCatArray.push(...subResponse.data.map(item => ({
-            value: item.CID,
-            label: item.CNAME,
-          })));
+        const data = {
+          id: [-1,0]
         }
-        subCategories.value = [{ value: 'all', label: '全部' }, ...subCatArray];
+        const response = await axios.post(`http://localhost:8090/cat/get_cid_by_parent`,data, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
+        console.log("返回一级:", response.data);
+        categories.value = response.data.map(async (category) => {
+          try {
+            // 对于每个category，发起一个新的请求来获取详细信息
+            const infoResponse = await axios.get(`http://localhost:8090/cat/get_info_by_cid/${category}`, {
+              headers: {
+                'Authorization': `${token}`,
+              }
+            });
+            // 将获取到的信息更新到category对象中
+            return { ...category, ...infoResponse.data };
+          } catch (error) {
+            console.error(`Error fetching info for category ${category.cid}:`, error);
+            // 可以选择返回原始category或者根据需要处理错误
+            return category;
+          }
+        });
+
+        // 等待所有请求完成
+        const detailedCategories = await Promise.all(categories.value);
+
+        // 更新categories.value为包含详细信息的数组
+        categories.value = detailedCategories;
+
+        // 默认选中第一个标签
+        selectCategory(detailedCategories[0].cid);
+
       } catch (error) {
-        console.error('There was an error fetching subcategories:', error);
+        console.error('Error fetching categories:', error);
       }
     };
 
-    const selectCategory = (category) => {
-      selectedCategory.value = category;
-      if (category !== 'all') {
-        fetchSubCategories(category);
-      } else {
-        subCategories.value = [];
+    const fetchCategoryInfoById = async (subCat) => {
+      try {
+        console.log("sub:",subCat)
+        const response = await axios.get(`http://localhost:8090/cat/get_info_by_cid/${subCat}`, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
+        console.log("Category Info:", response.data);
+        // 返回获取到的类别信息
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching category info:', error);
+        return null;
       }
     };
 
-    const selectSubCategory = (subCategory) => {
-      selectedSubCategory.value = subCategory;
+    const fetchSubCategories = async (categoryId) => {
+      try {
+        const response = await axios.post('http://localhost:8090/cat/get_all_child', { id: [categoryId] }, {
+          headers: {
+            'Authorization': `${token}`,
+            'Content-Type': 'application/json',
+          }
+        });
+        console.log("erji:", response.data);
+        // 清空selectedSubCategory
+        selectedSubCategory.value = [];
+        // 遍历子类别数组，为每个子类别获取详细信息
+        const subCategoriesDetails = await Promise.all(response.data.map(async (subCat) => {
+          // 调用fetchCategoryInfoById获取详细信息
+          return await fetchCategoryInfoById(subCat);
+        }));
+        // 更新selectedSubCategory
+        selectedSubCategory.value = subCategoriesDetails.filter(cat => cat !== null);
+        // 默认选中第一个二级分类
+        if (selectedSubCategory.value.length > 0) {
+          selectSubCategory(selectedSubCategory.value[0].cid);
+        }
+      } catch (error) {
+        console.error('Error fetching subcategories:', error);
+      }
     };
 
-    const filterProducts = () => {
-      filteredProducts.value = products.value.filter(product => {
-        const categoryMatch = selectedCategory.value === 'all' || product.category === selectedCategory.value;
-        const subCategoryMatch = selectedSubCategory.value === 'all' || product.subCategory === selectedSubCategory.value;
-        return categoryMatch && subCategoryMatch;
-      });
+    // 获取商品图片的函数
+    const fetchProductPictures = async (gid) => {
+      try {
+        const picMap = { gid: gid };
+        const response = await axios.post('http://localhost:8090/pic/get_pic', picMap, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
+        return response.data.map(pic => `data:image/jpeg;base64,${pic}`);
+      } catch (error) {
+        console.error('获取商品图片失败:', error);
+        return [];
+      }
+    };
+
+    const fetchProducts = async (cid) => {
+      try {
+        const data = {
+          cid: [cid],
+          query: searchQuery.value
+        };
+        const response = await axios.post('http://localhost:8090/goods/list_By_Category', data, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
+        const productsWithPictures = await Promise.all(response.data.map(async product => {
+          if (product.gshelf === 1) {
+            const pictures = await fetchProductPictures(product.gid);
+            return { ...product, pictures };
+          }
+          return null;
+        }));
+        const filteredProducts = productsWithPictures.filter(item => item !== null); // 过滤掉null项
+        products.value = filteredProducts; // 确保这里赋值给 products.value
+
+        console.log("过滤后的商品：", filteredProducts);
+      } catch (error) {
+        console.error('获取商品信息失败:', error);
+      }
     };
 
     onMounted(() => {
       fetchCategories();
+      fetchProducts(0);
     });
 
+    const selectCategory = (cid) => {
+      selectedCategory.value = cid;
+      selectedCategoryStyle.value = { backgroundColor: '#666666', color: 'white' };
+      fetchSubCategories(cid);
+    };
+
+    const selectSubCategory = (sid) => {
+      // 这里可以添加根据选中的子分类进行操作的逻辑
+      selectedSubCategoryStyle.value = { backgroundColor: '#666666', color: 'white' };
+      fetchProducts(sid);
+    };
+
+    const selectedSubCategoryActive = (sid) => {
+      // 这里可以添加逻辑来判断子分类是否被选中
+    };
+
     return {
-      categories,
-      subCategories,
-      selectedCategory,
-      selectedSubCategory,
       products,
-      filteredProducts,
+      topCategories,
+      selectedCategory,
       selectCategory,
+      selectedSubCategory,
       selectSubCategory,
-      filterProducts,
+      selectedSubCategoryActive,
+      selectedCategoryStyle,
+      selectedSubCategoryStyle,
+      goToProductDetail
     };
   },
 });
@@ -131,143 +253,102 @@ export default defineComponent({
 
 <style>
 .product-page {
-  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
 }
 
-.header {
+.filters,.subfilters {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
-  height: 60px;
-  background-color: #f5f5f5;
-}
-
-.header-left {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "宋体", SimSun, sans-serif;
-}
-
-.welcome-message {
-  margin: 0;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-}
-
-.user-management {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.user-info-link {
-  text-decoration: none;
-  color: black;
-  margin-right: 10px;
-}
-
-.logout-button {
-  padding: 5px 10px;
-  background-color: #f44336;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.logout-button:hover {
-  background-color: #d32f2f;
-}
-
-.search-bar {
-  height: 50px;
-  display: flex;
   margin-top: 10px;
-  justify-content: center;
-  width: 100%;
-}
-
-.search-bar input {
-  padding: 10px;
-  flex: 1;
-}
-
-.search-bar button {
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.search-bar button:hover {
-  background-color: #0056b3;
-}
-
-.filters {
-  margin-top: 20px;
-  background-color: #eae9e9; /* 更改为淡蓝色 */
+  background-color: #f5f5f5; /* 设置背景为浅灰色 */
+  padding: 10px; /* 添加内边距 */
+  border: 1px solid #ddd; /* 添加边框 */
+  border-radius: 4px; /* 添加圆角边框 */
 }
 
 .category-filter {
   display: flex;
-  flex-wrap: wrap; /* 允许换行 */
-  gap: 10px; /* 标签之间的间距 */
-  margin-top: 3px;
-  margin-bottom: 10px; /* 让每一行标签之间有间距 */
-  background-color: #cfd0d1;
-}
-
-.sub-category-filter {
-  display: flex;
-  flex-wrap: wrap; /* 允许换行 */
-  gap: 10px; /* 标签之间的间距 */
-  margin-top: 3px;
-  margin-bottom: 10px; /* 让每一行标签之间有间距 */
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .filter-tag {
-  padding: 10px 15px;
+  padding: 5px 10px;
+  border: 1px solid #ccc; /* 设置边框颜色 */
+  border-radius: 4px;
   cursor: pointer;
-  background-color: transparent; /* 默认标签背景颜色 */
-  border-radius: 5px;
+  background-color: #fff; /* 设置标签背景颜色 */
+  color: #333; /* 设置标签文字颜色 */
+  transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
 }
 
-.filter-tag.active {
-  background-color: #ffffff; /* 选中标签背景颜色 */
+.filter-tag:hover {
+  background-color: #e6e6e6; /* 鼠标悬停时的背景颜色 */
 }
 
+/* 更新被选中时标签的样式 */
+.filter-tag:focus {
+  background-color: #666666; /* 被选中时的背景颜色 */
+  color: white; /* 被选中时的文字颜色 */
+}
+.filter-subtag {
+  padding: 5px 10px;
+  border: 1px solid #ccc; /* 设置边框颜色 */
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #fff; /* 设置标签背景颜色 */
+  color: #333; /* 设置标签文字颜色 */
+  transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
+}
+
+.filter-subtag:hover {
+  background-color: #e6e6e6; /* 鼠标悬停时的背景颜色 */
+}
+
+/* 更新被选中时标签的样式 */
+.filter-subtag:focus {
+  background-color: #666666; /* 被选中时的背景颜色 */
+  color: white; /* 被选中时的文字颜色 */
+}
 .product-list {
+  margin: 40px;
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  margin-top: 20px;
+  gap: 40px; /* 卡片之间的间隙 */
+  justify-content: center; /* 居中对齐 */
 }
 
-.product-item {
-  border: 1px solid #ccc;
+.product-card {
+  width: calc(25% - 20px); /* 每张卡片占据25%的宽度，减去间距 */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* 添加阴影效果 */
+  border-radius: 8px; /* 圆角边框 */
+  overflow: hidden; /* 隐藏溢出的内容 */
+  display: flex;
+  flex-direction: column;
+}
+
+.el-carousel {
+  height: 300px; /* 增加轮播图的高度 */
+}
+
+.el-carousel__item {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.product-image {
+  width: 100%; /* 图片宽度100% */
+  height: 100%; /* 高度100%，填满容器 */
+  object-fit: cover; /* 保持图片的比例 */
+  display: block; /* 防止图片下方出现空隙 */
+}
+
+.product-info {
   padding: 10px;
-  width: calc(20% - 20px);
-  text-align: center;
-}
-
-.product-name {
-  font-weight: bold;
-}
-
-.product-price {
-  color: red;
+  background-color: #fff; /* 信息区域背景色 */
+  border-top: 1px solid #eee; /* 分隔线 */
 }
 </style>

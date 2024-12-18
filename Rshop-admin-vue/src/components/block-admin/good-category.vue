@@ -81,13 +81,9 @@ const handleCurrentChange = (val) => {
 // 组件挂载时获取商品信息
 onMounted(fetchProducts);
 
-const viewDetails = (product) => {
-  router.push({ name: 'AGoodData', params: { productId: product.gid } });
-};
-
 // 新增标签的方法
 const addNewLabel = () => {
-  router.push({ name: 'AddNewLabel', params: { } }); // 假设 'AddNewLabel' 是新增标签页面的路由名称
+  router.push({ name: 'NewLabel'}); // 假设 'AddNewLabel' 是新增标签页面的路由名称
 };
 </script>
 
