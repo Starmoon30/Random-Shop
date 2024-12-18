@@ -7,7 +7,7 @@
 
     <el-sub-menu index="2">
       <template #title>
-        <el-icon><DocumentCopy /></el-icon>订单管理
+        <el-icon><DocumentCopy /></el-icon>我的订单
       </template>
       <el-menu-item index="2-1" @click="navigateTo('/orders/unaccepted')">未接受订单</el-menu-item>
       <el-menu-item index="2-2" @click="navigateTo('/orders/accepted')">已接受订单</el-menu-item>

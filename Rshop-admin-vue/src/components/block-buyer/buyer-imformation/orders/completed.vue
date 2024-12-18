@@ -1,21 +1,23 @@
 <template>
-  <div>
-    <el-scrollbar>
-      <el-table :data="completedTableData" class="custom-table-row" style="width: 100%">
+  <div class="content-wrapper">
+    <!-- 滚动条组件包裹内容区域 -->
+    <el-scrollbar class="scrollbar-container">
+      <el-table :data="tableData" class="custom-table-row" style="width: 100%">
         <el-table-column prop="oid" label="OID"/>
         <el-table-column prop="gid" label="GID"/>
-        <el-table-column prop="uaccount" label="UAccount"/>
         <el-table-column prop="ophone" label="OPhone"/>
         <el-table-column prop="oaddress" label="OAddress"/>
         <el-table-column prop="oremark" label="ORemark"/>
-        <el-table-column prop="ostate" label="OState"/>
       </el-table>
     </el-scrollbar>
+  </div>
+  <!-- 分页条固定在底部 -->
+  <div class="pagination-container">
     <el-pagination
-      v-model:current-page="completedPageNum"
+      v-model:current-page="pageNum"
       v-model:page-size="pageSize"
       :page-sizes="[5, 10, 20]"
-      :total="completedTotal"
+      :total="total"
       layout="total, sizes, prev, pager, next, jumper"
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
@@ -24,52 +26,97 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import {ref, onMounted} from 'vue';
 import axios from 'axios';
+import {jwtDecode} from "jwt-decode";
 
-// 定义响应式变量
+// 定义全部数据的响应式变量
 const allData = ref([]);
-const completedTableData = ref([]);
-const completedTotal = ref(0);
-const completedPageNum = ref(1); // 默认第一页
-const pageSize = ref(10); // 默认每页10条
+// 定义表格数据的响应式变量
+const tableData = ref([]);
+// 定义分页参数
+const pageSize = ref(10);
+const pageNum = ref(1);
+const total = ref(0);
 
-// 计算属性：基于当前分页参数获取数据切片
-const paginatedData = computed(() => {
-  const start = (completedPageNum.value - 1) * pageSize.value;
-  const end = start + pageSize.value;
-  return allData.value.slice(start, end);
-});
+// 获取当前用户账号
+// const currentUser = localStorage.getItem('userInfo');// 假设在 localStorage 中存储了当前用户账号
+// console.log("currentUser",currentUser);
+const token = localStorage.getItem('token');
+const decoded = jwtDecode(token);
+console.log("decoded", decoded);
 
-// 获取所有数据的方法
-const fetchData = async () => {
+// 获取所有订单数据的函数，并过滤当前用户的数据
+const fetchAllUsers = async () => {
   try {
-    const response = await axios.get('/api/orders/completed'); // 假设这是你的API路径
-    allData.value = response.data;
-    completedTotal.value = allData.value.length;
-    // 更新表格数据
-    completedTableData.value = paginatedData.value;
+    const response = await axios.get('http://localhost:8090/order/list', {
+      headers: {
+        'Authorization': `${token}`,
+      }
+    });
+    console.log("response", response);
+
+
+    console.log("user", decoded.account);
+
+    // 假设 response.data 是一个数组，每个元素都是一个订单对象
+    // 使用 currentUser.account 来筛选订单
+    allData.value = response.data.filter(item => item.uaccount === decoded.account && item.ostate === 2);
+    total.value = allData.value.length; // 更新总数据量
+    paginate(allData.value); // 进行分页
   } catch (error) {
-    console.error('Failed to fetch data:', error);
+    console.error('Error fetching orders:', error);
   }
 };
 
-// 分页大小改变时触发
-const handleSizeChange = (newSize) => {
-  pageSize.value = newSize;
-  // 更新表格数据
-  completedTableData.value = paginatedData.value;
+// 分页函数
+const paginate = (data) => {
+  const startIndex = (pageNum.value - 1) * pageSize.value;
+  const endIndex = startIndex + pageSize.value;
+  tableData.value = data.slice(startIndex, endIndex);
 };
 
-// 当前页码改变时触发
-const handleCurrentChange = (newPage) => {
-  completedPageNum.value = newPage;
-  // 更新表格数据
-  completedTableData.value = paginatedData.value;
+// 分页事件处理函数
+const handleSizeChange = (val) => {
+  pageSize.value = val;
+  paginate(allData.value);
 };
 
-// 组件挂载时获取数据
+const handleCurrentChange = (val) => {
+  pageNum.value = val;
+  paginate(allData.value);
+};
+
+
+// 组件挂载时获取当前用户的订单数据
 onMounted(() => {
-  fetchData();
+  fetchAllUsers();
 });
 </script>
+
+<style scoped>
+/* 自定义表格行高 */
+.custom-table-row .el-table .el-table__body {
+  --el-table-row-height: 100px; /* 设置行高为100px，可以根据需要调整 */
+}
+
+/* 滚动条容器样式 */
+.scrollbar-container {
+  height: calc(100vh - 60px); /* 减去分页条的高度 */
+  overflow-y: auto; /* 启用垂直滚动 */
+}
+
+/* 分页条固定在底部的样式 */
+.pagination-container {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #fff; /* 根据需要调整背景色 */
+  z-index: 1000; /* 确保分页条在最上层 */
+}
+
+/* 内容区域包裹器，用于计算滚动条高度 */
+.content-wrapper {
+  padding-bottom: 60px; /* 分页条的高度，确保内容不会被遮挡 */
+}
+</style>
