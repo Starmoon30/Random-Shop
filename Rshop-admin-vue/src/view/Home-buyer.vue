@@ -11,27 +11,31 @@
           class="filter-tag"
           v-for="category in topCategories"
           :key="category.cid"
-          :style="selectedCategory.value === category.cid ? selectedCategoryStyle : {}"
           @click="selectCategory(category.cid)"
+          tabindex="1"
         >
-          {{ category.cname }}
-        </div>
+        {{ category.cname }}
       </div>
     </div>
-    <div class="filters">
+    </div>
+    <div class="subfilters">
       <div class="category-filter" v-if="selectedSubCategory.length">
         <div
-          class="filter-tag"
-          v-for="subcategory in selectedSubCategory"
-          :key="subcategory"
-          @click="selectSubCategory(subcategory)"
+          class="filter-subtag"
+          v-for="(subcategory,index) in selectedSubCategory"
+          :key="subcategory.cid"
+          @click="selectSubCategory(subcategory.cid)"
+          tabindex="2"
         >
-          {{ subcategory }}
+          {{ index === 0 ? '全部' : subcategory.cname }}
         </div>
       </div>
     </div>
     <div class="product-list">
-      <el-card v-for="product in products" :key="product.gid" class="product-card">
+      <el-card v-for="product in products"
+               :key="product.gid"
+               class="product-card"
+               @click="goToProductDetail(product.gid)">
         <el-carousel :interval="5000" arrow="always" height="200px">
           <el-carousel-item v-for="(pic, index) in product.pictures" :key="index">
             <img :src="pic" class="product-image" />
@@ -49,10 +53,14 @@
 <script>
 import ShopLogo from "@/components/Shop-Logo.vue";
 import BuyerHeader from "@/components/block-buyer/buyer-header.vue";
-import Goodssearch from "@/components/block-search/Goods-Search.vue";
+import Goodssearch from "@/components/block-search/buyer-search.vue";
 import axios from "axios";
+
 const token = localStorage.getItem('token');
+console.log("token", token);
+
 import { defineComponent, onMounted, ref, computed } from "vue";
+import {useRouter} from "vue-router";
 
 export default defineComponent({
   components: { Goodssearch, BuyerHeader, ShopLogo },
@@ -66,41 +74,104 @@ export default defineComponent({
     const searchQuery = ref(''); // 用于存储搜索查询
     const selectedCategoryStyle = ref({});
     const selectedSubCategoryStyle = ref({});
-    // 计算属性，只返回前四个类别
-    const topCategories = computed(() => categories.value.slice(0, 4));
 
+    const topCategories = computed(() => categories.value);
+    const router = useRouter(); // 创建 router 实例
+
+    const goToProductDetail = (gid) => {
+      const route = {
+        name: 'BProductDet', // 详情页面的路由名称
+        params: { pid: gid }
+      };
+      router.push(route);
+    };
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:8090/cat/list', {
+        const data = {
+          id: [-1,0]
+        }
+        const response = await axios.post(`http://localhost:8090/cat/get_cid_by_parent`,data, {
           headers: {
             'Authorization': `${token}`,
           }
         });
-        console.log("data:", response.data);
-        categories.value = response.data;
+        console.log("返回一级:", response.data);
+        categories.value = response.data.map(async (category) => {
+          try {
+            // 对于每个category，发起一个新的请求来获取详细信息
+            const infoResponse = await axios.get(`http://localhost:8090/cat/get_info_by_cid/${category}`, {
+              headers: {
+                'Authorization': `${token}`,
+              }
+            });
+            // 将获取到的信息更新到category对象中
+            return { ...category, ...infoResponse.data };
+          } catch (error) {
+            console.error(`Error fetching info for category ${category.cid}:`, error);
+            // 可以选择返回原始category或者根据需要处理错误
+            return category;
+          }
+        });
+
+        // 等待所有请求完成
+        const detailedCategories = await Promise.all(categories.value);
+
+        // 更新categories.value为包含详细信息的数组
+        categories.value = detailedCategories;
+
         // 默认选中第一个标签
-        selectCategory(response.data[0].cid);
+        selectCategory(detailedCategories[0].cid);
+
       } catch (error) {
         console.error('Error fetching categories:', error);
       }
     };
 
-    const fetchSubCategories = async (categoryId) => {
-      const catMap = { id: [categoryId] };
+    const fetchCategoryInfoById = async (subCat) => {
       try {
-        const response = await axios.post('http://localhost:8090/cat/get_all_child', catMap, {
+        console.log("sub:",subCat)
+        const response = await axios.get(`http://localhost:8090/cat/get_info_by_cid/${subCat}`, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
+        console.log("Category Info:", response.data);
+        // 返回获取到的类别信息
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching category info:', error);
+        return null;
+      }
+    };
+
+    const fetchSubCategories = async (categoryId) => {
+      try {
+        const response = await axios.post('http://localhost:8090/cat/get_all_child', { id: [categoryId] }, {
           headers: {
             'Authorization': `${token}`,
             'Content-Type': 'application/json',
           }
         });
-        console.log("erji:",response.data)
-        selectedSubCategory.value = response.data;
+        console.log("erji:", response.data);
+        // 清空selectedSubCategory
+        selectedSubCategory.value = [];
+        // 遍历子类别数组，为每个子类别获取详细信息
+        const subCategoriesDetails = await Promise.all(response.data.map(async (subCat) => {
+          // 调用fetchCategoryInfoById获取详细信息
+          return await fetchCategoryInfoById(subCat);
+        }));
+        // 更新selectedSubCategory
+        selectedSubCategory.value = subCategoriesDetails.filter(cat => cat !== null);
+        // 默认选中第一个二级分类
+        if (selectedSubCategory.value.length > 0) {
+          selectSubCategory(selectedSubCategory.value[0].cid);
+        }
       } catch (error) {
         console.error('Error fetching subcategories:', error);
       }
     };
-// 获取商品图片的函数
+
+    // 获取商品图片的函数
     const fetchProductPictures = async (gid) => {
       try {
         const picMap = { gid: gid };
@@ -128,8 +199,11 @@ export default defineComponent({
           }
         });
         const productsWithPictures = await Promise.all(response.data.map(async product => {
+          if (product.gshelf === 1) {
             const pictures = await fetchProductPictures(product.gid);
             return { ...product, pictures };
+          }
+          return null;
         }));
         const filteredProducts = productsWithPictures.filter(item => item !== null); // 过滤掉null项
         products.value = filteredProducts; // 确保这里赋值给 products.value
@@ -139,6 +213,7 @@ export default defineComponent({
         console.error('获取商品信息失败:', error);
       }
     };
+
     onMounted(() => {
       fetchCategories();
       fetchProducts(0);
@@ -170,11 +245,11 @@ export default defineComponent({
       selectedSubCategoryActive,
       selectedCategoryStyle,
       selectedSubCategoryStyle,
+      goToProductDetail
     };
   },
 });
 </script>
-
 
 <style>
 .product-page {
@@ -182,7 +257,7 @@ export default defineComponent({
   flex-direction: column;
 }
 
-.filters {
+.filters,.subfilters {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -214,16 +289,35 @@ export default defineComponent({
 }
 
 /* 更新被选中时标签的样式 */
-.filter-tag.active {
-  background-color: #666666; /* 被选中时的背景颜色加深为灰色 */
-  color: white; /* 被选中时的文字颜色为白色 */
+.filter-tag:focus {
+  background-color: #666666; /* 被选中时的背景颜色 */
+  color: white; /* 被选中时的文字颜色 */
+}
+.filter-subtag {
+  padding: 5px 10px;
+  border: 1px solid #ccc; /* 设置边框颜色 */
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #fff; /* 设置标签背景颜色 */
+  color: #333; /* 设置标签文字颜色 */
+  transition: background-color 0.3s, color 0.3s; /* 添加过渡效果 */
 }
 
+.filter-subtag:hover {
+  background-color: #e6e6e6; /* 鼠标悬停时的背景颜色 */
+}
+
+/* 更新被选中时标签的样式 */
+.filter-subtag:focus {
+  background-color: #666666; /* 被选中时的背景颜色 */
+  color: white; /* 被选中时的文字颜色 */
+}
 .product-list {
+  margin: 40px;
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
-  justify-content: space-between; /* 添加间距 */
+  gap: 40px; /* 卡片之间的间隙 */
+  justify-content: center; /* 居中对齐 */
 }
 
 .product-card {

@@ -6,31 +6,33 @@
     </el-header>
   </div>
   <el-main class="product-detail-container">
-    <el-card v-if="product" class="product-card">
-      <div class="product-layout">
-        <div class="product-image-container">
-          <img :src="currentPicture" class="product-image" />
-        </div>
-        <div class="product-info">
-          <div class="info-header">
-            <el-button type="primary" @click="goBack">返回</el-button>
+    <el-main class="product-detail-container">
+      <el-card v-if="product" class="product-card">
+        <div class="product-layout">
+          <div class="product-image-container">
+            <img :src="currentPicture"/>
           </div>
-          <div class="info-content">
-            <h3>{{ product.gname }}</h3>
-            <p>价格: ￥{{ product.gvalue }}</p>
-            <p>库存: {{ product.gstock }}</p>
-            <el-button type="primary" @click="editProduct">编辑商品</el-button>
+          <div class="product-info">
+            <div class="info-header">
+              <el-button type="default" @click="goBack">返回</el-button>
+            </div>
+            <div class="info-content">
+              <h3>{{ product.gname }}</h3>
+              <p>价格: ￥{{ product.gvalue }}</p>
+              <p>库存: {{ product.gstock }}</p>
+              <el-button type="primary" @click="editProduct(product.gid)">编辑商品</el-button>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="preview-container">
-        <img v-for="(pic, index) in product.pictures" :key="index" :src="pic" class="preview-image" @click="selectPicture(index)" />
-      </div>
-
-      <div class="product-description">
-        <p>{{ product.gdesc }}</p>
-      </div>
-    </el-card>
+        <div class="preview-container">
+          <img v-for="(pic, index) in product.pictures" :key="index" :src="pic" class="preview-image" @click="selectPicture(index)" />
+        </div>
+        <div class="product-description">
+          <!-- 使用 v-html 指令来渲染 HTML 字符串 -->
+          <div v-html="product.gdesc"></div>
+        </div>
+      </el-card>
+    </el-main>
   </el-main>
 </template>
 
@@ -88,6 +90,7 @@ export default defineComponent({
     };
 
     const editProduct = (gid) => {
+      console.log("gid:",gid)
       if (gid) {
         router.push({ name: 'UpdateGood', params: { pid: gid } });
       } else {
@@ -125,15 +128,15 @@ body {
 
 .product-image-container {
   position: relative;
-  width: 800px; /* 固定大图容器宽度 */
+  width: 100%; /* 铺满整行 */
   height: 500px; /* 固定大图容器高度 */
   overflow: hidden; /* 隐藏超出容器的图片部分 */
 }
 
 .product-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 100%; /* 宽度自适应 */
+  height: 100%; /* 高度自适应 */
+  object-fit: cover; /* 保持图片比例 */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* 添加阴影效果 */
 }
@@ -142,28 +145,30 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  width: 100%; /* 铺满整行 */
 }
 
 .product-layout {
   display: flex;
-  align-items: center; /* 修改为垂直居中 */
-  justify-content: space-between; /* 两端对齐 */
+  align-items: flex-start; /* 修改为顶部对齐 */
+  justify-content: space-between; /* 保持两端对齐 */
+  width: 100%; /* 铺满整行 */
+  gap: 20px; /* 添加间距 */
+}
+
+.product-image-container {
+  flex: 1; /* 使图片容器占据可用空间 */
 }
 
 .product-info {
-  flex: 1; /* Allow the product info to take remaining space */
-  padding-left: 20px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center; /* 垂直居中 */
+  flex: 1; /* 使信息容器占据可用空间 */
+  padding: 20px; /* 保持原有内边距 */
 }
 
 .info-header {
-  position: fixed;
-  top: 100px;
-  right: 20px;
-  padding: 10px;
-  z-index: 1000; /* 确保按钮在最上层 */
+  margin-bottom: 10px; /* 增加按钮与商品信息的间距 */
+  display: flex;
+  justify-content: flex-end; /* 返回按钮靠右 */
 }
 
 .product-info h3 {
