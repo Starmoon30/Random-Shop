@@ -1,5 +1,8 @@
 package com.example.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.example.domain.Category;
 import com.example.domain.Goodspics;
 import com.example.service.GoodspicsService;
 import jakarta.annotation.Resource;
@@ -12,6 +15,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @RestController
 @RequestMapping("/pic")
@@ -33,11 +37,23 @@ public class PicController {
         return goodspicsService.removeById(id);
     }
     @RequestMapping("/get_pic")
-    public List<String> get_pic(@RequestBody Map<String,Object> picMap){
+    public Map<Integer,String> get_pic(@RequestBody Map<String,Object> picMap){
         int gid = (int) picMap.get("gid");
+        LambdaQueryWrapper<Goodspics> queryWrapper = Wrappers.<Goodspics>lambdaQuery()
+                .eq(Goodspics::getGid, gid) // 假设您要根据 gid 查询
+                .select(Goodspics::getPicid); // 指定只查询 Picid 列
+        List<Integer> pids = goodspicsService.listObjs(queryWrapper);
         List<byte[]> data = goodspicsService.find_data(gid);
-        return data.stream()
+        List<String> picdata=data.stream()
                 .map(Base64.getEncoder()::encodeToString)
                 .collect(Collectors.toList());
+        if (pids.size() != picdata.size()) {
+            throw new IllegalStateException("The length of pids array does not match the size of picdata list.");
+        }
+        // 将pids和picdata组成Map
+        Map<Integer, String> result = IntStream.range(0, pids.size())
+                .boxed()
+                .collect(Collectors.toMap(pids::get, picdata::get));
+        return result;
     }
 }
