@@ -4,16 +4,16 @@
     <ShopLogo></ShopLogo>
   </div>
   <div class="order-form">
-    <el-form-item>
-      <el-input v-model="form.uaccount" placeholder="UAccount"></el-input>
+    <el-form-item label="收货人：">
+      <el-input v-model="form.uaccount" placeholder="收货人" aria-required="true" disabled></el-input>
     </el-form-item>
-    <el-form-item>
-      <el-input v-model="form.ophone" placeholder="OPhone"></el-input>
+    <el-form-item label="联系电话：">
+      <el-input v-model="form.ophone" placeholder="联系电话" aria-required="true"></el-input>
     </el-form-item>
-    <el-form-item>
-      <el-input v-model="form.oaddress" placeholder="OAddress"></el-input>
+    <el-form-item label="地址：">
+      <el-input v-model="form.oaddress" placeholder="地址" aria-required="true"></el-input>
     </el-form-item>
-    <el-form-item>
+    <el-form-item label="订单备注：">
       <el-input
         type="textarea"
         v-model="form.oremark"
@@ -54,6 +54,10 @@ const form = ref({
 });
 
 const submitForm = async () => {
+  if (!form.value.ophone || !form.value.oaddress) {
+    ElMessage.error('电话和地址不能为空！');
+    return;
+  }
   try {
     console.log("form:", form.value)
     const response = await axios.post('http://localhost:8090/order/creat', form.value, {
@@ -63,6 +67,17 @@ const submitForm = async () => {
     });
     if (response.data) {
       ElMessage.success('订单创建成功！');
+      const backid = Number(route.params.id);
+      if (backid) {
+        console.log("id:",backid)
+        const route = {
+          name: 'BProductDet',
+          params: { pid: backid }
+        };
+        await router.push(route);
+      } else {
+        console.error('商品信息未找到');
+      }
     } else {
       ElMessage.error('订单错误');
     }

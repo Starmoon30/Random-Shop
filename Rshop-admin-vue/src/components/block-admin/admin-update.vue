@@ -14,7 +14,12 @@
         <!-- 商品图片展示和上传 -->
         <el-form-item label="商品图片">
           <div v-if="pro.pictures" class="image-list">
-            <img v-for="(pic, index) in pro.pictures" :key="index" :src="pic" class="product-image" />
+            <div v-for="(picObj, index) in pro.pictures" :key="index" class="image-item">
+              <img :src="picObj.url" class="product-image" />
+              <el-button type="text" icon="el-icon-close" @click="handleRemovePic(picObj.id, index)">
+                <el-icon size="20"><Close /></el-icon>
+              </el-button>
+            </div>
           </div>
           <el-upload
             class="image-uploader"
@@ -41,10 +46,9 @@
 
         <el-form-item>
           <el-button type="primary" @click="submitProductInfo">提交</el-button>
-          <el-button type="text" @click="goBack">返回</el-button>
+          <el-button type="primary" @click="goBack">返回</el-button>
         </el-form-item>
       </el-form>
-
     </div>
   </el-main>
 </template>
@@ -55,7 +59,7 @@ defineProps({
 });
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import { ElMessage } from 'element-plus';
+import {ElMessage, ElMessageBox} from 'element-plus';
 import axios from 'axios';
 import ShopLogo from "@/components/Shop-Logo.vue";
 import AdminHead from "@/components/block-admin/adminHead.vue";
@@ -64,12 +68,13 @@ import upRichText from "@/components/block-rich/UpdateRichText.vue";
 const token = localStorage.getItem('token');
 const route = useRoute();
 const gid = Number(route.params.pid);
-const pro = ref()
+const pro = ref();
 const newDesc = ref('');
 const updateDescription = (content) => {
   newDesc.value = content; // 更新 newDesc 的值
   pro.value.desc = content; // 同时更新 pro 的 desc 属性
 };
+
 // 图片上传相关
 const headers = {
   'Authorization': token
@@ -112,6 +117,31 @@ const beforeUpload = (file) => {
     return false; // 阻止自动上传
   };
 };
+
+// 删除图片
+const handleRemovePic = async (picId, index) => {
+  console.log("picId:", picId, "index:", index);
+  await ElMessageBox.confirm('确认删除此图片吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  });
+  try {
+    const response = await axios.delete(`http://localhost:8090/pic/delete/${picId}`, {
+      headers: {
+        'Authorization': `${token}`,
+      }
+    });
+    if (response.data) {
+      pro.value.pictures.splice(index, 1);
+      ElMessage.success('图片删除成功');
+    }
+  } catch (error) {
+    console.error('删除图片失败:', error);
+    ElMessage.error('删除图片失败');
+  }
+};
+
 // 从后端获取商品信息
 const fetchProductData = async (gid) => {
   try {
@@ -138,7 +168,12 @@ const fetchProductPictures = async (gid) => {
       }
     });
     console.log("返回：",response.data);
-    return response.data.map(pic => `data:image/jpeg;base64,${pic}`);
+    // 遍历返回的Map对象并获取Base64编码图片数据
+    const picArray = Object.entries(response.data).map(([picId, base64Data]) => {
+      return { id: picId, url: `data:image/jpeg;base64,${base64Data}` };
+    });
+
+    return picArray;
   } catch (error) {
     console.error('获取商品图片失败:', error);
     return [];
@@ -184,6 +219,7 @@ const goBack = () => {
 </script>
 
 <style scoped>
+
 .edit-product-info {
   max-width: 600px;
   margin: 20px auto;
@@ -208,18 +244,6 @@ const goBack = () => {
   border: 1px solid #ccc;
 }
 
-.image-item::after {
-  content: '+';
-  position: absolute;
-  bottom: 0;
-  right: 0;
-  padding: 2px;
-  background-color: #409eff;
-  color: white;
-  border-radius: 2px;
-  cursor: pointer;
-}
-
 .image-uploader {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
@@ -233,5 +257,21 @@ const goBack = () => {
   color: #8c939d;
   line-height: 50px;
   text-align: center;
+}
+
+.el-button.el-button--text {
+  border: none;
+  background: none;
+  padding: 0;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+  color: #fff;
+  background-color: #f56c6c;
+  cursor: pointer;
 }
 </style>

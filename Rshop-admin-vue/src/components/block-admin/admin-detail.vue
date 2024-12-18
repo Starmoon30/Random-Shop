@@ -78,7 +78,12 @@ export default defineComponent({
             'Authorization': `${token}`,
           }
         });
-        return response.data.map(pic => `data:image/jpeg;base64,${pic}`);
+        // 遍历返回的Map对象并获取Base64编码图片数据
+        const picArray = Object.entries(response.data).map(([picId, base64Data]) => {
+          return `data:image/jpeg;base64,${base64Data}`;
+        });
+
+        return picArray;
       } catch (error) {
         console.error('获取商品图片失败:', error);
         return [];
