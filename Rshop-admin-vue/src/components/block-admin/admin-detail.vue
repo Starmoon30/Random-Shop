@@ -20,7 +20,7 @@
               <h3>{{ product.gname }}</h3>
               <p>价格: ￥{{ product.gvalue }}</p>
               <p>库存: {{ product.gstock }}</p>
-              <el-button type="primary" @click="editProduct">编辑商品</el-button>
+              <el-button type="primary" @click="editProduct(product.gid)">编辑商品</el-button>
             </div>
           </div>
         </div>
@@ -28,7 +28,8 @@
           <img v-for="(pic, index) in product.pictures" :key="index" :src="pic" class="preview-image" @click="selectPicture(index)" />
         </div>
         <div class="product-description">
-          <p>{{ product.gdesc }}</p>
+          <!-- 使用 v-html 指令来渲染 HTML 字符串 -->
+          <div v-html="product.gdesc"></div>
         </div>
       </el-card>
     </el-main>
@@ -89,6 +90,7 @@ export default defineComponent({
     };
 
     const editProduct = (gid) => {
+      console.log("gid:",gid)
       if (gid) {
         router.push({ name: 'UpdateGood', params: { pid: gid } });
       } else {

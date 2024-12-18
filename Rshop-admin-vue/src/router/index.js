@@ -26,7 +26,7 @@ const routes = [
     props: true // 启用 props
   },
   {
-    path: '/aHome/updateGood',
+    path: '/aHome/updateGood/:pid',
     name: 'UpdateGood',
     component: UpdateGood,
     props: true // 启用 props

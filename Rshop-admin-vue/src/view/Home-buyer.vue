@@ -55,7 +55,10 @@ import ShopLogo from "@/components/Shop-Logo.vue";
 import BuyerHeader from "@/components/block-buyer/buyer-header.vue";
 import Goodssearch from "@/components/block-search/buyer-search.vue";
 import axios from "axios";
+
 const token = localStorage.getItem('token');
+console.log("token", token);
+
 import { defineComponent, onMounted, ref, computed } from "vue";
 import {useRouter} from "vue-router";
 
@@ -72,8 +75,7 @@ export default defineComponent({
     const selectedCategoryStyle = ref({});
     const selectedSubCategoryStyle = ref({});
 
-    // 计算属性，只返回前四个类别
-    const topCategories = computed(() => categories.value.slice(0, 4));
+    const topCategories = computed(() => categories.value);
     const router = useRouter(); // 创建 router 实例
 
     const goToProductDetail = (gid) => {
@@ -85,15 +87,40 @@ export default defineComponent({
     };
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:8090/cat/list', {
+        const data = {
+          id: [-1,0]
+        }
+        const response = await axios.post(`http://localhost:8090/cat/get_cid_by_parent`,data, {
           headers: {
             'Authorization': `${token}`,
           }
         });
-        console.log("data:", response.data);
-        categories.value = response.data;
+        console.log("返回一级:", response.data);
+        categories.value = response.data.map(async (category) => {
+          try {
+            // 对于每个category，发起一个新的请求来获取详细信息
+            const infoResponse = await axios.get(`http://localhost:8090/cat/get_info_by_cid/${category}`, {
+              headers: {
+                'Authorization': `${token}`,
+              }
+            });
+            // 将获取到的信息更新到category对象中
+            return { ...category, ...infoResponse.data };
+          } catch (error) {
+            console.error(`Error fetching info for category ${category.cid}:`, error);
+            // 可以选择返回原始category或者根据需要处理错误
+            return category;
+          }
+        });
+
+        // 等待所有请求完成
+        const detailedCategories = await Promise.all(categories.value);
+
+        // 更新categories.value为包含详细信息的数组
+        categories.value = detailedCategories;
+
         // 默认选中第一个标签
-        selectCategory(response.data[0].cid);
+        selectCategory(detailedCategories[0].cid);
 
       } catch (error) {
         console.error('Error fetching categories:', error);
@@ -172,8 +199,11 @@ export default defineComponent({
           }
         });
         const productsWithPictures = await Promise.all(response.data.map(async product => {
-          const pictures = await fetchProductPictures(product.gid);
-          return { ...product, pictures };
+          if (product.gshelf === 1) {
+            const pictures = await fetchProductPictures(product.gid);
+            return { ...product, pictures };
+          }
+          return null;
         }));
         const filteredProducts = productsWithPictures.filter(item => item !== null); // 过滤掉null项
         products.value = filteredProducts; // 确保这里赋值给 products.value

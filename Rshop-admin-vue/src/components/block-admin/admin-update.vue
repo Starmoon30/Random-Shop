@@ -6,44 +6,53 @@
     </el-header>
   </div>
   <el-main>
-    <div v-if="product" class="edit-product-info">
-      <el-form :model="product">
+    <div v-if="pro" class="edit-product-info">
+      <el-form :model="pro">
         <el-form-item label="商品名称">
-          <el-input v-model="product.name"></el-input>
+          <el-input v-model="pro.gname"></el-input>
         </el-form-item>
         <el-form-item label="价格">
-          <el-input type="number" v-model="product.price"></el-input>
+          <el-input type="number" v-model="pro.gvalue"></el-input>
         </el-form-item>
-        <!-- 更多表单项 -->
+        <el-form-item label="库存">
+          <el-input type="number" v-model="pro.gstock"></el-input>
+        </el-form-item>
+
+        <upRichText :content="pro.gdesc" :onContentChange="updateDescription"></upRichText>
+
         <el-form-item>
           <el-button type="primary" @click="submitProductInfo">提交</el-button>
+          <el-button type="text" @click="goBack">返回</el-button>
         </el-form-item>
       </el-form>
-      <el-button type="text" @click="goBack">返回</el-button>
+
     </div>
   </el-main>
 </template>
 
 <script lang="ts" setup>
+defineProps({
+  content: String
+});
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
 import ShopLogo from "@/components/Shop-Logo.vue";
 import AdminHead from "@/components/block-admin/adminHead.vue";
+import upRichText from "@/components/block-rich/UpdateRichText.vue";
 
 const token = localStorage.getItem('token');
 const route = useRoute();
 const gid = Number(route.params.pid);
-const product = ref({
-  id: gid,
-  name: '',
-  price: '',
-  // 更多商品信息...
-});
-
+const pro = ref()
+const newDesc = ref('');
+const updateDescription = (content) => {
+  newDesc.value = content; // 更新 newDesc 的值
+  pro.value.desc = content; // 同时更新 pro 的 desc 属性
+};
 // 从后端获取商品信息
-const fetchProductInfo = async (gid) => {
+const fetchProductData = async (gid) => {
   try {
     const response = await axios.post('http://localhost:8090/goods/get_info', { gid }, {
       headers: {
@@ -53,11 +62,10 @@ const fetchProductInfo = async (gid) => {
     if (response.data.length > 0) {
       const fetchedProduct = response.data[0];
       const pictures = await fetchProductPictures(fetchedProduct.gid);
-      product.value = { ...fetchedProduct, pictures };
+      pro.value = { ...fetchedProduct, pictures };
     }
   } catch (error) {
     console.error("获取商品详情失败:", error);
-    // 这里可以添加更多的错误处理逻辑，例如显示错误消息
   }
 };
 
@@ -78,12 +86,23 @@ const fetchProductPictures = async (gid) => {
 // 提交商品信息修改
 const submitProductInfo = async () => {
   try {
-    const response = await axios.post(`http://localhost:8090/goods/update`, product.value, {
+    console.log("传输：",newDesc)
+    const product ={
+      gid: gid,
+      name: pro.value.gname,
+      value: parseInt(pro.value.gvalue),
+      stock: parseInt(pro.value.gstock),
+      cid: pro.value.cid,
+      desc: newDesc.value
+    }
+    const response = await axios.post(`http://localhost:8090/goods/update_Ginfo`, product, {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        'Authorization': `${token}`,
       }
     });
-    ElMessage.success('商品信息修改成功');
+    if (response) {
+      ElMessage.success('商品信息修改成功');
+    }
   } catch (error) {
     console.error("提交商品信息失败:", error);
     ElMessage.error('提交商品信息失败');
@@ -92,12 +111,9 @@ const submitProductInfo = async () => {
 
 // 在组件挂载时获取商品信息
 onMounted(() => {
-  if (!isNaN(gid)) {
-    fetchProductInfo(gid);
-  } else {
-    console.error('商品ID无效');
-    // 这里可以添加更多的错误处理逻辑，例如跳转到错误页面或显示错误消息
-  }
+  const gid = Number(route.params.pid);
+  console.log("得到gid：",gid);
+  fetchProductData(gid);
 });
 
 const goBack = () => {
