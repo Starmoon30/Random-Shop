@@ -16,7 +16,7 @@
           <div v-if="pro.pictures" class="image-list">
             <div v-for="(picObj, index) in pro.pictures" :key="index" class="image-item">
               <img :src="picObj.url" class="product-image" />
-              <el-button type="text" icon="el-icon-close" @click="handleRemovePic(picObj.id, index)">
+              <el-button type="text"  @click="handleRemovePic(picObj.id, index)">
                 <el-icon size="20"><Close /></el-icon>
               </el-button>
             </div>
@@ -24,15 +24,15 @@
           <el-upload
             class="image-uploader"
             action="http://localhost:8090/pic/add"
-            list-type="picture-card"
             :on-success="handleSuccess"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
             :before-upload="beforeUpload"
             :headers="headers"
           >
-            <i class="el-icon-plus"></i>
-            <el-icon size="48"><Plus /></el-icon>
+            <div class="icon-container">
+              <el-icon><Plus /></el-icon>
+            </div>
           </el-upload>
         </el-form-item>
         <el-form-item label="价格">
@@ -54,11 +54,13 @@
 </template>
 
 <script lang="ts" setup>
+import {Plus} from "@element-plus/icons-vue";
+
 defineProps({
   content: String
 });
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import {useRoute, useRouter} from 'vue-router';
 import {ElMessage, ElMessageBox} from 'element-plus';
 import axios from 'axios';
 import ShopLogo from "@/components/Shop-Logo.vue";
@@ -67,6 +69,7 @@ import upRichText from "@/components/block-rich/UpdateRichText.vue";
 
 const token = localStorage.getItem('token');
 const route = useRoute();
+const router = useRouter();
 const gid = Number(route.params.pid);
 const pro = ref();
 const newDesc = ref('');
@@ -99,7 +102,7 @@ const beforeUpload = (file) => {
   reader.onload = () => {
     const picMap = {
       gid: gid,
-      data: reader.result.split(',')[1]
+      data: reader.result?.split(',')[1]
     };
     axios.post('http://localhost:8090/pic/add', picMap, {
       headers: {
@@ -199,6 +202,11 @@ const submitProductInfo = async () => {
     });
     if (response) {
       ElMessage.success('商品信息修改成功');
+      if (gid) {
+        await router.push({name: 'AProductDet', params: {pid: gid}});
+      } else {
+        console.error('商品ID未找到');
+      }
     }
   } catch (error) {
     console.error("提交商品信息失败:", error);
@@ -219,7 +227,6 @@ const goBack = () => {
 </script>
 
 <style scoped>
-
 .edit-product-info {
   max-width: 600px;
   margin: 20px auto;
@@ -238,8 +245,8 @@ const goBack = () => {
 }
 
 .product-image {
-  width: 50px; /* 根据需要调整 */
-  height: 50px; /* 根据需要调整 */
+  width: 50px; /* 设置与添加方框等大的宽度 */
+  height: 50px; /* 设置与添加方框等大的高度 */
   object-fit: cover;
   border: 1px solid #ccc;
 }
@@ -250,13 +257,34 @@ const goBack = () => {
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  width: 50px; /* 设置与商品图片等大的宽度 */
+  height: 50px; /* 设置与商品图片等大的高度 */
+  line-height: 50px; /* 保持图标垂直居中 */
+  text-align: center;
+  margin-bottom: 10px; /* 添加底部外边距 */
+}
+.image-uploader-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px; /* 设置与商品图片等大的宽度 */
+  height: 50px; /* 设置与商品图片等大的高度 */
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  overflow: hidden;
+  line-height: 50px; /* 保持图标垂直居中 */
+  text-align: center;
+  margin-bottom: 10px; /* 添加底部外边距 */
 }
 
+.image-uploader-content .el-icon {
+  font-size: 20px; /* 修改图标大小以符合添加按钮大小 */
+  color: #000; /* 修改图标颜色为黑色 */
+}
 .image-uploader .el-icon-plus {
-  font-size: 28px;
-  color: #8c939d;
-  line-height: 50px;
-  text-align: center;
+  font-size: 20px; /* 修改图标大小以符合添加按钮大小 */
+  color: #ca0909; /* 修改图标颜色为黑色 */
 }
 
 .el-button.el-button--text {
@@ -264,14 +292,19 @@ const goBack = () => {
   background: none;
   padding: 0;
   position: absolute;
-  top: -5px;
-  right: -5px;
+  bottom: 0; /* 调整为底部对齐 */
+  right: 0; /* 调整为右侧对齐 */
   border-radius: 50%;
   width: 20px;
   height: 20px;
   line-height: 20px;
   color: #fff;
-  background-color: #f56c6c;
+  background-color: #f56c6c; /* 保持红色背景 */
   cursor: pointer;
+  text-align: center; /* 确保文本居中 */
+}
+
+.el-button.el-button--text .el-icon {
+  margin: 0; /* 移除图标的默认外边距 */
 }
 </style>
