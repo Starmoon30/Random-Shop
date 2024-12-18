@@ -10,10 +10,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.text.AbstractDocument.Content;
+
 import org.random_shop.vo.Goods;
 
 public class GoodsDaoImpl implements GoodsDao {
-    public static final String URL = "jdbc:sqlite:C:\\Users\\小假\\Desktop\\random-shop.db";
+    public static final String URL = "jdbc:sqlite:"+System.getProperty("catalina.home")+"\\webapps\\random-shop\\WEB-INF\\db\\random-shop.db";
     public static final String JDBC = "org.sqlite.JDBC";
 
     @Override

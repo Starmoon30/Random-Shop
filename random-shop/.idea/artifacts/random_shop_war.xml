@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="random-shop:war">
+    <output-path>$PROJECT_DIR$/classes/artifacts/random_shop_war</output-path>
+    <root id="archive" name="random-shop_war.war">
+      <element id="artifact" artifact-name="random-shop:war exploded" />
+    </root>
+  </artifact>
+</component>

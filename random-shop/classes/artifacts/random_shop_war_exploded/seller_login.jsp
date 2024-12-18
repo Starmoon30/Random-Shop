@@ -80,8 +80,8 @@
             <a href="home.jsp">返回首页</a>
         </header>
         <div class="login">
-            <p>默认账号：123</p>
-            <p>默认密码：123</p>
+            <p>默认账号：admin123</p>
+            <p>默认密码：admin123</p>
             <form action="<%=request.getContextPath()%>/seller?method=login" method="post">
                 <label>账号<input type="text" name="account" required></label><br>
                 <label>密码<input type="password" name="pwd" required></label><br><br>
