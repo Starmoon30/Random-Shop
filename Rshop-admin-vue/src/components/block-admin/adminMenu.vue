@@ -42,7 +42,7 @@ const handleOrderClick = () => {
       </el-menu-item>
     </el-menu-item-group>
 
-    <el-sub-menu :default-opened="isShelfMenuOpen">
+    <el-sub-menu v-model:opened="isShelfMenuOpen">
       <template #title>
         <el-icon @click.prevent="handleShelfClick"><Menu /></el-icon>货架管理
       </template>
@@ -59,14 +59,14 @@ const handleOrderClick = () => {
       </el-menu-item>
     </el-menu-item-group>
 
-    <el-sub-menu :default-opened="isOrderMenuOpen">
+    <el-sub-menu v-model:opened="isOrderMenuOpen">
       <template #title>
         <el-icon @click.prevent="handleOrderClick"><Promotion /></el-icon>订单管理
       </template>
       <el-menu-item-group>
-        <el-menu-item index="6">未接受</el-menu-item>
-        <el-menu-item index="7">已接受</el-menu-item>
-        <el-menu-item index="8">已完成</el-menu-item>
+        <el-menu-item index="6">未接受订单</el-menu-item>
+        <el-menu-item index="7">已接受订单</el-menu-item>
+        <el-menu-item index="8">已完成订单</el-menu-item>
       </el-menu-item-group>
     </el-sub-menu>
 

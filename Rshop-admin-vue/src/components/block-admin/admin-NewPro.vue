@@ -69,6 +69,7 @@
   const goBack = () => {
     router.back();
   };
+
   const updateDescription = (content) => {
     productForm.desc = content; // 更新productForm.desc
     console.log("desc:",productForm.desc);

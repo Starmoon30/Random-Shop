@@ -3,13 +3,13 @@
     <!-- 滚动条组件包裹内容区域 -->
     <el-scrollbar class="scrollbar-container">
       <el-table :data="tableData" class="custom-table-row" style="width: 100%">
-        <el-table-column prop="oid" label="OID"/>
-        <el-table-column prop="gid" label="GID"/>
-        <el-table-column prop="uaccount" label="UAccount"/>
-        <el-table-column prop="ophone" label="OPhone"/>
-        <el-table-column prop="oaddress" label="OAddress"/>
-        <el-table-column prop="oremark" label="ORemark"/>
-        <el-table-column prop="ostate" label="OState"/>
+        <el-table-column prop="oid" label="订单号"/>
+        <el-table-column prop="gid" label="商品号"/>
+        <el-table-column prop="uaccount" label="下单用户"/>
+        <el-table-column prop="ophone" label="联系电话"/>
+        <el-table-column prop="oaddress" label="地址"/>
+        <el-table-column prop="oremark" label="备注"/>
+        <el-table-column prop="ostate" label="订单阶段"/>
         <el-table-column label="状态">
           <template #default="scope">
             <!-- 根据ostate的值显示“已完成”并应用样式 -->

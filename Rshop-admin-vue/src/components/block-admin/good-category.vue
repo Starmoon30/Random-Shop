@@ -7,9 +7,9 @@
         <el-button type="primary" @click="addNewLabel">新增标签</el-button>
       </div>
       <el-table :data="tableData" class="custom-table-row" style="width: 100%">
-        <el-table-column prop="cid" label="CID"/>
-        <el-table-column prop="cname" label="CNAME"/>
-        <el-table-column prop="cparentid" label="CParentID"/>
+        <el-table-column prop="cid" label="分类ID"/>
+        <el-table-column prop="cname" label="分类名"/>
+        <el-table-column prop="cparentid" label="上级ID"/>
         <!-- 可以继续添加其他列 -->
       </el-table>
     </el-scrollbar>

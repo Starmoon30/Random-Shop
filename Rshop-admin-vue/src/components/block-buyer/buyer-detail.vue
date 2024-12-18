@@ -27,7 +27,8 @@
           <img v-for="(pic, index) in product.pictures" :key="index" :src="pic" class="preview-image" @click="selectPicture(index)" />
         </div>
         <div class="product-description">
-          <p>{{ product.gdesc }}</p>
+          <!-- 使用 v-html 指令来渲染 HTML 字符串 -->
+          <div v-html="product.gdesc"></div>
         </div>
       </el-card>
     </el-main>

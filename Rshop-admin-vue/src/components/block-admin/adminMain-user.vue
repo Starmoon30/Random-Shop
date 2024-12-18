@@ -3,11 +3,11 @@
   <div class="content-wrapper">
     <el-scrollbar>
       <el-table :data="tableData" class="custom-table-row" style="width: 100%">
-        <el-table-column prop="uaccount" label="UAccount"/>
-        <el-table-column prop="upassword" label="UPassword"/>
-        <el-table-column prop="uphone" label="UPhone"/>
-        <el-table-column prop="uaddress" label="UAddress"/>
-        <el-table-column prop="ucategory" label="UCategory"/>
+        <el-table-column prop="uaccount" label="用户名"/>
+        <el-table-column prop="upassword" label="密码"/>
+        <el-table-column prop="uphone" label="联系电话"/>
+        <el-table-column prop="uaddress" label="默认地址"/>
+        <el-table-column prop="ucategory" label="角色"/>
       </el-table>
     </el-scrollbar>
     <el-pagination

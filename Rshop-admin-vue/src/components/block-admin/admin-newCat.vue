@@ -11,8 +11,18 @@
       <el-form-item label="分类名：">
         <el-input v-model="form.cname" placeholder="CName"></el-input>
       </el-form-item>
-      <el-form-item label="父id：">
-        <el-input v-model="form.cparentid" placeholder="CParentId"></el-input>
+      <el-form-item label="父分类">
+        <el-select v-model="form.cparentid">
+          <el-option
+            v-for="category in topCategories"
+            :key="category.cid"
+            :label="category.cname"
+            :value="category.cid">
+          </el-option>
+        </el-select>
+        <!-- 显示选中的分类信息 -->
+        <div v-if="selectedTopCategory" class="selected-category-info">
+        </div>
       </el-form-item>
       <el-form-item>
         <el-button @click="goBack">取消</el-button>
@@ -26,11 +36,12 @@
 import { ElButton, ElFormItem, ElInput, ElForm, ElMessage } from "element-plus";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { ref } from "vue";
+import {computed, onMounted, ref} from "vue";
 import ShopLogo from "@/components/Shop-Logo.vue";
 import AdminHead from "@/components/block-admin/adminHead.vue";
 const token = localStorage.getItem('token');
 const claims = jwtDecode(token);
+const categories = ref([]); // 一级分类
 console.log("claim:", claims);
 const form = ref({
   cname: '',
@@ -39,6 +50,33 @@ const form = ref({
 const goBack = () => {
   window.history.back();
 };
+const fetchCategories = async () => {
+  try {
+    const response = await axios.post('http://localhost:8090/cat/get_cid_by_parent', { id: [-1,0] }, {
+      headers: {
+        'Authorization': `${token}`,
+      }
+    });
+    categories.value = await Promise.all(response.data.map(async (category) => {
+      try {
+        const infoResponse = await axios.get(`http://localhost:8090/cat/get_info_by_cid/${category}`, {
+          headers: {
+            'Authorization': `${token}`,
+          }
+        });
+        return { ...category, ...infoResponse.data };
+      } catch (error) {
+        console.error(`Error fetching info for category ${category.cid}:`, error);
+        return category;
+      }
+    }));
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+  }
+};
+
+const topCategories = computed(() => categories.value);
+
 const submit = async () => {
   try {
     console.log("form:", form.value);
@@ -57,6 +95,9 @@ const submit = async () => {
     ElMessage.error('错误');
   }
 };
+onMounted(() => {
+  fetchCategories();
+});
 </script>
 
 <style scoped>

@@ -3,19 +3,19 @@
     <!-- 滚动条组件包裹内容区域 -->
     <el-scrollbar class="scrollbar-container">
       <el-table :data="tableData" class="custom-table-row" style="width: 100%">
-        <el-table-column prop="shid" label="SHID"/>
-        <el-table-column prop="shtime" label="SHTime">
+        <el-table-column prop="shid" label="修改编号"/>
+        <el-table-column prop="shtime" label="修改时间">
           <template #default="{ row }">
             <span>{{ formatDateTime(row.shtime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="shreason" label="SHReason">
+        <el-table-column prop="shreason" label="修改原因">
           <template #default="{ row }">
-            <span v-if="row.shreason === 0">管理员修改。</span>
-            <span v-else-if="row.shreason === 1">完成订单。</span>
+            <span v-if="row.shreason === 1">管理员修改</span>
+            <span v-else-if="row.shreason === 0">完成订单</span>
           </template>
         </el-table-column>
-        <el-table-column prop="gid" label="GID"/>
+        <el-table-column prop="gid" label="修改商品号"/>
         <el-table-column prop="shstock_O" label="原库存"/>
         <el-table-column prop="shstock_N" label="新库存"/>
       </el-table>
