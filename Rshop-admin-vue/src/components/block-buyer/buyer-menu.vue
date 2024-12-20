@@ -1,7 +1,7 @@
 <template>
   <el-menu :default-openeds="['1', '2', '5']" style="background-color: var(--el-color-primary-light-9)" :collapse="isCollapse">
     <!-- 子菜单项 -->
-    <el-menu-item index="1" @click="navigateTo('/userinfo')">
+    <el-menu-item index="1" @click="navigateTo('/user-info')">
       <el-icon><User /></el-icon>个人信息
     </el-menu-item>
 
@@ -10,8 +10,8 @@
         <el-icon><DocumentCopy /></el-icon>我的订单
       </template>
       <el-menu-item index="2-1" @click="navigateTo('/orders/unaccepted')">未接受订单</el-menu-item>
-      <el-menu-item index="2-2" @click="navigateTo('/orders/accepted')">已接受订单</el-menu-item>
-      <el-menu-item index="2-3" @click="navigateTo('/orders/completed')">已完成订单</el-menu-item>
+<!--      <el-menu-item index="2-2" @click="navigateTo('/orders/accepted')">已接受订单</el-menu-item>-->
+      <el-menu-item index="2-3" @click="navigateTo('/orders/completed')">历史订单</el-menu-item>
     </el-sub-menu>
 
     <el-menu-item index="3" @click="navigateTo('/shipping-management')">

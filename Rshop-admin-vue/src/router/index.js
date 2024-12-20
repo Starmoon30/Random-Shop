@@ -11,7 +11,6 @@ import NewProduct from "@/components/block-admin/admin-NewPro.vue";
 import UserInfo from '../components/block-buyer/buyer-imformation/UserInfo.vue';
 import ShippingManagement from '../components/block-buyer/buyer-imformation/ShippingManagement.vue';
 import AccountManagement from '../components/block-buyer/buyer-imformation/AccountManagement.vue';
-import WelcomePage from "../components/block-buyer/buyer-imformation/welcome.vue";
 import UnacceptedOrders from '../components/block-buyer/buyer-imformation/orders/unaccepted.vue';
 import AcceptedOrders from '../components/block-buyer/buyer-imformation/orders/accepted.vue';
 import CompletedOrders from '../components/block-buyer/buyer-imformation/orders/completed.vue';
@@ -69,16 +68,11 @@ const routes = [
   },
   {
     path: '/user-info',
-    component:UserIn,
+    component: UserIn,
     children: [
-      // {
-      //   path: '/welcome', // 默认子路由，渲染欢迎界面
-      //   name: 'WelcomePage',
-      //   component: WelcomePage
-      // },
       {
-        path: '/userinfo', // 嵌套路由
-        name: 'UserInfo',
+        path: '', // 设置空路径，作为默认子路由
+        name: 'UserInfo', // 默认显示UserInfo
         component: UserInfo
       },
       {
@@ -108,7 +102,6 @@ const routes = [
       },
     ]
   },
-
 ];
 const router = createRouter({
   history: createWebHistory(),
