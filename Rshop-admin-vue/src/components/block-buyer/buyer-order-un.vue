@@ -22,10 +22,10 @@
                 <el-form-item label="联系电话" prop="phone">
                   <el-input v-model="orderForm.phone" ></el-input>
                 </el-form-item>
-                <el-form-item label="地址">
+                <el-form-item label="地址" prop="address">
                   <el-input v-model="orderForm.address"></el-input>
                 </el-form-item>
-                <el-form-item label="备注">
+                <el-form-item label="备注"  prop="remark">
                   <el-input
                     type="textarea"
                     v-model="orderForm.remark"
