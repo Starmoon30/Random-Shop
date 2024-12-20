@@ -11,7 +11,7 @@ import NewProduct from "@/components/block-admin/admin-NewPro.vue";
 import UserInfo from '../components/block-buyer/buyer-imformation/UserInfo.vue';
 import ShippingManagement from '../components/block-buyer/buyer-imformation/ShippingManagement.vue';
 import AccountManagement from '../components/block-buyer/buyer-imformation/AccountManagement.vue';
-import WelcomePage from "../components/block-buyer/buyer-imformation/welcome.vue";
+import WelcomePage from "@/components/block-buyer/buyer-imformation/welcome.vue";
 import UnacceptedOrders from '../components/block-buyer/buyer-imformation/orders/unaccepted.vue';
 import AcceptedOrders from '../components/block-buyer/buyer-imformation/orders/accepted.vue';
 import CompletedOrders from '../components/block-buyer/buyer-imformation/orders/completed.vue';
@@ -57,25 +57,25 @@ const routes = [
     name: 'Ishell',
     component: Ishell
   },
-  // {
-  //   path: '/user-info',
-  //   name: 'UserIn',
-  //   component: UserIn
-  // },
+  {
+    path: '/user-info',
+    name: 'UserIn',
+    component: UserIn
+  },
   {
     path: '/updatePwd',
     name: 'UpdatePwd',
     component: UpdatePwd
   },
   {
-    path: '/user-info',
+    path: '/user-home',
     component:UserIn,
     children: [
-      // {
-      //   path: '/welcome', // 默认子路由，渲染欢迎界面
-      //   name: 'WelcomePage',
-      //   component: WelcomePage
-      // },
+      {
+        path: '', // 默认子路由，渲染欢迎界面
+        name: 'Welcome',
+        component: WelcomePage
+      },
       {
         path: '/userinfo', // 嵌套路由
         name: 'UserInfo',

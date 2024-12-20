@@ -3,18 +3,11 @@
     <!-- 滚动条组件包裹内容区域 -->
     <el-scrollbar class="scrollbar-container">
       <el-table :data="tableData" class="custom-table-row" style="width: 100%">
-        <el-table-column prop="oid" label="订单号"/>
-        <el-table-column prop="gid" label="商品号"/>
-        <el-table-column prop="ophone" label="联系电话"/>
-        <el-table-column prop="oaddress" label="地址"/>
-        <el-table-column prop="oremark" label="备注"/>
-        <el-table-column prop="ostate" label="订单阶段"/>
-        <!-- 新增的按钮列 -->
-        <el-table-column label="操作">
-          <template #default="scope">
-            <el-button type="primary" size="small" @click="acceptOrder(scope.row)">接受订单</el-button>
-          </template>
-        </el-table-column>
+        <el-table-column prop="oid" label="OID"/>
+        <el-table-column prop="gid" label="GID"/>
+        <el-table-column prop="ophone" label="OPhone"/>
+        <el-table-column prop="oaddress" label="OAddress"/>
+        <el-table-column prop="oremark" label="ORemark"/>
       </el-table>
     </el-scrollbar>
   </div>
@@ -45,67 +38,59 @@ const tableData = ref([]);
 const pageSize = ref(10);
 const pageNum = ref(1);
 const total = ref(0);
-const token = localStorage.getItem('token');
 
-// 获取所有订单数据的函数
-const fetchAllOrders = async () => {
+// 获取当前用户账号
+// const currentUser = localStorage.getItem('userInfo');// 假设在 localStorage 中存储了当前用户账号
+// console.log("currentUser",currentUser);
+const token = localStorage.getItem('token');
+const decoded = jwtDecode(token);
+console.log("decoded", decoded);
+
+// 获取所有订单数据的函数，并过滤当前用户的数据
+const fetchAllUsers = async () => {
   try {
     const response = await axios.get('http://localhost:8090/order/list', {
       headers: {
         'Authorization': `${token}`,
       }
     });
-    const decoded = jwtDecode(token);
-    allData.value = response.data.filter(item => item.ostate === 0 && item.uaccount === decoded.account); // 过滤出ostate为0的数据
-    total.value = allData.value.length; // 总数据量
-    paginate(); // 进行分页
+    console.log("response", response);
+
+
+    console.log("user", decoded.account);
+
+    // 假设 response.data 是一个数组，每个元素都是一个订单对象
+    // 使用 currentUser.account 来筛选订单
+    allData.value = response.data.filter(item => item.uaccount === decoded.account && item.ostate === 0);
+    total.value = allData.value.length; // 更新总数据量
+    paginate(allData.value); // 进行分页
   } catch (error) {
     console.error('Error fetching orders:', error);
   }
 };
 
 // 分页函数
-const paginate = () => {
+const paginate = (data) => {
   const startIndex = (pageNum.value - 1) * pageSize.value;
   const endIndex = startIndex + pageSize.value;
-  tableData.value = allData.value.slice(startIndex, endIndex);
+  tableData.value = data.slice(startIndex, endIndex);
 };
 
 // 分页事件处理函数
 const handleSizeChange = (val) => {
   pageSize.value = val;
-  paginate();
+  paginate(allData.value);
 };
 
 const handleCurrentChange = (val) => {
   pageNum.value = val;
-  paginate();
+  paginate(allData.value);
 };
 
-// 接受订单的方法
-const acceptOrder = async (order) => {
-  try {
-    const response = await axios.post('http://localhost:8090/order/update_Ostate', {id: order.oid, state: 1}, {
-      headers: {
-        'Authorization': `${token}`,
-      }
-    });
-    if (response.data) {
-      console.log('接受成功');
-      // 重新获取商品列表
-      fetchAllOrders();
-    }
-    else {
-      console.error('Error accepting order:', response.data.message);
-    }
-  } catch (error) {
-    console.error('Error accepting order:', error);
-  }
-};
 
-// 组件挂载时获取所有订单数据
+// 组件挂载时获取当前用户的订单数据
 onMounted(() => {
-  fetchAllOrders();
+  fetchAllUsers();
 });
 </script>
 

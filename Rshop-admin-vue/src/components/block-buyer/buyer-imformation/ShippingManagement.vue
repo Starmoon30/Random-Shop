@@ -1,117 +1,89 @@
 <template>
-  <!-- 滚动条组件 -->
-  <div>
-    <el-scrollbar>
-      <el-table :data="tableData" class="custom-table-row" style="width: 100%">
-        <el-table-column prop="oid" label="OID"/>
-        <el-table-column prop="gid" label="GID"/>
-        <el-table-column prop="uaccount" label="UAccount"/>
-        <el-table-column prop="ophone" label="OPhone"/>
-        <el-table-column prop="oaddress" label="OAddress"/>
-        <el-table-column prop="oremark" label="ORemark"/>
-        <el-table-column prop="ostate" label="OState"/>
-        <!-- 新增的按钮列 -->
-        <el-table-column label="操作">
-          <template #default="scope">
-            <el-button type="primary" size="small" @click="acceptOrder(scope.row)">确认收货</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-scrollbar>
-    <el-pagination
-      v-model:current-page="pageNum"
-      v-model:page-size="pageSize"
-      :page-sizes="[5, 10, 20]"
-      :total="total"
-      layout="total, sizes, prev, pager, next, jumper"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
-  </div>
+  <el-card class="account-info-update-card">
+    <template v-slot:header>
+      <div>{{ `修改账号信息` }}</div>
+      <div class="account-info">当前账号为：{{ account }}</div>
+    </template>
+    <el-form ref="accountForm" :model="accountForm" label-width="150px" @submit.native.prevent="submitAccountUpdate">
+      <el-form-item label="地址" :rules="[{ required: true, message: '请输入地址', trigger: 'blur' }]">
+        <el-input v-model="accountForm.address" autocomplete="off" required></el-input>
+      </el-form-item>
+      <el-form-item label="电话号码" :rules="[{ required: true, message: '请输入电话号码', trigger: 'blur' }, { pattern: /^1[3-9]\d{9}$/, message: '请输入有效的手机号码', trigger: 'blur' }]">
+        <el-input v-model="accountForm.phone" autocomplete="off" required></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="submitAccountUpdate">提交</el-button>
+      </el-form-item>
+    </el-form>
+  </el-card>
 </template>
 
-<script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
-
-// 定义全部数据的响应式变量
-const allData = ref([]);
-// 定义表格数据的响应式变量
-const tableData = ref([]);
-// 定义分页参数
-const pageSize = ref(10);
-const pageNum = ref(1);
-const total = ref(0);
-
-// 获取存储在 localStorage 中的用户信息
-const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-
-// 获取所有用户数据的函数
-const fetchAllUsers = async () => {
-  try {
-    const response = await axios.get('http://localhost:8090/order/list');
-    allData.value = response.data; // 假设后端返回所有订单数据
-
-    // 根据 localStorage 中的用户信息过滤订单数据
-    if (userInfo) {
-      // 假设根据用户的 `role` 或 `account` 来筛选订单数据
-      // 例如：只显示与当前用户相关的订单
-      allData.value = allData.value.filter(order => {
-        // 你可以根据需要调整筛选逻辑
-        return order.uaccount === userInfo.account; // 这里只展示当前用户的订单
-      });
-    }
-
-    total.value = allData.value.length; // 更新总数据量
-    paginate(allData.value); // 进行分页
-  } catch (error) {
-    console.error('Error fetching orders:', error);
-  }
-};
-
-// 分页函数
-const paginate = (data) => {
-  const startIndex = (pageNum.value - 1) * pageSize.value;
-  const endIndex = startIndex + pageSize.value;
-  tableData.value = data.slice(startIndex, endIndex);
-};
-
-// 分页事件处理函数
-const handleSizeChange = (val) => {
-  pageSize.value = val;
-  paginate(allData.value);
-};
-
-const handleCurrentChange = (val) => {
-  pageNum.value = val;
-  paginate(allData.value);
-};
-
-// 接受订单的方法
-const acceptOrder = async (order) => {
-  try {
-    const response = await axios.post('http://localhost:8090/order/accept', {oid: order.oid});
-    if (response.data.success) {
-      // 假设后端返回success字段表示操作成功
-      fetchAllUsers(); // 重新获取订单数据
-    } else {
-      // 处理失败情况
-      console.error('Error accepting order:', response.data.message);
-    }
-  } catch (error) {
-    console.error('Error accepting order:', error);
-  }
-};
-
-// 组件挂载时获取所有订单数据
-onMounted(() => {
-  fetchAllUsers();
-});
-</script>
-
 <style scoped>
-/* 自定义表格行高 */
-.custom-table-row .el-table .el-table__body {
-  --el-table-row-height: 100px; /* 设置行高为100px，可以根据需要调整 */
+.account-info-update-card {
+  max-width: 400px;
+  margin: 20px auto;
+}
+
+.el-form-item {
+  margin-bottom: 20px;
 }
 </style>
+
+<script>
+import { ElMessage } from 'element-plus';
+import axios from 'axios';
+import { defineComponent, ref } from 'vue';
+import { jwtDecode } from "jwt-decode";
+
+export default defineComponent({
+  data() {
+    return {
+      account: '',
+      accountForm: {
+        account: '',
+        address: '',
+        phone: ''
+      },
+      token: '' // 存储token
+    };
+  },
+  created() {
+    this.token = localStorage.getItem('token');
+    if (this.token) {
+      const claims = jwtDecode(this.token);
+      this.account = claims.account;
+      this.accountForm.account = claims.account;
+      // 可以在这里添加额外的逻辑来预填充地址和电话，如果它们存储在token中或可以从其他地方获取
+    } else {
+      this.$router.push({ path: '/' });
+    }
+  },
+  methods: {
+    async submitAccountUpdate() {
+      const formData = {
+        account: this.accountForm.account,
+        address: this.accountForm.address,
+        phone: this.accountForm.phone
+      };
+
+      try {
+        const response = await axios.post('http://localhost:8090/user/update_uinfo', formData, {
+          headers: {
+            'Authorization': `${this.token}`
+          }
+        });
+        console.log(response.data);
+        if (response.data) { // 根据你的API响应结构来检查是否成功
+          ElMessage.success('账号信息修改成功');
+          //this.$router.push('/');
+        } else {
+          ElMessage.error('账号信息修改失败，请检查输入');
+        }
+      } catch (error) {
+        console.error('账号信息修改请求出错:', error);
+        ElMessage.error('账号信息修改过程中出现错误');
+      }
+    }
+  }
+});
+</script>

@@ -35,10 +35,21 @@
 <script>
 import { ElMessage } from 'element-plus';
 import axios from 'axios';
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { jwtDecode } from "jwt-decode";
 
 export default defineComponent({
+  created() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const claims = jwtDecode(token);
+      this.account = claims.account;
+      this.passwordForm.account = claims.account;
+      console.log("pwd页面：", this.account);
+    } else {
+      this.$router.push({ path: '/'});
+    }
+  },
   data() {
     return {
       account: '',
@@ -47,20 +58,8 @@ export default defineComponent({
         old_pwd: '',
         new_pwd: '',
         confirmPassword: ''
-      },
-      token: '' // 添加 token 到 data 中
+      }
     };
-  },
-  created() {
-    this.token = localStorage.getItem('token'); // 将 token 存储到组件的 data 中
-    if (this.token) {
-      const claims = jwtDecode(this.token);
-      this.account = claims.account;
-      this.passwordForm.account = claims.account;
-      console.log("pwd页面：", this.account);
-    } else {
-      this.$router.push({ path: '/'});
-    }
   },
   methods: {
     async submitPasswordChange() {
@@ -75,14 +74,18 @@ export default defineComponent({
         new_pwd: this.passwordForm.new_pwd
       };
 
+      // Send the request to change the password
       try {
+        console.log("新密码：",formData.new_pwd);
+        console.log("账号为：", formData.account);
+        console.log("旧密码为：", formData.old_pwd);
         const response = await axios.post('http://localhost:8090/user/update_pwd', formData, {
           headers: {
-            'Authorization': `${this.token}`, // 使用 this.token
+            'Authorization': `${token}`,
           }
         });
         console.log(response.data);
-        if (response.data) { // 假设你的 API 返回一个 success 标志
+        if (response.data) { // Assuming your API returns a success flag
           ElMessage.success('密码修改成功');
           this.$router.push('/');
         } else {

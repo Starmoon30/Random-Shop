@@ -14,7 +14,6 @@
       <el-container style="flex: 1;background-color: #e8eaeb">
         <el-main>
           <div>
-
             <router-view></router-view>
           </div>
         </el-main>

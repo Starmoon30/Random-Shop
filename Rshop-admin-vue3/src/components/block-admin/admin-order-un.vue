@@ -3,12 +3,13 @@
     <!-- 滚动条组件包裹内容区域 -->
     <el-scrollbar class="scrollbar-container">
       <el-table :data="tableData" class="custom-table-row" style="width: 100%">
-        <el-table-column prop="oid" label="订单号"/>
-        <el-table-column prop="gid" label="商品号"/>
-        <el-table-column prop="ophone" label="联系电话"/>
-        <el-table-column prop="oaddress" label="地址"/>
-        <el-table-column prop="oremark" label="备注"/>
-        <el-table-column prop="ostate" label="订单阶段"/>
+        <el-table-column prop="oid" label="OID"/>
+        <el-table-column prop="gid" label="GID"/>
+        <el-table-column prop="uaccount" label="UAccount"/>
+        <el-table-column prop="ophone" label="OPhone"/>
+        <el-table-column prop="oaddress" label="OAddress"/>
+        <el-table-column prop="oremark" label="ORemark"/>
+        <el-table-column prop="ostate" label="OState"/>
         <!-- 新增的按钮列 -->
         <el-table-column label="操作">
           <template #default="scope">
@@ -35,7 +36,6 @@
 <script setup>
 import {ref, onMounted} from 'vue';
 import axios from 'axios';
-import {jwtDecode} from "jwt-decode";
 
 // 定义全部数据的响应式变量
 const allData = ref([]);
@@ -55,8 +55,7 @@ const fetchAllOrders = async () => {
         'Authorization': `${token}`,
       }
     });
-    const decoded = jwtDecode(token);
-    allData.value = response.data.filter(item => item.ostate === 0 && item.uaccount === decoded.account); // 过滤出ostate为0的数据
+    allData.value = response.data.filter(item => item.ostate === 0); // 过滤出ostate为0的数据
     total.value = allData.value.length; // 总数据量
     paginate(); // 进行分页
   } catch (error) {

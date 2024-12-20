@@ -9,15 +9,16 @@
 export default {
   name: 'WelcomePage'
 };
+
 </script>
 
-<style scoped>
-h1 {
-  font-size: 2rem;
-  color: var(--el-text-color-primary);
-}
-p {
-  font-size: 1rem;
-  color: var(--el-text-color-secondary);
-}
-</style>
+<!--<style scoped>-->
+<!--h1 {-->
+<!--  font-size: 2rem;-->
+<!--  color: var(&#45;&#45;el-text-color-primary);-->
+<!--}-->
+<!--p {-->
+<!--  font-size: 1rem;-->
+<!--  color: var(&#45;&#45;el-text-color-secondary);-->
+<!--}-->
+<!--</style>-->

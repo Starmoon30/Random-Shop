@@ -5,9 +5,17 @@
       <el-table :data="tableData" class="custom-table-row" style="width: 100%">
         <el-table-column prop="oid" label="OID"/>
         <el-table-column prop="gid" label="GID"/>
+<!--        <el-table-column prop="gname" label="GName"/>  &lt;!&ndash; 商品名称 &ndash;&gt;-->
         <el-table-column prop="ophone" label="OPhone"/>
         <el-table-column prop="oaddress" label="OAddress"/>
         <el-table-column prop="oremark" label="ORemark"/>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <div style="justify-content: center;align-items: center;">
+              <el-button type="primary" size="small" style="background-color: #ea4444" @click="canselOrder(scope.row)">取消接受</el-button>
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
     </el-scrollbar>
   </div>
@@ -26,27 +34,39 @@
 </template>
 
 <script setup>
-import {ref, onMounted} from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
+import { ElMessage } from 'element-plus';
 
-// 定义全部数据的响应式变量
+// 定义数据的响应式变量
 const allData = ref([]);
-// 定义表格数据的响应式变量
 const tableData = ref([]);
-// 定义分页参数
+const goodsList = ref([]);  // 商品列表
+
+// 分页相关变量
 const pageSize = ref(10);
 const pageNum = ref(1);
 const total = ref(0);
 
-// 获取当前用户账号
-// const currentUser = localStorage.getItem('userInfo');// 假设在 localStorage 中存储了当前用户账号
-// console.log("currentUser",currentUser);
 const token = localStorage.getItem('token');
 const decoded = jwtDecode(token);
-console.log("decoded",decoded);
 
-// 获取所有订单数据的函数，并过滤当前用户的数据
+// 获取商品列表
+const fetchGoodsList = async () => {
+  try {
+    const response = await axios.get('http://localhost:8090/goods/get_info', {
+      headers: {
+        'Authorization': `${token}`,
+      }
+    });
+    goodsList.value = response.data;  // 假设返回的商品列表数据在 data 中
+  } catch (error) {
+    console.error('Error fetching goods list:', error);
+  }
+};
+
+// 获取订单数据并根据 gid 加载商品名称
 const fetchAllUsers = async () => {
   try {
     const response = await axios.get('http://localhost:8090/order/list', {
@@ -54,16 +74,20 @@ const fetchAllUsers = async () => {
         'Authorization': `${token}`,
       }
     });
-    console.log("response", response);
 
+    // 获取当前用户的订单数据
+    const orders = response.data.filter(item => item.uaccount === decoded.account && item.ostate === 1);
 
-    console.log("user",decoded.account);
+    // 为每个订单添加商品名称
+    for (let order of orders) {
+      // 查找对应的商品名称
+      const product = goodsList.value.find(item => item.gid === order.gid);
+      order.gname = product ? product.gname : '未知商品';  // 如果找不到商品，默认设置为 '未知商品'
+    }
 
-    // 假设 response.data 是一个数组，每个元素都是一个订单对象
-    // 使用 currentUser.account 来筛选订单
-    allData.value = response.data.filter(item => item.uaccount === decoded.account && item.ostate === 1);
-    total.value = allData.value.length; // 更新总数据量
-    paginate(allData.value); // 进行分页
+    allData.value = orders;
+    total.value = orders.length;
+    paginate(orders);
   } catch (error) {
     console.error('Error fetching orders:', error);
   }
@@ -87,10 +111,43 @@ const handleCurrentChange = (val) => {
   paginate(allData.value);
 };
 
+// 取消订单
+const canselOrder = async (order) => {
+  try {
+    const response = await axios.post('http://localhost:8090/order/update_Ostate', {
+      id: order.oid,
+      state: 0
+    }, {
+      headers: {
+        'Authorization': `${token}`,
+      }
+    });
 
-// 组件挂载时获取当前用户的订单数据
+    if (response.data) {
+      ElMessage({
+        message: '取消成功',
+        type: 'success'
+      });
+      fetchAllUsers();
+    } else {
+      ElMessage({
+        message: response.data.message || '取消订单失败',
+        type: 'error'
+      });
+    }
+  } catch (error) {
+    console.error('Error cancelling order:', error);
+    ElMessage({
+      message: '取消订单时发生错误',
+      type: 'error'
+    });
+  }
+};
+
+// 组件挂载时获取商品列表和订单数据
 onMounted(() => {
-  fetchAllUsers();
+  fetchGoodsList();  // 获取商品列表
+  fetchAllUsers();   // 获取订单数据
 });
 </script>
 
