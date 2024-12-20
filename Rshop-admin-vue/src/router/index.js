@@ -11,7 +11,7 @@ import BProductDet from "@/components/block-buyer/buyer-detail.vue";
 import NewProduct from "@/components/block-admin/admin-NewPro.vue";
 import NewOrder from "@/components/block-buyer/buyer-Neworder.vue";
 import SearchRes from "@/components/block-buyer/buyer-searchGoods.vue";
-import NewLabel from "@/components/block-admin/admin-newCat.vue"
+import NewLabel from "@/components/block-admin/admin-newCat.vue";
 
 const routes = [
   {
@@ -76,6 +76,11 @@ const routes = [
     path: '/ingshell',
     name: 'Ishell',
     component: Ishell
+  },
+  {
+    path: '/user-info',
+    name: 'UserIn',
+    component: UserIn
   },
   {
     path: '/user-info',

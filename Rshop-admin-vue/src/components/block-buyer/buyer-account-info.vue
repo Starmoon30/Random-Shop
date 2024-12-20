@@ -4,7 +4,7 @@
       <div>{{ `修改密码` }}</div>
       <div class="account-info">当前账号为：{{ account }}</div>
     </template>
-    <el-form ref="passwordForm" :model="passwordForm" label-width="150px" @submit.native.prevent="submitPasswordChange">
+    <el-form ref="passwordForm" :model="passwordForm" label-width="150px">
       <el-form-item label="旧密码" :rules="[{ required: true, message: '请输入旧密码', trigger: 'blur' }]">
         <el-input type="password" v-model="passwordForm.old_pwd" autocomplete="off" required></el-input>
       </el-form-item>
@@ -37,14 +37,13 @@ import axios from 'axios';
 import { defineComponent } from 'vue';
 import { jwtDecode } from "jwt-decode";
 
+const token = localStorage.getItem('token');
 export default defineComponent({
   created() {
-    const token = localStorage.getItem('token');
     if (token) {
       const claims = jwtDecode(token);
       this.account = claims.account;
       this.passwordForm.account = claims.account;
-      console.log("pwd页面：", this.account);
     } else {
       this.$router.push({ path: '/'});
     }
@@ -75,8 +74,8 @@ export default defineComponent({
 
       // Send the request to change the password
       try {
-        console.log("新密码：",formData.new_pwd);
         console.log("账号为：", formData.account);
+        console.log("新密码：",formData.new_pwd);
         console.log("旧密码为：", formData.old_pwd);
         const response = await axios.post('http://localhost:8090/user/update_pwd', formData, {
           headers: {

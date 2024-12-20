@@ -9,6 +9,7 @@ const logout = () => {
 
 <template>
   <header class="header">
+    <a href="/bHome" class="bhome-link" style="color: #093b7f">返回首页</a>
     <div class="header-left">
       <h3 class="welcome-message">欢迎浏览随意商城！</h3>
     </div>
