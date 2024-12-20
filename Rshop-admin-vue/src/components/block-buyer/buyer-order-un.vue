@@ -25,7 +25,7 @@
                 <el-form-item label="地址" prop="address">
                   <el-input v-model="orderForm.address"></el-input>
                 </el-form-item>
-                <el-form-item label="备注"  prop="remark">
+                <el-form-item label="备注">
                   <el-input
                     type="textarea"
                     v-model="orderForm.remark"
@@ -81,9 +81,6 @@ const rules = ref({
   ],
   address: [
     { required: true, message: '请输入地址', trigger: 'blur' }
-  ],
-  remark: [
-    { required: true, message: '请输入备注', trigger: 'blur' }
   ]
 });
 const formRef = ref(null);
