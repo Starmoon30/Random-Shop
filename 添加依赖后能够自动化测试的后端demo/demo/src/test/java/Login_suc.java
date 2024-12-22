@@ -1,19 +1,16 @@
+import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.junit.Before;
+import org.junit.Test;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.JavascriptExecutor;
-import com.opencsv.CSVReader;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Login_suc {
   private WebDriver driver;
@@ -40,7 +37,7 @@ public class Login_suc {
     String username = loginData[0];  // 假设用户名在CSV的第一列
     String password = loginData[1];  // 假设密码在CSV的第二列
 
-    driver.get("http://localhost:5173/");
+    driver.get("http://localhost:8090/");
     driver.manage().window().setSize(new Dimension(856, 596));
 
     // 输入用户名

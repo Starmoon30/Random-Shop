@@ -1,22 +1,20 @@
+import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
-
-import static java.lang.Thread.sleep;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.core.IsNot.not;
+import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
-
-import com.opencsv.CSVReader;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Login_fail {
   private WebDriver driver;
@@ -41,7 +39,7 @@ public class Login_fail {
 
   @Test
   public void logFail() throws InterruptedException, IOException, CsvValidationException {
-    driver.get("http://localhost:5173/");
+    driver.get("http://localhost:8090/");
     driver.manage().window().setSize(new Dimension(876, 674));
 
     // 读取CSV文件中的数据

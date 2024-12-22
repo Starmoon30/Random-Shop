@@ -1,17 +1,19 @@
+import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.Dimension;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.JavascriptExecutor;
+
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.*;
-import com.opencsv.CSVReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Register_suc {
   private WebDriver driver;
@@ -40,7 +42,7 @@ public class Register_suc {
     String[] userData = csvData.get(0);
 
     // 启动浏览器并打开页面
-    driver.get("http://localhost:5173/");
+    driver.get("http://localhost:8090/");
     driver.manage().window().setSize(new Dimension(876, 674));
 
     // 点击“注册账号”链接

@@ -21,7 +21,6 @@ public class LoginController {
     private UserService userService;
     @PostMapping("/login")
     public Result login(@RequestBody User user){
-        log.info("员工登陆的信息：{}",user);
         User u = userService.findUser(user);
 
         // 如果登陆成功，生成令牌，下发令牌

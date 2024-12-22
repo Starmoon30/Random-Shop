@@ -19,28 +19,24 @@ public class Stockhistory implements Serializable {
     /**
      *
      */
-    @Setter
     @TableId(value = "SHID", type = IdType.AUTO)
     private Integer SHID;
 
     /**
      *
      */
-    @Setter
     @TableField(value = "SHTime")
     private Date SHTime;
 
     /**
      *
      */
-    @Setter
     @TableField(value = "SHReason")
     private Integer SHReason;
 
     /**
      *
      */
-    @Setter
     @TableField(value = "GID")
     private Integer GID;
 
@@ -58,6 +54,22 @@ public class Stockhistory implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    public void setSHID(Integer SHID) {
+        this.SHID = SHID;
+    }
+
+    public void setSHTime(Date SHTime) {
+        this.SHTime = SHTime;
+    }
+
+    public void setSHReason(Integer SHReason) {
+        this.SHReason = SHReason;
+    }
+
+    public void setGID(Integer GID) {
+        this.GID = GID;
+    }
 
     public void setSHStockO(Integer SHStock_O) {
         this.SHStock_O = SHStock_O;

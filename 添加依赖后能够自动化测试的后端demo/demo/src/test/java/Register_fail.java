@@ -1,12 +1,13 @@
+import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.Dimension;
-import com.opencsv.CSVReader;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
@@ -31,7 +32,7 @@ public class Register_fail {
     List<String[]> csvData = readCsv("C:\\Users\\23888\\Desktop\\我的测试\\csv\\Register_fail.csv");
 
     // 打开页面
-    driver.get("http://localhost:5173/");
+    driver.get("http://localhost:8090/");
     driver.manage().window().setSize(new Dimension(876, 674));
 
     // 注册过程

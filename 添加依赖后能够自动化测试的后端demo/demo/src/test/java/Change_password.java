@@ -1,11 +1,11 @@
+import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
-import org.junit.Test;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
-import com.opencsv.CSVReader;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class Change_password {
   @Test
   public void changepassword() throws InterruptedException {
     // 打开网页并设置浏览器窗口大小
-    driver.get("http://localhost:5173/");
+    driver.get("http://localhost:8090/");
     driver.manage().window().setSize(new Dimension(876, 676));
 
     // 选择"Admin"并登录
