@@ -22,11 +22,11 @@ public class Login_fail {
   JavascriptExecutor js;
 
   // CSV文件路径
-  private String csvFilePath = "C:\\Users\\23888\\Desktop\\我的测试\\csv\\log-fai.csv";
+  private String csvFilePath = "src/main/resources/TestDriver/CSV/log-fai.csv";
 
   @Before
   public void setUp() {
-    System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe");
+    System.setProperty("webdriver.chrome.driver", "src/main/resources/TestDriver/chromedriver.exe");
     driver = new ChromeDriver();
     js = (JavascriptExecutor) driver;
     vars = new HashMap<String, Object>();

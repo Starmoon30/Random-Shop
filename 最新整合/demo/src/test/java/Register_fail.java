@@ -17,7 +17,7 @@ public class Register_fail {
 
   @Before
   public void setUp() {
-    System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe");
+    System.setProperty("webdriver.chrome.driver", "src/main/resources/TestDriver/chromedriver.exe");
     driver = new ChromeDriver();
   }
 
@@ -29,7 +29,7 @@ public class Register_fail {
   @Test
   public void faillllllllll() throws InterruptedException, IOException, CsvException {
     // 读取CSV文件
-    List<String[]> csvData = readCsv("C:\\Users\\23888\\Desktop\\我的测试\\csv\\Register_fail.csv");
+    List<String[]> csvData = readCsv("src/main/resources/TestDriver/CSV/Register_fail.csv");
 
     // 打开页面
     driver.get("http://localhost:8090/");

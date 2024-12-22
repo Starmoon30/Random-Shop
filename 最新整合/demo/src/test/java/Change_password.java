@@ -21,13 +21,13 @@ public class Change_password {
 
   @Before
   public void setUp() throws IOException, CsvException {
-    System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe");
+    System.setProperty("webdriver.chrome.driver", "src/main/resources/TestDriver/chromedriver.exe");
     driver = new ChromeDriver();
     js = (JavascriptExecutor) driver;
     vars = new HashMap<>();
 
     // 读取CSV文件并加载数据
-    CSVReader csvReader = new CSVReader(new FileReader("C:/Users/23888/Desktop/我的测试/csv/Change_password.csv"));
+    CSVReader csvReader = new CSVReader(new FileReader("src/main/resources/TestDriver/CSV/Change_password.csv"));
     csvData = csvReader.readAll();
     csvReader.close();
   }

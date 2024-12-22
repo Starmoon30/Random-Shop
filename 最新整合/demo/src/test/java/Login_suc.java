@@ -19,7 +19,7 @@ public class Login_suc {
 
   @Before
   public void setUp() {
-    System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe");
+    System.setProperty("webdriver.chrome.driver", "src/main/resources/TestDriver/chromedriver.exe");
     driver = new ChromeDriver();
     js = (JavascriptExecutor) driver;
     vars = new HashMap<String, Object>();
@@ -33,7 +33,7 @@ public class Login_suc {
   @Test
   public void logintest() throws InterruptedException, IOException, CsvValidationException {
     // 从CSV文件中读取登录信息
-    String[] loginData = readCSV("C:\\Users\\23888\\Desktop\\我的测试\\csv\\log-suc.csv");
+    String[] loginData = readCSV("src/main/resources/TestDriver/CSV/log-suc.csv");
     String username = loginData[0];  // 假设用户名在CSV的第一列
     String password = loginData[1];  // 假设密码在CSV的第二列
 

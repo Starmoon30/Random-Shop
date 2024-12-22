@@ -16,7 +16,7 @@ public class User_msg {
   JavascriptExecutor js;
   @Before
   public void setUp() {
-    System.setProperty("webdriver.chrome.driver","C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe");
+    System.setProperty("webdriver.chrome.driver","src/main/resources/TestDriver/chromedriver.exe");
     driver = new ChromeDriver();
     js = (JavascriptExecutor) driver;
     vars = new HashMap<String, Object>();
@@ -43,11 +43,6 @@ public class User_msg {
     Thread.sleep(2000);
     driver.findElement(By.cssSelector(".el-menu-item-group:nth-child(1) .el-menu-item")).click();
     Thread.sleep(500);
-    driver.findElement(By.cssSelector(".el-menu-item-group:nth-child(2) .el-menu-item")).click();
-    Thread.sleep(500);
-    driver.findElement(By.cssSelector(".el-menu-item-group:nth-child(3) .el-menu-item")).click();
-    Thread.sleep(500);
-    driver.findElement(By.cssSelector(".el-menu-item-group:nth-child(4) .el-menu-item")).click();
-    Thread.sleep(500);
+
   }
 }

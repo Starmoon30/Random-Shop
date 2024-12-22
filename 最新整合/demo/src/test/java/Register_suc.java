@@ -22,7 +22,7 @@ public class Register_suc {
 
   @Before
   public void setUp() {
-    System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe");
+    System.setProperty("webdriver.chrome.driver", "src/main/resources/TestDriver/chromedriver.exe");
     driver = new ChromeDriver();
     js = (JavascriptExecutor) driver;
     vars = new HashMap<String, Object>();
@@ -36,7 +36,7 @@ public class Register_suc {
   @Test
   public void Registersuc() throws InterruptedException, IOException, CsvException {
     // 读取 CSV 文件
-    List<String[]> csvData = readCSV("C:\\Users\\23888\\Desktop\\我的测试\\csv\\Register_suc.csv");
+    List<String[]> csvData = readCSV("src/main/resources/TestDriver/CSV/Register_suc.csv");
 
     // 获取 CSV 数据中的第一行
     String[] userData = csvData.get(0);

@@ -16,7 +16,7 @@ public class Change_order_info {
   JavascriptExecutor js;
   @Before
   public void setUp() {
-    System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe");
+    System.setProperty("webdriver.chrome.driver", "src/main/resources/TestDriver/chromedriver.exe");
     driver = new ChromeDriver();
     js = (JavascriptExecutor) driver;
     vars = new HashMap<String, Object>();
@@ -52,10 +52,10 @@ public class Change_order_info {
       Actions builder = new Actions(driver);
       builder.moveToElement(element, 0, 0).perform();
     }
-    driver.findElement(By.xpath("//tr[10]/td[7]/div/div/div/div/div/form/div/div/div/div/input")).click();Thread.sleep(500);
-    driver.findElement(By.xpath("//tr[10]/td[7]/div/div/div/div/div/form/div/div/div/div/input")).sendKeys("123");Thread.sleep(500);
-    driver.findElement(By.xpath("//tr[10]/td[7]/div/div/div/div/div/form/div[2]/div/div/div/input")).click();Thread.sleep(500);
-    driver.findElement(By.xpath("//tr[10]/td[7]/div/div/div/div/div/form/div[2]/div/div/div/input")).sendKeys("浙工商123");Thread.sleep(500);
-    driver.findElement(By.xpath("//tr[10]/td[7]/div/div/div/div/footer/span/button/span")).click();Thread.sleep(1000);
+    driver.findElement(By.xpath("//tr[1]/td[7]/div/div/div/div/div/form/div/div/div/div/input")).click();Thread.sleep(500);
+    driver.findElement(By.xpath("//tr[1]/td[7]/div/div/div/div/div/form/div/div/div/div/input")).sendKeys("123");Thread.sleep(500);
+    driver.findElement(By.xpath("//tr[1]/td[7]/div/div/div/div/div/form/div[2]/div/div/div/input")).click();Thread.sleep(500);
+    driver.findElement(By.xpath("//tr[1]/td[7]/div/div/div/div/div/form/div[2]/div/div/div/input")).sendKeys("浙工商123");Thread.sleep(500);
+    driver.findElement(By.xpath("//tr[1]/td[7]/div/div/div/div/footer/span/button/span")).click();Thread.sleep(1000);
   }
 }

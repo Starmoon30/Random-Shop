@@ -15,7 +15,7 @@ public class User_Info {
     JavascriptExecutor js;
     @Before
     public void setUp() {
-        System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\Google\\Chrome\\Application\\chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "src/main/resources/TestDriver/chromedriver.exe");
         driver = new ChromeDriver();
         js = (JavascriptExecutor) driver;
         vars = new HashMap<String, Object>();
