@@ -57,7 +57,7 @@ const fetchAllOrders = async () => {
         'Authorization': `${token}`,
       }
     });
-    const orders = response.data.filter(item => item.ostate === 4 || item.ostate === -1 && item.uaccount === account);
+    const orders = response.data.filter(item => item.uaccount === account && item.ostate === 4 || item.ostate === -1);
     const allDataWithGname = await Promise.all(orders.map(async (order) => {
       const gname = await fetchGnameByGid(order.gid);
       return { ...order, gname };

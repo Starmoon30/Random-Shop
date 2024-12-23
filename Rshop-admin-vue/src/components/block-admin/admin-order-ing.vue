@@ -116,11 +116,11 @@ const acceptOrder = async (order) => {
     });
     if (response.data) {
       if(state === 2){
-        ElMessage.success("备货完成")
+        ElMessage.success("备货完成，待发货")
       }else if(state === 3){
-        ElMessage.success("已发货")
+        ElMessage.success("已发货，待收货")
       }else{
-        ElMessage.success("订单完成")
+        ElMessage.success("已收货，订单完成")
       }
       // 重新获取商品列表
       fetchOrders();
