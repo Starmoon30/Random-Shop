@@ -9,6 +9,21 @@
         <el-table-column prop="ophone" label="联系电话"/>
         <el-table-column prop="oaddress" label="地址"/>
         <el-table-column prop="oremark" label="备注"/>
+        <el-table-column label="状态">
+          <template #default="scope">
+            <span v-if="scope.row.ostate === 3" class="status-completed">已发货</span>
+            <span v-if="scope.row.ostate === 2" class="status-completed">已备货，代发货</span>
+            <span v-if="scope.row.ostate === 1" class="status-completed">已接受，备货中</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <div style="justify-content: center;align-items: center;">
+              <el-button v-if="scope.row.ostate === 1 || scope.row.ostate === 2" type="primary" size="small" style="background-color: #ea4444" @click="canselOrder(scope.row)">取消订单</el-button>
+              <span v-if="scope.row.ostate === 3" class="status-completed">待收货</span>
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
     </el-scrollbar>
   </div>
@@ -30,6 +45,7 @@
 import {ref, onMounted} from 'vue';
 import axios from 'axios';
 import {jwtDecode} from "jwt-decode";
+import {ElMessage} from "element-plus";
 
 // 定义全部数据的响应式变量
 const allData = ref([]);
@@ -49,7 +65,7 @@ const fetchAllOrders = async () => {
         'Authorization': `${token}`,
       }
     });
-    const orders = response.data.filter(item => item.ostate === 1 && item.uaccount === account);
+    const orders = response.data.filter(item => item.ostate === 1 || item.ostate === 2 || item.ostate === 3 && item.uaccount === account);
     const allDataWithGname = await Promise.all(orders.map(async (order) => {
       const gname = await fetchGnameByGid(order.gid);
       return { ...order, gname };
@@ -74,7 +90,26 @@ const fetchGnameByGid = async (gid) => {
     return '未知商品'; // 出错时返回默认值
   }
 };
-
+// 取消订单的方法
+const canselOrder = async (order) => {
+  try {
+    const response = await axios.post('http://localhost:8090/order/update_Ostate', {id: order.oid, state: -1}, {
+      headers: {
+        'Authorization': `${token}`,
+      }
+    });
+    if (response.data) {
+      ElMessage.success("订单已取消")
+      // 重新获取商品列表
+      fetchAllOrders();
+    }
+    else {
+      console.error('Error accepting order:', response.data.message);
+    }
+  } catch (error) {
+    console.error('Error accepting order:', error);
+  }
+};
 // 分页函数
 const paginate = () => {
   const startIndex = (pageNum.value - 1) * pageSize.value;

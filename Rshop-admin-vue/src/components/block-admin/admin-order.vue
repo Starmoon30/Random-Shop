@@ -1,130 +1,90 @@
 <template>
-  <div class="content-wrapper">
-    <!-- 滚动条组件包裹内容区域 -->
-    <el-scrollbar class="scrollbar-container">
-      <el-table :data="tableData" class="custom-table-row" style="width: 100%">
-        <el-table-column prop="oid" label="订单号"/>
-        <el-table-column prop="gid" label="商品号"/>
-        <el-table-column prop="uaccount" label="下单用户"/>
-        <el-table-column prop="ophone" label="联系电话"/>
-        <el-table-column prop="oaddress" label="地址"/>
-        <el-table-column prop="oremark" label="备注"/>
-        <el-table-column prop="ostate" label="订单阶段"/>
-        <!-- 新增的按钮列 -->
-        <el-table-column label="操作">
-          <template #default="scope">
-            <el-button type="primary" size="small" @click="acceptOrder(scope.row)">接受订单</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-scrollbar>
+  <div style="height: 100%; display: flex;">
+    <ShopLogo style="background-color: #ffffff"></ShopLogo>
+    <el-header style="width: 82%; text-align: right; font-size: 12px; display: flex; align-items: center; height: 80px; background-color: var(--el-color-primary-light-9);">
+      <admin-head></admin-head>
+    </el-header>
   </div>
-  <!-- 分页条固定在底部 -->
-  <div class="pagination-container">
-    <el-pagination
-      v-model:current-page="pageNum"
-      v-model:page-size="pageSize"
-      :page-sizes="[5, 10, 20]"
-      :total="total"
-      layout="total, sizes, prev, pager, next, jumper"
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    />
+  <el-table :data="orderData" style="width: 100%">
+    <el-table-column prop="oid" label="订单号"/>
+    <el-table-column prop="gid" label="商品号"/>
+    <el-table-column prop="gname" label="商品名称"/>
+    <el-table-column prop="ophone" label="联系电话"/>
+    <el-table-column prop="oaddress" label="地址"/>
+    <el-table-column prop="oremark" label="备注"/>
+    <el-table-column label="状态">
+      <template #default="scope">
+        <span v-if="scope.row.ostate === 4" class="status-completed">已完成</span>
+        <span v-if="scope.row.ostate === 3" class="status-completed">已发货</span>
+        <span v-if="scope.row.ostate === 2" class="status-completed">已备货，代发货</span>
+        <span v-if="scope.row.ostate === 1" class="status-completed">已接受，备货中</span>
+        <span v-if="scope.row.ostate === 0" class="status-completed">未接受</span>
+        <span v-if="scope.row.ostate === -1" class="status-completed">已撤回订单</span>
+      </template>
+    </el-table-column>
+  </el-table>
+  <div style="display: flex; justify-content: space-between; height: 80px">
+    <el-button @click="goBack" style="margin-right: auto;">返回</el-button>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import { onMounted, ref } from 'vue';
+import { useRouter, useRoute } from 'vue-router';  // 导入 useRouter
+import ShopLogo from "@/components/Shop-Logo.vue";
+import AdminHead from "@/components/block-admin/adminHead.vue";
+import axios from "axios";
 
-// 定义全部数据的响应式变量
-const allData = ref([]);
-// 定义表格数据的响应式变量
-const tableData = ref([]);
-// 定义分页参数
-const pageSize = ref(10);
-const pageNum = ref(1);
-const total = ref(0);
 const token = localStorage.getItem('token');
-// 获取所有用户数据的函数
-const fetchAllUsers = async () => {
+const orderData = ref([]);
+const route = useRoute();
+const router = useRouter();  // 初始化 router
+const uid = route.params.uid;
+console.log("搜索用户：", uid);
+
+const fetchAllOrders = async (uid) => {
   try {
     const response = await axios.get('http://localhost:8090/order/list', {
       headers: {
         'Authorization': `${token}`,
       }
     });
-    allData.value = response.data; // 假设后端返回所有订单数据
-    total.value = allData.value.length; // 总数据量
-    paginate(allData.value); // 进行分页
+    const orders = response.data.filter(item => item.uaccount === uid);
+    orderData.value = await Promise.all(orders.map(async (order) => {
+      const gname = await fetchGnameByGid(order.gid);
+      return { ...order, gname };
+    }));
+    console.log("订单：", orderData.value);
   } catch (error) {
     console.error('Error fetching orders:', error);
   }
 };
 
-// 分页函数
-const paginate = (data) => {
-  const startIndex = (pageNum.value - 1) * pageSize.value;
-  const endIndex = startIndex + pageSize.value;
-  tableData.value = data.slice(startIndex, endIndex);
-};
-
-// 分页事件处理函数
-const handleSizeChange = (val) => {
-  pageSize.value = val;
-  paginate(allData.value);
-};
-
-const handleCurrentChange = (val) => {
-  pageNum.value = val;
-  paginate(allData.value);
-};
-
-// 接受订单的方法
-const acceptOrder = async (order) => {
+const fetchGnameByGid = async (gid) => {
   try {
-    const response = await axios.post('http://localhost:8090/order/accept', {oid: order.oid});
-    if (response.data.success) {
-      // 假设后端返回success字段表示操作成功
-      fetchAllUsers(); // 重新获取订单数据
-    } else {
-      // 处理失败情况
-      console.error('Error accepting order:', response.data.message);
-    }
+    const response = await axios.post(`http://localhost:8090/goods/get_info`, { gid: gid }, {
+      headers: {
+        'Authorization': `${token}`,
+      }
+    });
+    return response.data[0].gname;
   } catch (error) {
-    console.error('Error accepting order:', error);
+    console.error('Error fetching gname:', error);
+    return '未知商品';
   }
 };
 
-// 组件挂载时获取所有订单数据
+const goBack = () => {
+  router.go(-1);  // 返回上一页面
+};
+
 onMounted(() => {
-  fetchAllUsers();
+  fetchAllOrders(uid);
 });
 </script>
 
 <style scoped>
-/* 自定义表格行高 */
-.custom-table-row .el-table .el-table__body {
-  --el-table-row-height: 100px; /* 设置行高为100px，可以根据需要调整 */
-}
-
-/* 滚动条容器样式 */
-.scrollbar-container {
-  height: calc(100vh - 60px); /* 减去分页条的高度 */
-  overflow-y: auto; /* 启用垂直滚动 */
-}
-
-/* 分页条固定在底部的样式 */
-.pagination-container {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background-color: #fff; /* 根据需要调整背景色 */
-  z-index: 1000; /* 确保分页条在最上层 */
-}
-
-/* 内容区域包裹器，用于计算滚动条高度 */
-.content-wrapper {
-  padding-bottom: 60px; /* 分页条的高度，确保内容不会被遮挡 */
+.status-completed {
+  color: green;
 }
 </style>

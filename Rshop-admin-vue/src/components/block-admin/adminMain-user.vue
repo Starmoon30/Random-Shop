@@ -1,5 +1,4 @@
 <template>
-  <!-- 滚动条组件 -->
   <div class="content-wrapper">
     <el-scrollbar>
       <el-table :data="tableData" class="custom-table-row" style="width: 100%">
@@ -7,7 +6,16 @@
         <el-table-column prop="upassword" label="密码"/>
         <el-table-column prop="uphone" label="联系电话"/>
         <el-table-column prop="uaddress" label="默认地址"/>
-        <el-table-column prop="ucategory" label="角色"/>
+        <el-table-column label="角色">
+          <template #default="{ row }">
+            {{ roleByCategory(row.ucategory) }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template #default="scope">
+            <el-button type="primary" size="small" @click="fetchAllOrders(scope.row)">查看订单</el-button>
+          </template>
+        </el-table-column>
       </el-table>
     </el-scrollbar>
     <el-pagination
@@ -24,46 +32,77 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
+import router from "@/router/index.js";
 
-// 定义全部数据的响应式变量
 const allData = ref([]);
-// 定义表格数据的响应式变量
 const tableData = ref([]);
-// 定义分页参数
+const orderData = ref([]);
 const pageSize = ref(10);
 const pageNum = ref(1);
 const total = ref(0);
 const token = localStorage.getItem('token');
-console.log("token:",token);
-// 获取所有用户数据的函数
+
+const roleByCategory = computed(() => (category) => {
+  return category === 0 ? '管理员' : category === 1 ? '买家用户' : '未知角色';
+});
+
 const fetchAllUsers = async () => {
   try {
-
-    console.log("miling：",localStorage.getItem('token'));
     const response = await axios.get('http://localhost:8090/user/list', {
       headers: {
         'Authorization': `${token}`,
       }
     });
-    console.log("返回：",response);
-    allData.value = response.data; // 假设后端返回所有用户数据
-    total.value = allData.value.length; // 总数据量
-    paginate(allData.value); // 进行分页
+    allData.value = response.data;
+    total.value = allData.value.length;
+    paginate(allData.value);
   } catch (error) {
     console.error('Error fetching users:', error);
   }
 };
 
-// 分页函数
+const fetchAllOrders = async (user) => {
+  try {
+    const response = await axios.get('http://localhost:8090/order/list', {
+      headers: {
+        'Authorization': `${token}`,
+      }
+    });
+    const orders = response.data.filter(item => item.uaccount === user.uaccount);
+    orderData.value = await Promise.all(orders.map(async (order) => {
+      const gname = await fetchGnameByGid(order.gid);
+      return {...order, gname};
+    }));
+    console.log("订单：", orderData.value);
+    // 跳转到新组建，并传递订单数据
+    await router.push({name: 'OrderDet', params: {uid: user.uaccount}});
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+  }
+};
+
+const fetchGnameByGid = async (gid) => {
+  try {
+    const response = await axios.post(`http://localhost:8090/goods/get_info`, { gid: gid }, {
+      headers: {
+        'Authorization': `${token}`,
+      }
+    });
+    return response.data[0].gname;
+  } catch (error) {
+    console.error('Error fetching gname:', error);
+    return '未知商品';
+  }
+};
+
 const paginate = (data) => {
   const startIndex = (pageNum.value - 1) * pageSize.value;
   const endIndex = startIndex + pageSize.value;
   tableData.value = data.slice(startIndex, endIndex);
 };
 
-// 分页事件处理函数
 const handleSizeChange = (val) => {
   pageSize.value = val;
   paginate(allData.value);
@@ -74,26 +113,22 @@ const handleCurrentChange = (val) => {
   paginate(allData.value);
 };
 
-// 组件挂载时获取所有用户数据
 onMounted(() => {
   fetchAllUsers();
 });
 </script>
 
 <style scoped>
-/* 自定义表格行高 */
 .custom-table-row .el-table .el-table__body {
-  --el-table-row-height: 100px; /* 设置行高为100px，可以根据需要调整 */
+  --el-table-row-height: 100px;
 }
 
-/* 内容区块样式 */
 .content-wrapper {
   position: relative;
   overflow: auto;
-  height: calc(100vh - 50px); /* 减去分页条的高度，可以根据实际情况调整 */
+  height: calc(100vh - 50px);
 }
 
-/* 分页条样式 */
 .pagination {
   position: fixed;
   bottom: 0;

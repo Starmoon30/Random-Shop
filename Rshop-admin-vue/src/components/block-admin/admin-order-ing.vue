@@ -14,8 +14,8 @@
         <el-table-column label="操作">
           <template #default="scope">
             <div style="justify-content: center;align-items: center;">
-              <el-button v-if="scope.row.ostate === 1" type="primary" size="small" @click="acceptOrder(scope.row)">备货完成</el-button>
-              <el-button v-if="scope.row.ostate === 2" type="primary" size="small" @click="acceptOrder(scope.row)">开始发货</el-button>
+              <el-button v-if="scope.row.ostate === 1" type="primary" size="small" @click="acceptOrder(scope.row)">备货</el-button>
+              <el-button v-if="scope.row.ostate === 2" type="primary" size="small" @click="acceptOrder(scope.row)">发货</el-button>
               <el-button v-if="scope.row.ostate === 3" type="primary" size="small" @click="acceptOrder(scope.row)">完成</el-button>
               <el-button type="primary" size="small" style="background-color: #ea4444" @click="canselOrder(scope.row)">取消接受</el-button>
             </div>
@@ -42,6 +42,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import {ElMessage} from "element-plus";
 
 // 定义全部数据的响应式变量
 const allData = ref([]);
@@ -114,7 +115,13 @@ const acceptOrder = async (order) => {
       }
     });
     if (response.data) {
-      console.log('接受成功');
+      if(state === 2){
+        ElMessage.success("备货完成")
+      }else if(state === 3){
+        ElMessage.success("已发货")
+      }else{
+        ElMessage.success("订单完成")
+      }
       // 重新获取商品列表
       fetchOrders();
     }
@@ -134,7 +141,7 @@ const canselOrder = async (order) => {
       }
     });
     if (response.data) {
-      console.log('取消成功');
+      ElMessage.success("订单已取消")
       // 重新获取商品列表
       fetchOrders();
     }

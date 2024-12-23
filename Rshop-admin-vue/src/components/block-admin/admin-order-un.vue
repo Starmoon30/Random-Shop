@@ -36,6 +36,7 @@
 <script setup>
 import {ref, onMounted} from 'vue';
 import axios from 'axios';
+import {ElMessage} from "element-plus";
 
 // 定义全部数据的响应式变量
 const allData = ref([]);
@@ -107,8 +108,7 @@ const acceptOrder = async (order) => {
       }
     });
     if (response.data) {
-      console.log('接受成功');
-      // 重新获取商品列表
+      ElMessage.success("已接受订单")
       fetchOrders();
     }
     else {

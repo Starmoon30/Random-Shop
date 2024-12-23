@@ -13,6 +13,7 @@
         <el-table-column label="状态">
           <template #default="scope">
             <!-- 根据ostate的值显示“已完成”并应用样式 -->
+            <span v-if="scope.row.ostate === -1" class="status-completed">已取消</span>
             <span v-if="scope.row.ostate === 4" class="status-completed">已完成</span>
           </template>
 
@@ -56,7 +57,7 @@ const fetchOrders = async () => {
         'Authorization': `${token}`,
       }
     });
-    const orders = response.data.filter(item => item.ostate === 4);
+    const orders = response.data.filter(item => item.ostate === 4 || item.ostate === -1);
     const allDataWithGname = await Promise.all(orders.map(async (order) => {
       const gname = await fetchGnameByGid(order.gid);
       return { ...order, gname };

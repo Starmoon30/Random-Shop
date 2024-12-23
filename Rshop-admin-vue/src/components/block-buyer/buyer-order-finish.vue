@@ -9,6 +9,14 @@
         <el-table-column prop="ophone" label="联系电话"/>
         <el-table-column prop="oaddress" label="地址"/>
         <el-table-column prop="oremark" label="备注"/>
+        <el-table-column label="状态">
+          <template #default="scope">
+            <div style="justify-content: center;align-items: center;">
+              <span v-if="scope.row.ostate === -1" class="status-completed">已取消</span>
+              <span v-if="scope.row.ostate === 4" class="status-completed">已完成</span>
+            </div>
+          </template>
+        </el-table-column>
       </el-table>
     </el-scrollbar>
   </div>
@@ -49,7 +57,7 @@ const fetchAllOrders = async () => {
         'Authorization': `${token}`,
       }
     });
-    const orders = response.data.filter(item => item.ostate === 2 && item.uaccount === account);
+    const orders = response.data.filter(item => item.ostate === 4 || item.ostate === -1 && item.uaccount === account);
     const allDataWithGname = await Promise.all(orders.map(async (order) => {
       const gname = await fetchGnameByGid(order.gid);
       return { ...order, gname };

@@ -12,7 +12,7 @@ import NewProduct from "@/components/block-admin/admin-NewPro.vue";
 import NewOrder from "@/components/block-buyer/buyer-Neworder.vue";
 import SearchRes from "@/components/block-buyer/buyer-searchGoods.vue";
 import NewLabel from "@/components/block-admin/admin-newCat.vue";
-
+import OrderDet from "@/components/block-admin/admin-order.vue";
 const routes = [
   {
     path: '/',
@@ -47,6 +47,11 @@ const routes = [
     path: '/aHome/productDet/:pid',
     name: 'AProductDet',
     component: AProductDet
+  },
+  {
+    path: '/aHome/orderDet/:uid',
+    name: 'OrderDet',
+    component: OrderDet
   },
   {
     path: '/bHome',
