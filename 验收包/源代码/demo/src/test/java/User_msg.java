@@ -43,11 +43,6 @@ public class User_msg {
     Thread.sleep(2000);
     driver.findElement(By.cssSelector(".el-menu-item-group:nth-child(1) .el-menu-item")).click();
     Thread.sleep(500);
-    driver.findElement(By.cssSelector(".el-menu-item-group:nth-child(2) .el-menu-item")).click();
-    Thread.sleep(500);
-    driver.findElement(By.cssSelector(".el-menu-item-group:nth-child(3) .el-menu-item")).click();
-    Thread.sleep(500);
-    driver.findElement(By.cssSelector(".el-menu-item-group:nth-child(4) .el-menu-item")).click();
-    Thread.sleep(500);
+
   }
 }
