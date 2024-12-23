@@ -5,15 +5,15 @@
       <el-table :data="tableData" class="custom-table-row" style="width: 100%">
         <el-table-column prop="oid" label="订单号"/>
         <el-table-column prop="gid" label="商品号"/>
+        <el-table-column prop="gname" label="商品名称"/>
         <el-table-column prop="uaccount" label="下单用户"/>
         <el-table-column prop="ophone" label="联系电话"/>
         <el-table-column prop="oaddress" label="地址"/>
         <el-table-column prop="oremark" label="备注"/>
-        <el-table-column prop="ostate" label="订单阶段"/>
         <el-table-column label="状态">
           <template #default="scope">
             <!-- 根据ostate的值显示“已完成”并应用样式 -->
-            <span v-if="scope.row.ostate === 2" class="status-completed">已完成</span>
+            <span v-if="scope.row.ostate === 4" class="status-completed">已完成</span>
           </template>
 
         </el-table-column>
@@ -47,6 +47,7 @@ const pageSize = ref(10);
 const pageNum = ref(1);
 const total = ref(0);
 const token = localStorage.getItem('token');
+
 // 获取所有用户数据的函数
 const fetchOrders = async () => {
   try {
@@ -55,14 +56,31 @@ const fetchOrders = async () => {
         'Authorization': `${token}`,
       }
     });
-    allData.value = response.data.filter(item => item.ostate === 2); // 假设后端返回所有订单数据
+    const orders = response.data.filter(item => item.ostate === 4);
+    const allDataWithGname = await Promise.all(orders.map(async (order) => {
+      const gname = await fetchGnameByGid(order.gid);
+      return { ...order, gname };
+    }));
+    allData.value = allDataWithGname;
     total.value = allData.value.length; // 总数据量
     paginate(allData.value); // 进行分页
   } catch (error) {
     console.error('Error fetching orders:', error);
   }
 };
-
+const fetchGnameByGid = async (gid) => {
+  try {
+    const response = await axios.post(`http://localhost:8090/goods/get_info`, {gid:gid},{
+      headers: {
+        'Authorization': `${token}`,
+      }
+    });
+    return response.data[0].gname; // 假设返回的数据中包含商品名
+  } catch (error) {
+    console.error('Error fetching gname:', error);
+    return '未知商品'; // 出错时返回默认值
+  }
+};
 // 分页函数
 const paginate = (data) => {
   const startIndex = (pageNum.value - 1) * pageSize.value;

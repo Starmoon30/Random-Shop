@@ -30,7 +30,7 @@ const logout = () => {
   align-items: center;
   padding: 10px;
   height: 60px;
-  background-color: #f5f5f5;
+  background-color: #ffffff;
 }
 
 .header-left {

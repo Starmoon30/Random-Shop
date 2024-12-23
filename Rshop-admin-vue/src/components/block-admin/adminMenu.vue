@@ -52,7 +52,13 @@ const handleOrderClick = () => {
         <el-menu-item index="4">历史上架</el-menu-item>
       </el-menu-item-group>
     </el-sub-menu>
-
+  </el-menu>
+  <el-menu
+    :default-openeds="['1', '11']"
+    style="background-color: var(--el-color-primary-light-9)"
+    :collapse="isCollapse"
+    @select="handleSelect"
+  >
     <el-menu-item-group>
       <el-menu-item index="5">
         <el-icon><Setting /></el-icon>商品管理

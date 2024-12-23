@@ -5,11 +5,11 @@
       <el-table :data="tableData" class="custom-table-row" style="width: 100%">
         <el-table-column prop="oid" label="订单号"/>
         <el-table-column prop="gid" label="商品号"/>
+        <el-table-column prop="gname" label="商品名称"/>
         <el-table-column prop="uaccount" label="下单用户"/>
         <el-table-column prop="ophone" label="联系电话"/>
         <el-table-column prop="oaddress" label="地址"/>
         <el-table-column prop="oremark" label="备注"/>
-        <el-table-column prop="ostate" label="订单阶段"/>
         <!-- 新增的按钮列 -->
         <el-table-column label="操作">
           <template #default="scope">
@@ -48,21 +48,38 @@ const total = ref(0);
 const token = localStorage.getItem('token');
 
 // 获取所有订单数据的函数
-const fetchAllOrders = async () => {
+const fetchOrders = async () => {
   try {
     const response = await axios.get('http://localhost:8090/order/list', {
       headers: {
         'Authorization': `${token}`,
       }
     });
-    allData.value = response.data.filter(item => item.ostate === 0); // 过滤出ostate为0的数据
+    const orders = response.data.filter(item => item.ostate === 0);
+    const allDataWithGname = await Promise.all(orders.map(async (order) => {
+      const gname = await fetchGnameByGid(order.gid);
+      return { ...order, gname };
+    }));
+    allData.value = allDataWithGname;
     total.value = allData.value.length; // 总数据量
     paginate(); // 进行分页
   } catch (error) {
     console.error('Error fetching orders:', error);
   }
 };
-
+const fetchGnameByGid = async (gid) => {
+  try {
+    const response = await axios.post(`http://localhost:8090/goods/get_info`, {gid:gid},{
+      headers: {
+        'Authorization': `${token}`,
+      }
+    });
+    return response.data[0].gname; // 假设返回的数据中包含商品名
+  } catch (error) {
+    console.error('Error fetching gname:', error);
+    return '未知商品'; // 出错时返回默认值
+  }
+};
 // 分页函数
 const paginate = () => {
   const startIndex = (pageNum.value - 1) * pageSize.value;
@@ -92,7 +109,7 @@ const acceptOrder = async (order) => {
     if (response.data) {
       console.log('接受成功');
       // 重新获取商品列表
-      fetchAllOrders();
+      fetchOrders();
     }
     else {
       console.error('Error accepting order:', response.data.message);
@@ -104,7 +121,7 @@ const acceptOrder = async (order) => {
 
 // 组件挂载时获取所有订单数据
 onMounted(() => {
-  fetchAllOrders();
+  fetchOrders();
 });
 </script>
 
